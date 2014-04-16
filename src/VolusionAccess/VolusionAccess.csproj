@@ -51,16 +51,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IVolusionOrdersService.cs" />
     <Compile Include="IVolusionProductsService.cs" />
     <Compile Include="Misc\ActionPolicies.cs" />
     <Compile Include="Models\Command\VolusionCommand.cs" />
     <Compile Include="Models\Command\VolusionParam.cs" />
     <Compile Include="Models\Configuration\VolusionConfig.cs" />
+    <Compile Include="Models\Order\VolusionOrder.cs" />
     <Compile Include="Models\Product\VolusionProduct.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\EndpointsBuilder.cs" />
     <Compile Include="Services\WebRequestServices.cs" />
     <Compile Include="VolusionFactory.cs" />
+    <Compile Include="VolusionOrdersService.cs" />
     <Compile Include="VolusionProductsService.cs" />
     <Compile Include="VolusionServiceBase.cs" />
   </ItemGroup>

@@ -23,26 +23,6 @@ namespace VolusionAccess.Services
 			return endpoint;
 		}
 
-		//public static string CreateGetProductsEndpoint( string login, string password )
-		//{
-		//	var endpoint = string.Format( "?{0}={1}&{2}={3}&{4}={5}&{6}={7}",
-		//		VolusionParam.Login.Name, login,
-		//		VolusionParam.EncryptedPassword.Name, password,
-		//		VolusionParam.ApiName.Name, VolusionCommand.GetProducts.Command,
-		//		VolusionParam.SelectColumns, "*" );
-		//	return endpoint;
-		//}
-
-		//public static string CreateGetOrdersEndpoint( string login, string password )
-		//{
-		//	var endpoint = string.Format( "?{0}={1}&{2}={3}&{4}={5}&{6}={7}",
-		//		VolusionParam.Login.Name, login,
-		//		VolusionParam.EncryptedPassword.Name, password,
-		//		VolusionParam.ApiName.Name, VolusionCommand.GetOrders.Command,
-		//		VolusionParam.SelectColumns, "*" );
-		//	return endpoint;
-		//}
-
 		public static string ConcatParams( this string mainEndpoint, params string[] endpoints )
 		{
 			var result = new StringBuilder( mainEndpoint );

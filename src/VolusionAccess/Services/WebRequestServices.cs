@@ -61,7 +61,7 @@ namespace VolusionAccess.Services
 				this.LogUpdateInfo( endpoint, response.StatusCode, jsonContent );
 		}
 
-		public async Task PutDataAsync(string endpoint, string jsonContent )
+		public async Task PutDataAsync( string endpoint, string jsonContent )
 		{
 			var request = this.CreateServicePutRequest( endpoint, jsonContent );
 			using( var response = await request.GetResponseAsync() )
@@ -90,7 +90,7 @@ namespace VolusionAccess.Services
 			var request = ( HttpWebRequest )WebRequest.Create( uri );
 
 			request.Method = WebRequestMethods.Http.Put;
-			request.ContentType = "application/json";
+			request.ContentType = "application/x-www-form-urlencoded";
 			request.Headers.Add( "Authorization", this.CreateAuthenticationHeader() );
 
 			using( var writer = new StreamWriter( request.GetRequestStream() ) )
@@ -113,7 +113,7 @@ namespace VolusionAccess.Services
 				this.Log().Trace( "[volusion]\tResponse\t{0} - {1}", response.ResponseUri, jsonResponse );
 
 				if( !String.IsNullOrEmpty( jsonResponse ) )
-					result = jsonResponse.FromJson< T >();
+					result = jsonResponse.FromXml< T >();
 			}
 
 			return result;
