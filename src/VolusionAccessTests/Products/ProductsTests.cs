@@ -13,7 +13,7 @@ namespace VolusionAccessTests.Products
 	[ TestFixture ]
 	public class ProductsTests
 	{
-		private readonly IVolusionFactory BigCommerceFactory = new VolusionFactory();
+		private readonly IVolusionFactory VolusionFactory = new VolusionFactory();
 		private VolusionConfig Config;
 
 		[ SetUp ]
@@ -31,7 +31,7 @@ namespace VolusionAccessTests.Products
 		[ Test ]
 		public void GetProducts()
 		{
-			var service = this.BigCommerceFactory.CreateProductsService( this.Config );
+			var service = this.VolusionFactory.CreateProductsService( this.Config );
 			var products = service.GetProducts();
 
 			products.Count().Should().BeGreaterThan( 0 );
@@ -40,7 +40,7 @@ namespace VolusionAccessTests.Products
 		[ Test ]
 		public async Task GetProductsAsync()
 		{
-			var service = this.BigCommerceFactory.CreateProductsService( this.Config );
+			var service = this.VolusionFactory.CreateProductsService( this.Config );
 			var products = await service.GetProductsAsync();
 
 			products.Count().Should().BeGreaterThan( 0 );
@@ -49,7 +49,7 @@ namespace VolusionAccessTests.Products
 		[ Test ]
 		public void ProductQuantityUpdated()
 		{
-			var service = this.BigCommerceFactory.CreateProductsService( this.Config );
+			var service = this.VolusionFactory.CreateProductsService( this.Config );
 
 			var productToUpdate = new VolusionProduct { Id = 74, Quantity = "55" };
 			service.UpdateProducts( new List< VolusionProduct > { productToUpdate } );
@@ -58,7 +58,7 @@ namespace VolusionAccessTests.Products
 		[ Test ]
 		public async Task ProductQuantityUpdatedAsync()
 		{
-			var service = this.BigCommerceFactory.CreateProductsService( this.Config );
+			var service = this.VolusionFactory.CreateProductsService( this.Config );
 
 			var productToUpdate = new VolusionProduct { Id = 74, Quantity = "55" };
 			await service.UpdateProductsAsync( new List< VolusionProduct > { productToUpdate } );

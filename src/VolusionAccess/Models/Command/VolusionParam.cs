@@ -9,6 +9,8 @@
 		public static readonly VolusionParam SelectColumns = new VolusionParam( "SELECT_Columns" );
 		public static readonly VolusionParam Import = new VolusionParam( "Import" );
 		public static readonly VolusionParam Update = new VolusionParam( "Update" );
+		public static readonly VolusionParam WhereColumn = new VolusionParam( "WHERE_Column" );
+		public static readonly VolusionParam WhereValue = new VolusionParam( "WHERE_Value" );
 
 		private VolusionParam( string name )
 		{

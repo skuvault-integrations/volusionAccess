@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using VolusionAccess.Models.Command;
 using VolusionAccess.Models.Configuration;
 
@@ -22,11 +23,13 @@ namespace VolusionAccess.Services
 			return endpoint;
 		}
 
-		public static string CreateGetOrdersEndpoint()
+		public static string CreateGetOrdersEndpoint( DateTime startDate, DateTime endDate )
 		{
-			var endpoint = string.Format( "{0}={1}&{2}={3}",
+			var endpoint = string.Format( "{0}={1}&{2}={3}&{4}={5}&{6}={7}",
 				VolusionParam.ApiName.Name, VolusionCommand.GetOrders.Command,
-				VolusionParam.SelectColumns.Name, "*" );
+				VolusionParam.SelectColumns.Name, "*",
+				VolusionParam.WhereColumn.Name, "o.OrderDate",
+				VolusionParam.WhereValue.Name, DateTime.SpecifyKind( startDate, DateTimeKind.Utc ).ToString( "o" ) );
 			return endpoint;
 		}
 
