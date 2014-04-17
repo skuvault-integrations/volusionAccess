@@ -1,6 +1,6 @@
 ﻿namespace VolusionAccess.Models.Command
 {
-	public class VolusionCommand
+	internal class VolusionCommand
 	{
 		public static readonly VolusionCommand Unknown = new VolusionCommand( string.Empty );
 		public static readonly VolusionCommand GetProducts = new VolusionCommand( @"Generic\Products" );

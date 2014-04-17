@@ -7,6 +7,8 @@
 		public static readonly VolusionParam EncryptedPassword = new VolusionParam( "EncryptedPassword" );
 		public static readonly VolusionParam ApiName = new VolusionParam( "EDI_Name" );
 		public static readonly VolusionParam SelectColumns = new VolusionParam( "SELECT_Columns" );
+		public static readonly VolusionParam Import = new VolusionParam( "Import" );
+		public static readonly VolusionParam Update = new VolusionParam( "Update" );
 
 		private VolusionParam( string name )
 		{

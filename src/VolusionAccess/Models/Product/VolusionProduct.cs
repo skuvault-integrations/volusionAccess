@@ -2,7 +2,7 @@
 
 namespace VolusionAccess.Models.Product
 {
-	[ DataContract ]
+	[ DataContract( Name = "Products" ) ]
 	public class VolusionProduct
 	{
 		[ DataMember( Name = "p.ProductID" ) ]

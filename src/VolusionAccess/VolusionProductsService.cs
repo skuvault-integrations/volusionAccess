@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CuttingEdge.Conditions;
+using ServiceStack;
 using VolusionAccess.Misc;
 using VolusionAccess.Models.Configuration;
 using VolusionAccess.Models.Product;
@@ -25,20 +24,21 @@ namespace VolusionAccess
 		public IEnumerable< VolusionProduct > GetProducts()
 		{
 			var products = new List< VolusionProduct >();
-			var productsPortion = new List< VolusionProduct >();
+			IList< VolusionProduct > productsPortion = null;
 			var endpoint = EndpointsBuilder.CreateGetProductsEndpoint();
 
 			do
 			{
 				ActionPolicies.Get.Do( () =>
 				{
-					productsPortion = this._webRequestServices.GetResponse< IList< VolusionProduct > >( endpoint ).ToList();
-					products.AddRange( productsPortion );
+					productsPortion = this._webRequestServices.GetResponse< IList< VolusionProduct > >( endpoint );
+					if( productsPortion != null )
+						products.AddRange( productsPortion );
 
 					//API requirement
 					this.CreateApiDelay().Wait();
 				} );
-			} while( productsPortion.Count != 0 );
+			} while( productsPortion != null && productsPortion.Count != 0 );
 
 			return products;
 		}
@@ -46,20 +46,21 @@ namespace VolusionAccess
 		public async Task< IEnumerable< VolusionProduct > > GetProductsAsync()
 		{
 			var products = new List< VolusionProduct >();
-			var productsPortion = new List< VolusionProduct >();
+			IList< VolusionProduct > productsPortion = null;
 			var endpoint = EndpointsBuilder.CreateGetProductsEndpoint();
 
 			do
 			{
 				await ActionPolicies.GetAsync.Do( async () =>
 				{
-					productsPortion = ( await this._webRequestServices.GetResponseAsync< IList< VolusionProduct > >( endpoint ) ).ToList();
-					products.AddRange( productsPortion );
+					productsPortion = await this._webRequestServices.GetResponseAsync< IList< VolusionProduct > >( endpoint );
+					if( productsPortion != null )
+						products.AddRange( productsPortion );
 
 					//API requirement
 					this.CreateApiDelay().Wait();
 				} );
-			} while( productsPortion.Count != 0 );
+			} while( productsPortion != null && productsPortion.Count != 0 );
 
 			return products;
 		}
@@ -68,12 +69,32 @@ namespace VolusionAccess
 		#region Update
 		public void UpdateProducts( IEnumerable< VolusionProduct > products )
 		{
-			throw new NotImplementedException();
+			var endpoint = EndpointsBuilder.CreateProductsUpdateEndpoint();
+			var xmlContent = products.ToXml();
+
+			ActionPolicies.Submit.Do( () =>
+			{
+				this._webRequestServices.PutData( endpoint, xmlContent );
+
+				//API requirement
+				this.CreateApiDelay().Wait();
+			} );
 		}
 
-		public Task UpdateProductsAsync( IEnumerable< VolusionProduct > products )
+		public async Task UpdateProductsAsync( IEnumerable< VolusionProduct > products )
 		{
-			throw new NotImplementedException();
+			var endpoint = EndpointsBuilder.CreateProductsUpdateEndpoint();
+			var xmlContent = products.ToXml();
+
+			await ActionPolicies.SubmitAsync.Do( async () =>
+			{
+				await this._webRequestServices.PutDataAsync( endpoint, xmlContent );
+				//API requirement
+				this.CreateApiDelay().Wait();
+			} );
+
+			//API requirement
+			this.CreateApiDelay().Wait();
 		}
 		#endregion
 	}

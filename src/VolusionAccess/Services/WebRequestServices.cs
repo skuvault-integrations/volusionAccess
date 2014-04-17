@@ -22,7 +22,7 @@ namespace VolusionAccess.Services
 
 		public T GetResponse< T >( string commandParams )
 		{
-			var url = string.Concat( this._config.HostWithAuth, commandParams );
+			var url = commandParams.GetFullEndpoint( this._config );
 			var result = this.GetResponseForSpecificUrl< T >( url );
 			return result;
 		}
@@ -39,7 +39,7 @@ namespace VolusionAccess.Services
 
 		public async Task< T > GetResponseAsync< T >( string commandParams )
 		{
-			var url = string.Concat( this._config.HostWithAuth, commandParams );
+			var url = commandParams.GetFullEndpoint( this._config );
 			var result = await this.GetResponseForSpecificUrlAsync< T >( url );
 			return result;
 		}
@@ -54,18 +54,18 @@ namespace VolusionAccess.Services
 			return result;
 		}
 
-		public void PutData( string endpoint, string jsonContent )
+		public void PutData( string endpoint, string xmlContent )
 		{
-			var request = this.CreateServicePutRequest( endpoint, jsonContent );
+			var request = this.CreateServicePutRequest( endpoint, xmlContent );
 			using( var response = ( HttpWebResponse )request.GetResponse() )
-				this.LogUpdateInfo( endpoint, response.StatusCode, jsonContent );
+				this.LogUpdateInfo( endpoint, response.StatusCode, xmlContent );
 		}
 
-		public async Task PutDataAsync( string endpoint, string jsonContent )
+		public async Task PutDataAsync( string endpoint, string xmlContent )
 		{
-			var request = this.CreateServicePutRequest( endpoint, jsonContent );
+			var request = this.CreateServicePutRequest( endpoint, xmlContent );
 			using( var response = await request.GetResponseAsync() )
-				this.LogUpdateInfo( endpoint, ( ( HttpWebResponse )response ).StatusCode, jsonContent );
+				this.LogUpdateInfo( endpoint, ( ( HttpWebResponse )response ).StatusCode, xmlContent );
 		}
 
 		#region WebRequest configuration
@@ -86,11 +86,12 @@ namespace VolusionAccess.Services
 		{
 			this.AllowInvalidCertificate();
 
-			var uri = new Uri( string.Concat( this._config.HostWithAuth, endpoint ) );
+			var uri = new Uri( endpoint.GetFullEndpoint( this._config ) );
 			var request = ( HttpWebRequest )WebRequest.Create( uri );
 
 			request.Method = WebRequestMethods.Http.Put;
-			request.ContentType = "application/x-www-form-urlencoded";
+			request.ContentType = "application/x-www-form-urlencoded; charset=utf-8";
+			request.Headers[ "Content-Action" ] = "Volusion_API";
 			request.Headers.Add( "Authorization", this.CreateAuthenticationHeader() );
 
 			using( var writer = new StreamWriter( request.GetRequestStream() ) )
@@ -108,12 +109,12 @@ namespace VolusionAccess.Services
 			using( var stream = response.GetResponseStream() )
 			{
 				var reader = new StreamReader( stream );
-				var jsonResponse = reader.ReadToEnd();
+				var xmlResponse = reader.ReadToEnd();
 
-				this.Log().Trace( "[volusion]\tResponse\t{0} - {1}", response.ResponseUri, jsonResponse );
+				this.Log().Trace( "[volusion]\tResponse\t{0} - {1}", response.ResponseUri, xmlResponse );
 
-				if( !String.IsNullOrEmpty( jsonResponse ) )
-					result = jsonResponse.FromXml< T >();
+				if( !String.IsNullOrEmpty( xmlResponse ) )
+					result = xmlResponse.FromXml< T >();
 			}
 
 			return result;
@@ -127,9 +128,9 @@ namespace VolusionAccess.Services
 			return string.Concat( "Basic ", authInfo );
 		}
 
-		private void LogUpdateInfo( string url, HttpStatusCode statusCode, string jsonContent )
+		private void LogUpdateInfo( string url, HttpStatusCode statusCode, string xmlContent )
 		{
-			this.Log().Trace( "[volusion]\tPUT/POST call for the url '{0}' has been completed with code '{1}'.\n{2}", url, statusCode, jsonContent );
+			this.Log().Trace( "[volusion]\tPUT/POST call for the url '{0}' has been completed with code '{1}'.\n{2}", url, statusCode, xmlContent );
 		}
 		#endregion
 
