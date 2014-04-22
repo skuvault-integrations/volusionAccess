@@ -75,9 +75,7 @@ namespace VolusionAccess.Services
 
 			var uri = new Uri( url );
 			var request = ( HttpWebRequest )WebRequest.Create( uri );
-
 			request.Method = WebRequestMethods.Http.Get;
-			request.Headers.Add( "Authorization", this.CreateAuthenticationHeader() );
 
 			return request;
 		}
@@ -92,7 +90,6 @@ namespace VolusionAccess.Services
 			request.Method = WebRequestMethods.Http.Put;
 			request.ContentType = "application/x-www-form-urlencoded; charset=utf-8";
 			request.Headers[ "Content-Action" ] = "Volusion_API";
-			request.Headers.Add( "Authorization", this.CreateAuthenticationHeader() );
 
 			using( var writer = new StreamWriter( request.GetRequestStream() ) )
 				writer.Write( content );

@@ -2,16 +2,16 @@
 
 namespace VolusionAccess.Models.Product
 {
-	[ DataContract( Name = "Products" ) ]
+	[ DataContract( Name = "Products", Namespace = "" ) ]
 	public class VolusionProduct
 	{
-		[ DataMember( Name = "p.ProductID" ) ]
-		public long Id { get; set; }
+		[ DataMember( Name = "ProductID" ) ]
+		public int Id { get; set; }
 
-		[ DataMember( Name = "p.StockStatus" ) ]
-		public string Quantity { get; set; }
+		[ DataMember( Name = "StockStatus" ) ]
+		public int Quantity { get; set; }
 
-		[ DataMember( Name = "p.ProductCode" ) ]
+		[ DataMember( Name = "ProductCode" ) ]
 		public string Sku { get; set; }
 	}
 }

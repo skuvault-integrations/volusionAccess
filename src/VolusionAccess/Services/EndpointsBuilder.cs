@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using VolusionAccess.Models.Command;
 using VolusionAccess.Models.Configuration;
 
@@ -41,18 +40,6 @@ namespace VolusionAccess.Services
 				VolusionParam.EncryptedPassword.Name, config.Password,
 				endpoint );
 			return fullEndpoint;
-		}
-
-		public static string ConcatParams( this string mainEndpoint, params string[] endpoints )
-		{
-			var result = new StringBuilder( mainEndpoint );
-
-			foreach( var endpoint in endpoints )
-			{
-				result.Append( endpoint.Replace( "?", "&" ) );
-			}
-
-			return result.ToString();
 		}
 	}
 }

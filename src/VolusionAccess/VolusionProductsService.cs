@@ -31,7 +31,7 @@ namespace VolusionAccess
 			{
 				ActionPolicies.Get.Do( () =>
 				{
-					productsPortion = this._webRequestServices.GetResponse< IList< VolusionProduct > >( endpoint );
+					productsPortion = this._webRequestServices.GetResponse< VolusionProducts >( endpoint );
 					if( productsPortion != null )
 						products.AddRange( productsPortion );
 
@@ -53,7 +53,7 @@ namespace VolusionAccess
 			{
 				await ActionPolicies.GetAsync.Do( async () =>
 				{
-					productsPortion = await this._webRequestServices.GetResponseAsync< IList< VolusionProduct > >( endpoint );
+					productsPortion = await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint );
 					if( productsPortion != null )
 						products.AddRange( productsPortion );
 

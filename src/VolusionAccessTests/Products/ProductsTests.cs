@@ -51,7 +51,7 @@ namespace VolusionAccessTests.Products
 		{
 			var service = this.VolusionFactory.CreateProductsService( this.Config );
 
-			var productToUpdate = new VolusionProduct { Id = 74, Quantity = "55" };
+			var productToUpdate = new VolusionProduct { Id = 74, Quantity = 55 };
 			service.UpdateProducts( new List< VolusionProduct > { productToUpdate } );
 		}
 
@@ -60,7 +60,7 @@ namespace VolusionAccessTests.Products
 		{
 			var service = this.VolusionFactory.CreateProductsService( this.Config );
 
-			var productToUpdate = new VolusionProduct { Id = 74, Quantity = "55" };
+			var productToUpdate = new VolusionProduct { Id = 74, Quantity = 55 };
 			await service.UpdateProductsAsync( new List< VolusionProduct > { productToUpdate } );
 		}
 	}
