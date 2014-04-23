@@ -3,7 +3,6 @@ using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 using Netco.Logging;
 using ServiceStack;
@@ -54,16 +53,16 @@ namespace VolusionAccess.Services
 			return result;
 		}
 
-		public void PutData( string endpoint, string xmlContent )
+		public void PostData( string endpoint, string xmlContent )
 		{
-			var request = this.CreateServicePutRequest( endpoint, xmlContent );
+			var request = this.CreateServicePostRequest( endpoint, xmlContent );
 			using( var response = ( HttpWebResponse )request.GetResponse() )
 				this.LogUpdateInfo( endpoint, response.StatusCode, xmlContent );
 		}
 
-		public async Task PutDataAsync( string endpoint, string xmlContent )
+		public async Task PostDataAsync( string endpoint, string xmlContent )
 		{
-			var request = this.CreateServicePutRequest( endpoint, xmlContent );
+			var request = this.CreateServicePostRequest( endpoint, xmlContent );
 			using( var response = await request.GetResponseAsync() )
 				this.LogUpdateInfo( endpoint, ( ( HttpWebResponse )response ).StatusCode, xmlContent );
 		}
@@ -80,14 +79,14 @@ namespace VolusionAccess.Services
 			return request;
 		}
 
-		private HttpWebRequest CreateServicePutRequest( string endpoint, string content )
+		private HttpWebRequest CreateServicePostRequest( string endpoint, string content )
 		{
 			this.AllowInvalidCertificate();
 
 			var uri = new Uri( endpoint.GetFullEndpoint( this._config ) );
 			var request = ( HttpWebRequest )WebRequest.Create( uri );
 
-			request.Method = WebRequestMethods.Http.Put;
+			request.Method = WebRequestMethods.Http.Post;
 			request.ContentType = "application/x-www-form-urlencoded; charset=utf-8";
 			request.Headers[ "Content-Action" ] = "Volusion_API";
 
@@ -115,14 +114,6 @@ namespace VolusionAccess.Services
 			}
 
 			return result;
-		}
-
-		private string CreateAuthenticationHeader()
-		{
-			var authInfo = string.Concat( this._config.UserName, ":", this._config.Password );
-			authInfo = Convert.ToBase64String( Encoding.Default.GetBytes( authInfo ) );
-
-			return string.Concat( "Basic ", authInfo );
 		}
 
 		private void LogUpdateInfo( string url, HttpStatusCode statusCode, string xmlContent )

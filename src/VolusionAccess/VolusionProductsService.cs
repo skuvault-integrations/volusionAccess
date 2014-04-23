@@ -67,34 +67,42 @@ namespace VolusionAccess
 		#endregion
 
 		#region Update
+		/// <summary>
+		/// Update products
+		/// </summary>
+		/// <param name="products">The products. Need to use SKU as key.</param>
 		public void UpdateProducts( IEnumerable< VolusionProduct > products )
 		{
 			var endpoint = EndpointsBuilder.CreateProductsUpdateEndpoint();
-			var xmlContent = products.ToXml();
+			var vp = new VolusionProducts( products );
+			var xmlContent = vp.ToXml();
 
 			ActionPolicies.Submit.Do( () =>
 			{
-				this._webRequestServices.PutData( endpoint, xmlContent );
+				this._webRequestServices.PostData( endpoint, xmlContent );
 
 				//API requirement
 				this.CreateApiDelay().Wait();
 			} );
 		}
 
+		/// <summary>
+		/// Update products
+		/// </summary>
+		/// <param name="products">The products. Need to use SKU as key.</param>
 		public async Task UpdateProductsAsync( IEnumerable< VolusionProduct > products )
 		{
 			var endpoint = EndpointsBuilder.CreateProductsUpdateEndpoint();
-			var xmlContent = products.ToXml();
+			var vp = new VolusionProducts( products );
+			var xmlContent = vp.ToXml();
 
 			await ActionPolicies.SubmitAsync.Do( async () =>
 			{
-				await this._webRequestServices.PutDataAsync( endpoint, xmlContent );
+				await this._webRequestServices.PostDataAsync( endpoint, xmlContent );
+
 				//API requirement
 				this.CreateApiDelay().Wait();
 			} );
-
-			//API requirement
-			this.CreateApiDelay().Wait();
 		}
 		#endregion
 	}
