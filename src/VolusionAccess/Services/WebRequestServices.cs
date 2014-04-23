@@ -101,7 +101,6 @@ namespace VolusionAccess.Services
 		private T ParseResponse< T >( WebResponse response )
 		{
 			var result = default( T );
-
 			using( var stream = response.GetResponseStream() )
 			{
 				var reader = new StreamReader( stream );

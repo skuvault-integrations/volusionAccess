@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace VolusionAccess.Models.Product
 {
 	[ CollectionDataContract( Name = "xmldata", ItemName = "Products", Namespace = "" ) ]
-	internal class VolusionProducts : List< VolusionProduct >
+	public class VolusionProducts : List< VolusionProduct >
 	{
 		public VolusionProducts()
 		{

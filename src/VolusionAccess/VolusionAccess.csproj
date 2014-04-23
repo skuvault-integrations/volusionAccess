@@ -57,6 +57,8 @@
     <Compile Include="Models\Command\VolusionCommand.cs" />
     <Compile Include="Models\Command\VolusionParam.cs" />
     <Compile Include="Models\Configuration\VolusionConfig.cs" />
+    <Compile Include="Models\Order\OrderDetails.cs" />
+    <Compile Include="Models\Order\VolusionOrders.cs" />
     <Compile Include="Models\Order\VolusionShippingAddress.cs" />
     <Compile Include="Models\Order\VolusionBillingAddress.cs" />
     <Compile Include="Models\Order\VolusionOrder.cs" />

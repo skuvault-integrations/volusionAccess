@@ -1,41 +1,57 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace VolusionAccess.Models.Order
 {
 	[ DataContract ]
 	public class VolusionShippingAddress
 	{
-		[ DataMember( Name = "o.ShipAddress1" ) ]
+		[ DataMember( Name = "ShipAddress1" ) ]
 		public string Address1 { get; set; }
 
-		[ DataMember( Name = "o.ShipAddress2" ) ]
+		[ DataMember( Name = "ShipAddress2" ) ]
 		public string Address2 { get; set; }
 
-		[ DataMember( Name = "o.ShipCity" ) ]
+		[ DataMember( Name = "ShipCity" ) ]
 		public string City { get; set; }
 
-		[ DataMember( Name = "o.ShipCompanyName" ) ]
+		[ DataMember( Name = "ShipCompanyName" ) ]
 		public string Company { get; set; }
 
-		[ DataMember( Name = "o.ShipCountry" ) ]
+		[ DataMember( Name = "ShipCountry" ) ]
 		public string Country { get; set; }
 
-		[ DataMember( Name = "o.ShipState" ) ]
-		public string State { get; set; }
+		[ DataMember( Name = "ShipDate" ) ]
+		public DateTime ShipDate { get; set; }
 
-		[ DataMember( Name = "o.ShipFirstName" ) ]
+		[ DataMember( Name = "ShipFaxNumber" ) ]
+		public string FaxNumber { get; set; }
+
+		[ DataMember( Name = "ShipFirstName" ) ]
 		public string FirstName { get; set; }
 
-		[ DataMember( Name = "o.ShipLastName" ) ]
+		[ DataMember( Name = "ShipLastName" ) ]
 		public string LastName { get; set; }
 
-		[ DataMember( Name = "o.ShipPhoneNumber" ) ]
-		public string Phone { get; set; }
+		[ DataMember( Name = "Shipped" ) ]
+		public string Shipped { get; set; }
 
-		[ DataMember( Name = "o.ShipPostalCode" ) ]
+		[ DataMember( Name = "ShipPhoneNumber" ) ]
+		public string PhoneNumber { get; set; }
+
+		[ DataMember( Name = "Shipping_Locked" ) ]
+		public string ShippingLockedped { get; set; }
+
+		[ DataMember( Name = "ShippingMethodID" ) ]
+		public int ShippingMethodID { get; set; }
+
+		[ DataMember( Name = "ShipPostalCode" ) ]
 		public string PostalCode { get; set; }
 
-		[ DataMember( Name = "o.ShipFaxNumber" ) ]
-		public string ShipFaxNumber { get; set; }
+		[ DataMember( Name = "ShipResidential" ) ]
+		public string Residential { get; set; }
+
+		[ DataMember( Name = "ShipState" ) ]
+		public string State { get; set; }
 	}
 }
