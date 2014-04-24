@@ -54,6 +54,7 @@
     <Compile Include="IVolusionOrdersService.cs" />
     <Compile Include="IVolusionProductsService.cs" />
     <Compile Include="Misc\ActionPolicies.cs" />
+    <Compile Include="Misc\XmlSerializeHelpers.cs" />
     <Compile Include="Models\Command\VolusionCommand.cs" />
     <Compile Include="Models\Command\VolusionParam.cs" />
     <Compile Include="Models\Configuration\VolusionConfig.cs" />

@@ -1,17 +1,16 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace VolusionAccess.Models.Product
 {
-	[ DataContract( Name = "Products", Namespace = "" ) ]
 	public class VolusionProduct
 	{
-		[ DataMember( Name = "ProductID" ) ]
+		[ XmlElement( ElementName = "ProductID" ) ]
 		public int Id { get; set; }
 
-		[ DataMember( Name = "StockStatus" ) ]
+		[ XmlElement( ElementName = "StockStatus" ) ]
 		public int Quantity { get; set; }
 
-		[ DataMember( Name = "ProductCode" ) ]
+		[ XmlElement( ElementName = "ProductCode" ) ]
 		public string Sku { get; set; }
 	}
 }

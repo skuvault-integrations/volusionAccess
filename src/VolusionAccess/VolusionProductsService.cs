@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CuttingEdge.Conditions;
-using ServiceStack;
 using VolusionAccess.Misc;
 using VolusionAccess.Models.Configuration;
 using VolusionAccess.Models.Product;
@@ -31,7 +31,8 @@ namespace VolusionAccess
 			{
 				ActionPolicies.Get.Do( () =>
 				{
-					productsPortion = this._webRequestServices.GetResponse< VolusionProducts >( endpoint );
+					var tmp = this._webRequestServices.GetResponse< VolusionProducts >( endpoint );
+					productsPortion = tmp != null ? tmp.Products : null;
 					if( productsPortion != null )
 						products.AddRange( productsPortion );
 
@@ -53,7 +54,8 @@ namespace VolusionAccess
 			{
 				await ActionPolicies.GetAsync.Do( async () =>
 				{
-					productsPortion = await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint );
+					var tmp = await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint );
+					productsPortion = tmp != null ? tmp.Products : null;
 					if( productsPortion != null )
 						products.AddRange( productsPortion );
 
@@ -74,8 +76,8 @@ namespace VolusionAccess
 		public void UpdateProducts( IEnumerable< VolusionProduct > products )
 		{
 			var endpoint = EndpointsBuilder.CreateProductsUpdateEndpoint();
-			var vp = new VolusionProducts( products );
-			var xmlContent = vp.ToXml();
+			var vp = new VolusionProducts { Products = products.ToList() };
+			var xmlContent = XmlSerializeHelpers.Serialize( vp );
 
 			ActionPolicies.Submit.Do( () =>
 			{
@@ -93,8 +95,8 @@ namespace VolusionAccess
 		public async Task UpdateProductsAsync( IEnumerable< VolusionProduct > products )
 		{
 			var endpoint = EndpointsBuilder.CreateProductsUpdateEndpoint();
-			var vp = new VolusionProducts( products );
-			var xmlContent = vp.ToXml();
+			var vp = new VolusionProducts { Products = products.ToList() };
+			var xmlContent = XmlSerializeHelpers.Serialize( vp );
 
 			await ActionPolicies.SubmitAsync.Do( async () =>
 			{

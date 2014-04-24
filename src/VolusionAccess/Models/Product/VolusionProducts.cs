@@ -1,18 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace VolusionAccess.Models.Product
 {
-	[ CollectionDataContract( Name = "xmldata", ItemName = "Products", Namespace = "" ) ]
-	public class VolusionProducts : List< VolusionProduct >
+	[ XmlRoot( ElementName = "xmldata", Namespace = "" ) ]
+	public class VolusionProducts
 	{
-		public VolusionProducts()
-		{
-		}
-
-		public VolusionProducts( IEnumerable< VolusionProduct > products )
-			: base( products )
-		{
-		}
+		[ XmlElement( ElementName = "Products" ) ]
+		public List< VolusionProduct > Products { get; set; }
 	}
 }
