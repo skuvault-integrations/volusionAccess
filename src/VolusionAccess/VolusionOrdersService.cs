@@ -30,7 +30,8 @@ namespace VolusionAccess
 			{
 				ActionPolicies.Get.Do( () =>
 				{
-					ordersPortion = this._webRequestServices.GetResponse< VolusionOrders >( endpoint );
+					var tmp = this._webRequestServices.GetResponse< VolusionOrders >( endpoint );
+					ordersPortion = tmp != null ? tmp.Orders : null;
 					if( ordersPortion != null )
 						orders.AddRange( ordersPortion );
 
@@ -52,7 +53,8 @@ namespace VolusionAccess
 			{
 				await ActionPolicies.GetAsync.Do( async () =>
 				{
-					ordersPortion = await this._webRequestServices.GetResponseAsync< VolusionOrders >( endpoint );
+					var tmp = await this._webRequestServices.GetResponseAsync< VolusionOrders >( endpoint );
+					ordersPortion = tmp != null ? tmp.Orders : null;
 					if( ordersPortion != null )
 						orders.AddRange( ordersPortion );
 

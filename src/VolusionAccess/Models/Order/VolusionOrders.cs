@@ -1,18 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace VolusionAccess.Models.Order
 {
-	[ CollectionDataContract( Name = "xmldata", ItemName = "Orders", Namespace = "" ) ]
-	public class VolusionOrders : List< VolusionOrder >
+	[ XmlRoot( ElementName = "xmldata", Namespace = "" ) ]
+	public class VolusionOrders
 	{
-		public VolusionOrders()
-		{
-		}
-
-		public VolusionOrders( IEnumerable< VolusionOrder > orders )
-			: base( orders )
-		{
-		}
+		[ XmlElement( ElementName = "Orders" ) ]
+		public List< VolusionOrder > Orders { get; set; }
 	}
 }

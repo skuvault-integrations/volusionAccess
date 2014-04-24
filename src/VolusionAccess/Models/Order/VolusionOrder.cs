@@ -1,145 +1,195 @@
 ﻿using System;
-using System.Runtime.Serialization;
+using System.Globalization;
+using System.Xml.Serialization;
 
 namespace VolusionAccess.Models.Order
 {
-	[ DataContract( Name = "Orders", Namespace = "" ) ]
 	public class VolusionOrder
 	{
-		[ DataMember( Name = "OrderID" ) ]
-		public int Id { get; set; }
+		[ XmlElement( ElementName = "OrderID" ) ]
+		public string OrderID { get; set; }
 
-		[ DataMember( Name = "AddressValidated" ) ]
+		[ XmlElement( ElementName = "AddressValidated" ) ]
 		public string AddressValidated { get; set; }
 
-		[ DataMember( Name = "CancelDate" ) ]
+		[ XmlElement( ElementName = "AccountNumber" ) ]
+		public string AccountNumber { get; set; }
+
+		[ XmlElement( ElementName = "AccountType" ) ]
+		public string AccountType { get; set; }
+
+		[ XmlIgnore ]
 		public DateTime CancelDate { get; set; }
 
-		[ DataMember( Name = "CancelReason" ) ]
+		[ XmlElement( ElementName = "CancelDate" ) ]
+		public string CancelDateStr
+		{
+			get { return this.CancelDate.ToString( _culture ); }
+			set { this.CancelDate = DateTime.Parse( value, _culture ); }
+		}
+
+		[ XmlElement( ElementName = "CancelReason" ) ]
 		public string CancelReason { get; set; }
 
-		[ DataMember( Name = "InitiallyShippedDate" ) ]
+		[ XmlIgnore ]
 		public DateTime InitiallyShippedDate { get; set; }
 
-		[ DataMember( Name = "LastModified" ) ]
+		[ XmlElement( ElementName = "InitiallyShippedDate" ) ]
+		public string InitiallyShippedDateStr
+		{
+			get { return this.InitiallyShippedDate.ToString( _culture ); }
+			set { this.InitiallyShippedDate = DateTime.Parse( value, _culture ); }
+		}
+
+		[ XmlIgnore ]
 		public DateTime LastModified { get; set; }
 
-		[ DataMember( Name = "OrderDate" ) ]
+		[ XmlElement( ElementName = "LastModified" ) ]
+		public string LastModifiedStr
+		{
+			get { return this.LastModified.ToString( _culture ); }
+			set { this.LastModified = DateTime.Parse( value, _culture ); }
+		}
+
+		[ XmlIgnore ]
 		public DateTime OrderDate { get; set; }
 
-		[ DataMember( Name = "OrderDateUtc" ) ]
+		[ XmlElement( ElementName = "OrderDate" ) ]
+		public string OrderDateStr
+		{
+			get { return this.OrderDate.ToString( _culture ); }
+			set { this.OrderDate = DateTime.Parse( value, _culture ); }
+		}
+
+		[ XmlIgnore ]
 		public DateTime OrderDateUtc { get; set; }
 
-		[ DataMember( Name = "OrderStatus" ) ]
+		[ XmlElement( ElementName = "OrderDateUtc" ) ]
+		public string OrderDateUtcStr
+		{
+			get { return this.OrderDateUtc.ToString( _culture ); }
+			set { this.OrderDateUtc = DateTime.Parse( value, _culture ); }
+		}
+
+		[ XmlElement( ElementName = "OrderStatus" ) ]
 		public string OrderStatus { get; set; }
 
-		[ DataMember( Name = "PaymentAmount" ) ]
+		[ XmlElement( ElementName = "PaymentAmount" ) ]
 		public Decimal PaymentAmount { get; set; }
 
-		[ DataMember( Name = "PaymentDeclined" ) ]
+		[ XmlElement( ElementName = "PaymentDeclined" ) ]
 		public string PaymentDeclined { get; set; }
 
-		[ DataMember( Name = "PaymentMethodID" ) ]
+		[ XmlElement( ElementName = "PaymentMethodID" ) ]
 		public int PaymentMethodID { get; set; }
 
-		[ DataMember( Name = "Stock_Priority" ) ]
+		[ XmlElement( ElementName = "Stock_Priority" ) ]
 		public int StockPriority { get; set; }
 
-		[ DataMember( Name = "Total_Payment_Authorized" ) ]
+		[ XmlElement( ElementName = "Total_Payment_Authorized" ) ]
 		public decimal TotalPaymentAuthorized { get; set; }
 
-		[ DataMember( Name = "Total_Payment_Received" ) ]
+		[ XmlElement( ElementName = "Total_Payment_Received" ) ]
 		public decimal TotalPaymentReceived { get; set; }
 
-		[ DataMember( Name = "TotalShippingCost" ) ]
+		[ XmlElement( ElementName = "TotalShippingCost" ) ]
 		public decimal TotalShippingCost { get; set; }
 
 		#region billing
-		[ DataMember( Name = "BillingAddress1" ) ]
+		[ XmlElement( ElementName = "BillingAddress1" ) ]
 		public string BillingAddress1 { get; set; }
 
-		[ DataMember( Name = "BillingAddress2" ) ]
+		[ XmlElement( ElementName = "BillingAddress2" ) ]
 		public string BillingAddress2 { get; set; }
 
-		[ DataMember( Name = "BillingCity" ) ]
+		[ XmlElement( ElementName = "BillingCity" ) ]
 		public string BillingCity { get; set; }
 
-		[ DataMember( Name = "BillingCompanyName" ) ]
+		[ XmlElement( ElementName = "BillingCompanyName" ) ]
 		public string BillingCompanyName { get; set; }
 
-		[ DataMember( Name = "BillingCountry" ) ]
+		[ XmlElement( ElementName = "BillingCountry" ) ]
 		public string BillingCountry { get; set; }
 
-		[ DataMember( Name = "BillingFaxNumber" ) ]
+		[ XmlElement( ElementName = "BillingFaxNumber" ) ]
 		public string BillingFaxNumber { get; set; }
 
-		[ DataMember( Name = "BillingFirstName" ) ]
+		[ XmlElement( ElementName = "BillingFirstName" ) ]
 		public string BillingFirstName { get; set; }
 
-		[ DataMember( Name = "BillingLastName" ) ]
+		[ XmlElement( ElementName = "BillingLastName" ) ]
 		public string BillingLastName { get; set; }
 
-		[ DataMember( Name = "BillingPhoneNumber" ) ]
+		[ XmlElement( ElementName = "BillingPhoneNumber" ) ]
 		public string BillingPhoneNumber { get; set; }
 
-		[ DataMember( Name = "BillingPostalCode" ) ]
+		[ XmlElement( ElementName = "BillingPostalCode" ) ]
 		public string BillingPostalCode { get; set; }
 
-		[ DataMember( Name = "BillingState" ) ]
+		[ XmlElement( ElementName = "BillingState" ) ]
 		public string BillingState { get; set; }
 		#endregion
 
 		#region shipping
-		[ DataMember( Name = "ShipAddress1" ) ]
+		[ XmlElement( ElementName = "ShipAddress1" ) ]
 		public string ShipAddress1 { get; set; }
 
-		[ DataMember( Name = "ShipAddress2" ) ]
+		[ XmlElement( ElementName = "ShipAddress2" ) ]
 		public string ShipAddress2 { get; set; }
 
-		[ DataMember( Name = "ShipCity" ) ]
+		[ XmlElement( ElementName = "ShipCity" ) ]
 		public string ShipCity { get; set; }
 
-		[ DataMember( Name = "ShipCompanyName" ) ]
+		[ XmlElement( ElementName = "ShipCompanyName" ) ]
 		public string ShipCompanyName { get; set; }
 
-		[ DataMember( Name = "ShipCountry" ) ]
+		[ XmlElement( ElementName = "ShipCountry" ) ]
 		public string ShipCountry { get; set; }
 
-		[ DataMember( Name = "ShipDate" ) ]
+		[ XmlIgnore ]
 		public DateTime ShipDate { get; set; }
 
-		[ DataMember( Name = "ShipFaxNumber" ) ]
+		[ XmlElement( ElementName = "ShipDate" ) ]
+		public string ShipDateStr
+		{
+			get { return this.ShipDate.ToString( _culture ); }
+			set { this.ShipDate = DateTime.Parse( value, _culture ); }
+		}
+
+		[ XmlElement( ElementName = "ShipFaxNumber" ) ]
 		public string ShipFaxNumber { get; set; }
 
-		[ DataMember( Name = "ShipFirstName" ) ]
+		[ XmlElement( ElementName = "ShipFirstName" ) ]
 		public string ShipFirstName { get; set; }
 
-		[ DataMember( Name = "ShipLastName" ) ]
+		[ XmlElement( ElementName = "ShipLastName" ) ]
 		public string ShipLastName { get; set; }
 
-		[ DataMember( Name = "Shipped" ) ]
+		[ XmlElement( ElementName = "Shipped" ) ]
 		public string Shipped { get; set; }
 
-		[ DataMember( Name = "ShipPhoneNumber" ) ]
+		[ XmlElement( ElementName = "ShipPhoneNumber" ) ]
 		public string ShipPhoneNumber { get; set; }
 
-		[ DataMember( Name = "Shipping_Locked" ) ]
+		[ XmlElement( ElementName = "Shipping_Locked" ) ]
 		public string ShippingLockedped { get; set; }
 
-		[ DataMember( Name = "ShippingMethodID" ) ]
+		[ XmlElement( ElementName = "ShippingMethodID" ) ]
 		public int ShippingMethodID { get; set; }
 
-		[ DataMember( Name = "ShipPostalCode" ) ]
+		[ XmlElement( ElementName = "ShipPostalCode" ) ]
 		public string ShipPostalCode { get; set; }
 
-		[ DataMember( Name = "ShipResidential" ) ]
+		[ XmlElement( ElementName = "ShipResidential" ) ]
 		public string ShipResidential { get; set; }
 
-		[ DataMember( Name = "ShipState" ) ]
+		[ XmlElement( ElementName = "ShipState" ) ]
 		public string ShipState { get; set; }
 		#endregion
 
-		[ DataMember( Name = "OrderDetails" ) ]
+		[ XmlElement( ElementName = "OrderDetails" ) ]
 		public VolusionOrderDetails OrderDetails { get; set; }
+
+		private readonly CultureInfo _culture = new CultureInfo( "en-US" );
 	}
 }

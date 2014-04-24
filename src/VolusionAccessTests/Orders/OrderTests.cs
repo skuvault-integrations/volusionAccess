@@ -18,7 +18,7 @@ namespace VolusionAccessTests.Orders
 		public void Init()
 		{
 			const string credentialsFilePath = @"..\..\Files\VolusionCredentials.csv";
-			
+
 			var cc = new CsvContext();
 			var testConfig = cc.Read< TestConfig >( credentialsFilePath, new CsvFileDescription { FirstLineHasColumnNames = true } ).FirstOrDefault();
 

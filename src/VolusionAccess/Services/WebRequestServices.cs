@@ -4,8 +4,8 @@ using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Netco.Logging;
-using ServiceStack;
 using VolusionAccess.Models.Configuration;
 
 namespace VolusionAccess.Services
@@ -109,7 +109,10 @@ namespace VolusionAccess.Services
 				this.Log().Trace( "[volusion]\tResponse\t{0} - {1}", response.ResponseUri, xmlResponse );
 
 				if( !String.IsNullOrEmpty( xmlResponse ) )
-					result = xmlResponse.FromXml< T >();
+				{
+					var serializer = new XmlSerializer( typeof( T ) );
+					result = ( T )serializer.Deserialize( new StringReader( xmlResponse ) );
+				}
 			}
 
 			return result;

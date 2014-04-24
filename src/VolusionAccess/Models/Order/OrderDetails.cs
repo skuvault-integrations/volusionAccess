@@ -1,117 +1,140 @@
 ﻿using System;
-using System.Runtime.Serialization;
+using System.Globalization;
+using System.Xml.Serialization;
 
 namespace VolusionAccess.Models.Order
 {
-	[ DataContract( Name = "OrderDetails", Namespace = "" ) ]
 	public class VolusionOrderDetails
 	{
-		[ DataMember( Name = "OrderDetailID" ) ]
+		[ XmlElement( ElementName = "OrderDetailID" ) ]
 		public int OrderDetailID { get; set; }
 
-		[ DataMember( Name = "AutoDropShip" ) ]
+		[ XmlElement( ElementName = "AutoDropShip" ) ]
 		public string AutoDropShip { get; set; }
 
-		[ DataMember( Name = "CategoryID" ) ]
+		[ XmlElement( ElementName = "CategoryID" ) ]
 		public int CategoryID { get; set; }
 
-		[ DataMember( Name = "CouponCode" ) ]
+		[ XmlElement( ElementName = "CouponCode" ) ]
 		public string CouponCode { get; set; }
 
-		[ DataMember( Name = "CustomLineItem" ) ]
+		[ XmlElement( ElementName = "CustomLineItem" ) ]
 		public string CustomLineItem { get; set; }
 
-		[ DataMember( Name = "Fixed_ShippingCost" ) ]
+		[ XmlElement( ElementName = "Fixed_ShippingCost" ) ]
 		public decimal FixedShippingCost { get; set; }
 
-		[ DataMember( Name = "Fixed_ShippingCost_Outside_LocalRegion" ) ]
+		[ XmlElement( ElementName = "Fixed_ShippingCost_Outside_LocalRegion" ) ]
 		public decimal FixedShippingCostOutsideLocalRegion { get; set; }
 
-		[ DataMember( Name = "FreeShippingItem" ) ]
+		[ XmlElement( ElementName = "FreeShippingItem" ) ]
 		public string FreeShippingItem { get; set; }
 
-		[ DataMember( Name = "IsKitID" ) ]
+		[ XmlElement( ElementName = "IsKitID" ) ]
 		public string IsKitID { get; set; }
 
-		[ DataMember( Name = "KitID" ) ]
+		[ XmlElement( ElementName = "KitID" ) ]
 		public string KitID { get; set; }
 
-		[ DataMember( Name = "Locked" ) ]
+		[ XmlElement( ElementName = "Locked" ) ]
 		public string Locked { get; set; }
 
-		[ DataMember( Name = "LastModified" ) ]
+		[ XmlIgnore ]
 		public DateTime LastModified { get; set; }
 
-		[ DataMember( Name = "OnOrder_Qty" ) ]
+		[ XmlElement( ElementName = "LastModified" ) ]
+		public string LastModifiedStr
+		{
+			get { return this.LastModified.ToString( _culture ); }
+			set { this.LastModified = DateTime.Parse( value, _culture ); }
+		}
+
+		[ XmlElement( ElementName = "OnOrder_Qty" ) ]
 		public int OnOrderQty { get; set; }
 
-		[ DataMember( Name = "OptionID" ) ]
+		[ XmlElement( ElementName = "OptionID" ) ]
 		public int OptionID { get; set; }
 
-		[ DataMember( Name = "OptionIDs" ) ]
+		[ XmlElement( ElementName = "OptionIDs" ) ]
 		public string OptionIDs { get; set; }
 
-		[ DataMember( Name = "Package_Type" ) ]
+		[ XmlElement( ElementName = "Package_Type" ) ]
 		public string PackageType { get; set; }
 
-		[ DataMember( Name = "Product_Keys_Shipped" ) ]
+		[ XmlElement( ElementName = "Product_Keys_Shipped" ) ]
 		public string ProductKeysShipped { get; set; }
 
-		[ DataMember( Name = "ProductCode" ) ]
+		[ XmlElement( ElementName = "ProductCode" ) ]
 		public string ProductCode { get; set; }
 
-		[ DataMember( Name = "ProductID" ) ]
+		[ XmlElement( ElementName = "ProductID" ) ]
 		public int ProductID { get; set; }
 
-		[ DataMember( Name = "ProductName" ) ]
+		[ XmlElement( ElementName = "ProductName" ) ]
 		public string ProductName { get; set; }
 
-		[ DataMember( Name = "ProductPrice" ) ]
+		[ XmlElement( ElementName = "ProductPrice" ) ]
 		public decimal ProductPrice { get; set; }
 
-		[ DataMember( Name = "QtyOnBackOrder" ) ]
+		[ XmlElement( ElementName = "QtyOnBackOrder" ) ]
 		public int QtyOnBackOrder { get; set; }
 
-		[ DataMember( Name = "QtyOnHold" ) ]
+		[ XmlElement( ElementName = "QtyOnHold" ) ]
 		public int QtyOnHold { get; set; }
 
-		[ DataMember( Name = "QtyOnPackingSlip" ) ]
+		[ XmlElement( ElementName = "QtyOnPackingSlip" ) ]
 		public int QtyOnPackingSlip { get; set; }
 
-		[ DataMember( Name = "QtyShipped" ) ]
+		[ XmlElement( ElementName = "QtyShipped" ) ]
 		public int QtyShipped { get; set; }
 
-		[ DataMember( Name = "Quantity" ) ]
+		[ XmlElement( ElementName = "Quantity" ) ]
 		public int Quantity { get; set; }
 
-		[ DataMember( Name = "Returned" ) ]
+		[ XmlElement( ElementName = "Returned" ) ]
 		public string Returned { get; set; }
 
-		[ DataMember( Name = "Returned_Date" ) ]
+		[ XmlIgnore ]
 		public DateTime ReturnedDate { get; set; }
 
-		[ DataMember( Name = "Reward_Points_Given_For_Purchase" ) ]
+		[ XmlElement( ElementName = "Returned_Date" ) ]
+		public string ReturnedDateStr
+		{
+			get { return this.ReturnedDate.ToString( _culture ); }
+			set { this.ReturnedDate = DateTime.Parse( value, _culture ); }
+		}
+
+		[ XmlElement( ElementName = "Reward_Points_Given_For_Purchase" ) ]
 		public int RewardPointsGivenForPurchase { get; set; }
 
-		[ DataMember( Name = "ShipDate" ) ]
+		[ XmlIgnore ]
 		public DateTime ShipDate { get; set; }
 
-		[ DataMember( Name = "Shipped" ) ]
+		[ XmlElement( ElementName = "ShipDate" ) ]
+		public string ShipDateStr
+		{
+			get { return this.ShipDate.ToString( _culture ); }
+			set { this.ShipDate = DateTime.Parse( value, _culture ); }
+		}
+
+		[ XmlElement( ElementName = "Shipped" ) ]
 		public string Shipped { get; set; }
 
-		[ DataMember( Name = "Ships_By_Itself" ) ]
+		[ XmlElement( ElementName = "Ships_By_Itself" ) ]
 		public string ShipsByItself { get; set; }
 
-		[ DataMember( Name = "TaxableProduct" ) ]
+		[ XmlElement( ElementName = "TaxableProduct" ) ]
 		public string TaxableProduct { get; set; }
 
-		[ DataMember( Name = "TotalPrice" ) ]
+		[ XmlElement( ElementName = "TotalPrice" ) ]
 		public decimal TotalPrice { get; set; }
 
-		[ DataMember( Name = "Vendor_Price" ) ]
+		[ XmlElement( ElementName = "Vendor_Price" ) ]
 		public decimal Vendor_Price { get; set; }
 
-		[ DataMember( Name = "Warehouses" ) ]
+		[ XmlElement( ElementName = "Warehouses" ) ]
 		public string Warehouses { get; set; }
+
+		private readonly CultureInfo _culture = new CultureInfo( "en-US" );
 	}
 }
