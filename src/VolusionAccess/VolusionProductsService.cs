@@ -106,14 +106,10 @@ namespace VolusionAccess
 		#endregion
 
 		#region Update
-		/// <summary>
-		/// Update products
-		/// </summary>
-		/// <param name="products">The products. Need to use SKU as key.</param>
-		public void UpdateProducts( IEnumerable< VolusionProduct > products )
+		public void UpdateProducts( IEnumerable< VolusionUpdatedProduct > products )
 		{
 			var endpoint = EndpointsBuilder.CreateProductsUpdateEndpoint();
-			var vp = new VolusionProducts { Products = products.ToList() };
+			var vp = new VolusionUpdatedProducts { Products = products.ToList() };
 			var xmlContent = XmlSerializeHelpers.Serialize( vp );
 
 			ActionPolicies.Submit.Do( () =>
@@ -125,14 +121,10 @@ namespace VolusionAccess
 			} );
 		}
 
-		/// <summary>
-		/// Update products
-		/// </summary>
-		/// <param name="products">The products. Need to use SKU as key.</param>
-		public async Task UpdateProductsAsync( IEnumerable< VolusionProduct > products )
+		public async Task UpdateProductsAsync( IEnumerable< VolusionUpdatedProduct > products )
 		{
 			var endpoint = EndpointsBuilder.CreateProductsUpdateEndpoint();
-			var vp = new VolusionProducts { Products = products.ToList() };
+			var vp = new VolusionUpdatedProducts { Products = products.ToList() };
 			var xmlContent = XmlSerializeHelpers.Serialize( vp );
 
 			await ActionPolicies.SubmitAsync.Do( async () =>

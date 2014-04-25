@@ -69,8 +69,8 @@ namespace VolusionAccessTests.Products
 		{
 			var service = this.VolusionFactory.CreateProductsService( this.Config );
 
-			var productToUpdate = new VolusionProduct { Sku = "ah-chairbamboo", Quantity = 26 };
-			service.UpdateProducts( new List< VolusionProduct > { productToUpdate } );
+			var productToUpdate = new VolusionUpdatedProduct { Sku = "ah-chairbamboo", Quantity = 25 };
+			service.UpdateProducts( new List< VolusionUpdatedProduct > { productToUpdate } );
 		}
 
 		[ Test ]
@@ -78,8 +78,8 @@ namespace VolusionAccessTests.Products
 		{
 			var service = this.VolusionFactory.CreateProductsService( this.Config );
 
-			var productToUpdate = new VolusionProduct { Sku = "ah-chairbamboo", Quantity = 55 };
-			await service.UpdateProductsAsync( new List< VolusionProduct > { productToUpdate } );
+			var productToUpdate = new VolusionUpdatedProduct { Sku = "ah-chairbamboo", Quantity = 55 };
+			await service.UpdateProductsAsync( new List< VolusionUpdatedProduct > { productToUpdate } );
 		}
 	}
 }
