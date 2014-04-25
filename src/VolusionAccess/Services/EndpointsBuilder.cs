@@ -8,6 +8,12 @@ namespace VolusionAccess.Services
 	{
 		public static readonly string EmptyParams = string.Empty;
 
+		public static string CreateGetPublicProductsEndpoint()
+		{
+			var endpoint = string.Format( "{0}={1}", VolusionParam.ApiName.Name, VolusionCommand.GetPublicProducts.Command );
+			return endpoint;
+		}
+
 		public static string CreateGetProductsEndpoint()
 		{
 			var endpoint = string.Format( "{0}={1}&{2}={3}",
@@ -24,9 +30,9 @@ namespace VolusionAccess.Services
 
 		public static string CreateGetOrdersEndpoint( DateTime startDate, DateTime endDate )
 		{
-			var endpoint = string.Format( "{0}={1}&{2}={3}",//&{4}={5}&{6}={7}",
+			var endpoint = string.Format( "{0}={1}&{2}={3}", //&{4}={5}&{6}={7}",
 				VolusionParam.ApiName.Name, VolusionCommand.GetOrders.Command,
-				VolusionParam.SelectColumns.Name, "*"//,
+				VolusionParam.SelectColumns.Name, "*" //,
 				//VolusionParam.WhereColumn.Name, "o.OrderDate",
 				//VolusionParam.WhereValue.Name, DateTime.SpecifyKind( startDate, DateTimeKind.Utc ).ToString( "o" ) 
 				);
@@ -34,6 +40,12 @@ namespace VolusionAccess.Services
 		}
 
 		public static string GetFullEndpoint( this string endpoint, VolusionConfig config )
+		{
+			var fullEndpoint = string.Format( "{0}?{1}", config.Host, endpoint );
+			return fullEndpoint;
+		}
+
+		public static string GetFullEndpointWithAuth( this string endpoint, VolusionConfig config )
 		{
 			var fullEndpoint = string.Format( "{0}?{1}={2}&{3}={4}&{5}",
 				config.Host,

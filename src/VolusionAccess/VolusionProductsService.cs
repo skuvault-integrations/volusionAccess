@@ -12,15 +12,52 @@ namespace VolusionAccess
 	public class VolusionProductsService : VolusionServiceBase, IVolusionProductsService
 	{
 		private readonly WebRequestServices _webRequestServices;
+		private readonly VolusionConfig _config;
 
 		public VolusionProductsService( VolusionConfig config )
 		{
 			Condition.Requires( config, "config" ).IsNotNull();
-
 			this._webRequestServices = new WebRequestServices( config );
+			_config = config;
 		}
 
 		#region Get
+		public IEnumerable< VolusionProduct > GetPublicProducts()
+		{
+			var products = new List< VolusionProduct >();
+			var endpoint = EndpointsBuilder.CreateGetPublicProductsEndpoint().GetFullEndpoint( _config );
+
+			ActionPolicies.Get.Do( () =>
+			{
+				var tmp = this._webRequestServices.GetResponseForSpecificUrl< VolusionPublicProducts >( endpoint );
+				if( tmp != null && tmp.Products != null && tmp.Products.Count > 0 )
+					products.AddRange( tmp.Products );
+
+				//API requirement
+				this.CreateApiDelay().Wait();
+			} );
+
+			return products;
+		}
+
+		public async Task< IEnumerable< VolusionProduct > > GetPublicProductsAsync()
+		{
+			var products = new List< VolusionProduct >();
+			var endpoint = EndpointsBuilder.CreateGetPublicProductsEndpoint().GetFullEndpoint( _config );
+
+			await ActionPolicies.GetAsync.Do( async () =>
+			{
+				var tmp = await this._webRequestServices.GetResponseForSpecificUrlAsync< VolusionPublicProducts >( endpoint );
+				if( tmp != null && tmp.Products != null && tmp.Products.Count > 0 )
+					products.AddRange( tmp.Products );
+
+				//API requirement
+				this.CreateApiDelay().Wait();
+			} );
+
+			return products;
+		}
+
 		public IEnumerable< VolusionProduct > GetProducts()
 		{
 			var products = new List< VolusionProduct >();

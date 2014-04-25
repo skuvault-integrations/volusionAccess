@@ -6,6 +6,9 @@ namespace VolusionAccess
 {
 	public interface IVolusionProductsService
 	{
+		IEnumerable< VolusionProduct > GetPublicProducts();
+		Task< IEnumerable< VolusionProduct > > GetPublicProductsAsync();
+
 		IEnumerable< VolusionProduct > GetProducts();
 		Task< IEnumerable< VolusionProduct > > GetProductsAsync();
 

@@ -21,7 +21,7 @@ namespace VolusionAccess.Services
 
 		public T GetResponse< T >( string commandParams )
 		{
-			var url = commandParams.GetFullEndpoint( this._config );
+			var url = commandParams.GetFullEndpointWithAuth( this._config );
 			var result = this.GetResponseForSpecificUrl< T >( url );
 			return result;
 		}
@@ -38,7 +38,7 @@ namespace VolusionAccess.Services
 
 		public async Task< T > GetResponseAsync< T >( string commandParams )
 		{
-			var url = commandParams.GetFullEndpoint( this._config );
+			var url = commandParams.GetFullEndpointWithAuth( this._config );
 			var result = await this.GetResponseForSpecificUrlAsync< T >( url );
 			return result;
 		}
@@ -83,7 +83,7 @@ namespace VolusionAccess.Services
 		{
 			this.AllowInvalidCertificate();
 
-			var uri = new Uri( endpoint.GetFullEndpoint( this._config ) );
+			var uri = new Uri( endpoint.GetFullEndpointWithAuth( this._config ) );
 			var request = ( HttpWebRequest )WebRequest.Create( uri );
 
 			request.Method = WebRequestMethods.Http.Post;

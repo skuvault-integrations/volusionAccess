@@ -3,6 +3,7 @@
 	internal class VolusionCommand
 	{
 		public static readonly VolusionCommand Unknown = new VolusionCommand( string.Empty );
+		public static readonly VolusionCommand GetPublicProducts = new VolusionCommand( @"Generic\All_products" );
 		public static readonly VolusionCommand GetProducts = new VolusionCommand( @"Generic\Products" );
 		public static readonly VolusionCommand GetOrders = new VolusionCommand( @"Generic\Orders" );
 

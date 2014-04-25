@@ -29,6 +29,24 @@ namespace VolusionAccessTests.Products
 		}
 
 		[ Test ]
+		public void GetPublicProducts()
+		{
+			var service = this.VolusionFactory.CreateProductsService( this.Config );
+			var products = service.GetPublicProducts();
+
+			products.Count().Should().BeGreaterThan( 0 );
+		}
+
+		[ Test ]
+		public async Task GetPublicProductsAsync()
+		{
+			var service = this.VolusionFactory.CreateProductsService( this.Config );
+			var products = await service.GetPublicProductsAsync();
+
+			products.Count().Should().BeGreaterThan( 0 );
+		}
+
+		[ Test ]
 		public void GetProducts()
 		{
 			var service = this.VolusionFactory.CreateProductsService( this.Config );
