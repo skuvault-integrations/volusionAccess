@@ -113,6 +113,42 @@ namespace VolusionAccess
 
 			return products;
 		}
+
+		public VolusionProduct GetProduct( string sku )
+		{
+			VolusionProduct product = null;
+			var endpoint = EndpointsBuilder.CreateGetProductEndpoint( sku );
+
+			ActionPolicies.Get.Do( () =>
+			{
+				var tmp = this._webRequestServices.GetResponse< VolusionProducts >( endpoint );
+				if( tmp != null && tmp.Products != null )
+					product = tmp.Products.FirstOrDefault();
+
+				//API requirement
+				this.CreateApiDelay().Wait();
+			} );
+
+			return product;
+		}
+
+		public async Task< VolusionProduct > GetProductAsync( string sku )
+		{
+			VolusionProduct product = null;
+			var endpoint = EndpointsBuilder.CreateGetProductEndpoint( sku );
+
+			await ActionPolicies.GetAsync.Do( async () =>
+			{
+				var tmp = await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint );
+				if( tmp != null && tmp.Products != null )
+					product = tmp.Products.FirstOrDefault();
+
+				//API requirement
+				this.CreateApiDelay().Wait();
+			} );
+
+			return product;
+		}
 		#endregion
 
 		#region Update

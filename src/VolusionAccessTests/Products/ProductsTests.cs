@@ -65,6 +65,24 @@ namespace VolusionAccessTests.Products
 		}
 
 		[ Test ]
+		public void GetProduct()
+		{
+			var service = this.VolusionFactory.CreateProductsService( this.Config );
+			var product = service.GetProduct( "ah-chairbamboo" );
+
+			product.Should().NotBeNull();
+		}
+
+		[ Test ]
+		public async Task GetProductAsync()
+		{
+			var service = this.VolusionFactory.CreateProductsService( this.Config );
+			var product = await service.GetProductAsync( "ah-chairbamboo-0001" );
+
+			product.Should().NotBeNull();
+		}
+
+		[ Test ]
 		public void ProductQuantityUpdated()
 		{
 			var service = this.VolusionFactory.CreateProductsService( this.Config );

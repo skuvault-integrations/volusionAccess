@@ -18,13 +18,23 @@ namespace VolusionAccess.Services
 		{
 			var endpoint = string.Format( "{0}={1}&{2}={3}",
 				VolusionParam.ApiName.Name, VolusionCommand.GetProducts.Command,
-				VolusionParam.SelectColumns.Name, "*" );
+				VolusionParam.SelectColumns.Name, GetProductColumns() );
 			return endpoint;
 		}
 
 		public static string CreateProductsUpdateEndpoint()
 		{
 			var endpoint = string.Format( "{0}={1}", VolusionParam.Import.Name, VolusionParam.Update.Name );
+			return endpoint;
+		}
+
+		public static string CreateGetProductEndpoint( string sku )
+		{
+			var endpoint = string.Format( "{0}={1}&{2}={3}&{4}={5}&{6}={7}",
+				VolusionParam.ApiName.Name, VolusionCommand.GetProducts.Command,
+				VolusionParam.SelectColumns.Name, GetProductColumns(),
+				VolusionParam.WhereColumn.Name, ProductColumns.Sku.Name,
+				VolusionParam.WhereValue.Name, sku );
 			return endpoint;
 		}
 
@@ -53,6 +63,17 @@ namespace VolusionAccess.Services
 				VolusionParam.EncryptedPassword.Name, config.Password,
 				endpoint );
 			return fullEndpoint;
+		}
+
+		private static string GetProductColumns()
+		{
+			var columns = string.Format( "{0},{1},{2},{3},{4}",
+				ProductColumns.ProductID.Name,
+				ProductColumns.Sku.Name,
+				ProductColumns.Quantity.Name,
+				ProductColumns.ProductPrice.Name,
+				ProductColumns.SalePrice.Name );
+			return columns;
 		}
 	}
 }
