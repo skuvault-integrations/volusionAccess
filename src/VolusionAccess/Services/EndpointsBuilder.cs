@@ -22,9 +22,13 @@ namespace VolusionAccess.Services
 			return endpoint;
 		}
 
-		public static string CreateProductsUpdateEndpoint()
+		public static string CreateGetFilteredProductsEndpoint( ProductColumns column, string value )
 		{
-			var endpoint = string.Format( "{0}={1}", VolusionParam.Import.Name, VolusionParam.Update.Name );
+			var endpoint = string.Format( "{0}={1}&{2}={3}&{4}={5}&{6}={7}",
+				VolusionParam.ApiName.Name, VolusionCommand.GetProducts.Command,
+				VolusionParam.SelectColumns.Name, GetProductColumns(),
+				VolusionParam.WhereColumn.Name, column.Name,
+				VolusionParam.WhereValue.Name, value );
 			return endpoint;
 		}
 
@@ -35,6 +39,12 @@ namespace VolusionAccess.Services
 				VolusionParam.SelectColumns.Name, GetProductColumns(),
 				VolusionParam.WhereColumn.Name, ProductColumns.Sku.Name,
 				VolusionParam.WhereValue.Name, sku );
+			return endpoint;
+		}
+
+		public static string CreateProductsUpdateEndpoint()
+		{
+			var endpoint = string.Format( "{0}={1}", VolusionParam.Import.Name, VolusionParam.Update.Name );
 			return endpoint;
 		}
 

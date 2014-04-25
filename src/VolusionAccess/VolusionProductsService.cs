@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CuttingEdge.Conditions;
 using VolusionAccess.Misc;
+using VolusionAccess.Models.Command;
 using VolusionAccess.Models.Configuration;
 using VolusionAccess.Models.Product;
 using VolusionAccess.Services;
@@ -110,6 +111,42 @@ namespace VolusionAccess
 					this.CreateApiDelay().Wait();
 				} );
 			} while( productsPortion != null && productsPortion.Count != 0 );
+
+			return products;
+		}
+
+		public IEnumerable< VolusionProduct > GetFakeFilteredProducts()
+		{
+			var products = new List< VolusionProduct >();
+			var endpoint = EndpointsBuilder.CreateGetFilteredProductsEndpoint( ProductColumns.HideYouSave, "N" );
+
+			ActionPolicies.Get.Do( () =>
+			{
+				var tmp = this._webRequestServices.GetResponse< VolusionProducts >( endpoint );
+				if( tmp != null && tmp.Products != null )
+					products.AddRange( tmp.Products );
+
+				//API requirement
+				this.CreateApiDelay().Wait();
+			} );
+
+			return products;
+		}
+
+		public async Task< IEnumerable< VolusionProduct > > GetFakeFilteredProductsAsync()
+		{
+			var products = new List< VolusionProduct >();
+			var endpoint = EndpointsBuilder.CreateGetFilteredProductsEndpoint( ProductColumns.HideYouSave, "N" );
+
+			await ActionPolicies.GetAsync.Do( async () =>
+			{
+				var tmp = await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint );
+				if( tmp != null && tmp.Products != null )
+					products.AddRange( tmp.Products );
+
+				//API requirement
+				this.CreateApiDelay().Wait();
+			} );
 
 			return products;
 		}

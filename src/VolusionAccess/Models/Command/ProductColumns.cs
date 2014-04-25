@@ -9,6 +9,7 @@
 		public static readonly ProductColumns ProductPrice = new ProductColumns( "pe.ProductPrice" );
 		public static readonly ProductColumns SalePrice = new ProductColumns( "pe.SalePrice" );
 		public static readonly ProductColumns IsChildOfSku = new ProductColumns( "p.IsChildOfProductCode" );
+		public static readonly ProductColumns HideYouSave = new ProductColumns( "pe.Hide_YouSave" );
 
 		private ProductColumns( string name )
 		{

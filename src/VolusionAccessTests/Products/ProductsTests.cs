@@ -65,6 +65,24 @@ namespace VolusionAccessTests.Products
 		}
 
 		[ Test ]
+		public void GetFakeFilteredProducts()
+		{
+			var service = this.VolusionFactory.CreateProductsService( this.Config );
+			var products = service.GetFakeFilteredProducts();
+
+			products.Count().Should().BeGreaterThan( 0 );
+		}
+
+		[ Test ]
+		public async Task GetFakeFilteredProductsAsync()
+		{
+			var service = this.VolusionFactory.CreateProductsService( this.Config );
+			var products = await service.GetFakeFilteredProductsAsync();
+
+			products.Count().Should().BeGreaterThan( 0 );
+		}
+
+		[ Test ]
 		public void GetProduct()
 		{
 			var service = this.VolusionFactory.CreateProductsService( this.Config );
