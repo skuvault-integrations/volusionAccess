@@ -64,6 +64,7 @@
     <Compile Include="Models\Order\VolusionShippingAddress.cs" />
     <Compile Include="Models\Order\VolusionBillingAddress.cs" />
     <Compile Include="Models\Order\VolusionOrder.cs" />
+    <Compile Include="Models\Product\VolusionPublicProduct.cs" />
     <Compile Include="Models\Product\VolusionUpdatedProducts.cs" />
     <Compile Include="Models\Product\VolusionUpdatedProduct.cs" />
     <Compile Include="Models\Product\VolusionProduct.cs" />

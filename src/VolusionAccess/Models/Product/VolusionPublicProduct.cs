@@ -2,7 +2,7 @@
 
 namespace VolusionAccess.Models.Product
 {
-	public class VolusionProduct
+	public class VolusionPublicProduct
 	{
 		[ XmlElement( ElementName = "ProductID" ) ]
 		public int Id { get; set; }
@@ -10,9 +10,6 @@ namespace VolusionAccess.Models.Product
 		[ XmlElement( ElementName = "ProductCode" ) ]
 		public string Sku { get; set; }
 		
-		[ XmlElement( ElementName = "IsChildOfProductCode" ) ]
-		public string IsChildOfSku { get; set; }
-
 		[ XmlElement( ElementName = "StockStatus" ) ]
 		public int Quantity { get; set; }
 

@@ -67,12 +67,13 @@ namespace VolusionAccess.Services
 
 		private static string GetProductColumns()
 		{
-			var columns = string.Format( "{0},{1},{2},{3},{4}",
+			var columns = string.Format( "{0},{1},{2},{3},{4},{5}",
 				ProductColumns.ProductID.Name,
 				ProductColumns.Sku.Name,
 				ProductColumns.Quantity.Name,
 				ProductColumns.ProductPrice.Name,
-				ProductColumns.SalePrice.Name );
+				ProductColumns.SalePrice.Name,
+				ProductColumns.IsChildOfSku.Name );
 			return columns;
 		}
 	}

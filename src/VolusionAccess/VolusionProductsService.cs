@@ -27,9 +27,9 @@ namespace VolusionAccess
 		/// Once generated, the XML code is updated automatically on a regularly, timed basis. The auto-update takes place at 12:00 AM US Central Standard Time. 
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable< VolusionProduct > GetPublicProducts()
+		public IEnumerable< VolusionPublicProduct > GetPublicProducts()
 		{
-			var products = new List< VolusionProduct >();
+			var products = new List< VolusionPublicProduct >();
 			var endpoint = EndpointsBuilder.CreateGetPublicProductsEndpoint().GetFullEndpoint( _config );
 
 			ActionPolicies.Get.Do( () =>
@@ -50,9 +50,9 @@ namespace VolusionAccess
 		/// Once generated, the XML code is updated automatically on a regularly, timed basis. The auto-update takes place at 12:00 AM US Central Standard Time. 
 		/// </summary>
 		/// <returns></returns>
-		public async Task< IEnumerable< VolusionProduct > > GetPublicProductsAsync()
+		public async Task< IEnumerable< VolusionPublicProduct > > GetPublicProductsAsync()
 		{
-			var products = new List< VolusionProduct >();
+			var products = new List< VolusionPublicProduct >();
 			var endpoint = EndpointsBuilder.CreateGetPublicProductsEndpoint().GetFullEndpoint( _config );
 
 			await ActionPolicies.GetAsync.Do( async () =>

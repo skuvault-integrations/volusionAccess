@@ -7,6 +7,6 @@ namespace VolusionAccess.Models.Product
 	public class VolusionPublicProducts
 	{
 		[ XmlElement( ElementName = "Product" ) ]
-		public List< VolusionProduct > Products { get; set; }
+		public List< VolusionPublicProduct > Products { get; set; }
 	}
 }
