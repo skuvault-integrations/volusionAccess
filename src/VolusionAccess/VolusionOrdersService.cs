@@ -10,7 +10,7 @@ using VolusionAccess.Services;
 
 namespace VolusionAccess
 {
-	public class VolusionOrdersService : VolusionServiceBase, IVolusionOrdersService
+	public class VolusionOrdersService : IVolusionOrdersService
 	{
 		private readonly WebRequestServices _webRequestServices;
 
@@ -35,9 +35,6 @@ namespace VolusionAccess
 					ordersPortion = tmp != null ? tmp.Orders : null;
 					if( ordersPortion != null )
 						orders.AddRange( ordersPortion );
-
-					//API requirement
-					this.CreateApiDelay().Wait();
 				} );
 			} while( ordersPortion != null && ordersPortion.Count != 0 );
 
@@ -58,9 +55,6 @@ namespace VolusionAccess
 					ordersPortion = tmp != null ? tmp.Orders : null;
 					if( ordersPortion != null )
 						orders.AddRange( ordersPortion );
-
-					//API requirement
-					this.CreateApiDelay().Wait();
 				} );
 			} while( ordersPortion != null && ordersPortion.Count != 0 );
 
@@ -91,9 +85,6 @@ namespace VolusionAccess
 				var tmp = this._webRequestServices.GetResponse< VolusionOrders >( endpoint );
 				if( tmp != null && tmp.Orders != null )
 					orders.AddRange( tmp.Orders );
-
-				//API requirement
-				this.CreateApiDelay().Wait();
 			} );
 
 			return orders;
@@ -109,9 +100,6 @@ namespace VolusionAccess
 				var tmp = await this._webRequestServices.GetResponseAsync< VolusionOrders >( endpoint );
 				if( tmp != null && tmp.Orders != null )
 					orders.AddRange( tmp.Orders );
-
-				//API requirement
-				this.CreateApiDelay().Wait();
 			} );
 
 			return orders;

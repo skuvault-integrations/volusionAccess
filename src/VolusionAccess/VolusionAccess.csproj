@@ -79,7 +79,6 @@
     <Compile Include="VolusionFactory.cs" />
     <Compile Include="VolusionOrdersService.cs" />
     <Compile Include="VolusionProductsService.cs" />
-    <Compile Include="VolusionServiceBase.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

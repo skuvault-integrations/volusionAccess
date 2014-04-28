@@ -10,7 +10,7 @@ using VolusionAccess.Services;
 
 namespace VolusionAccess
 {
-	public class VolusionProductsService : VolusionServiceBase, IVolusionProductsService
+	public class VolusionProductsService : IVolusionProductsService
 	{
 		private readonly WebRequestServices _webRequestServices;
 		private readonly VolusionConfig _config;
@@ -38,9 +38,6 @@ namespace VolusionAccess
 				var tmp = this._webRequestServices.GetResponseForSpecificUrl< VolusionPublicProducts >( endpoint );
 				if( tmp != null && tmp.Products != null && tmp.Products.Count > 0 )
 					products.AddRange( tmp.Products );
-
-				//API requirement
-				this.CreateApiDelay().Wait();
 			} );
 
 			return products;
@@ -61,9 +58,6 @@ namespace VolusionAccess
 				var tmp = await this._webRequestServices.GetResponseForSpecificUrlAsync< VolusionPublicProducts >( endpoint );
 				if( tmp != null && tmp.Products != null && tmp.Products.Count > 0 )
 					products.AddRange( tmp.Products );
-
-				//API requirement
-				this.CreateApiDelay().Wait();
 			} );
 
 			return products;
@@ -83,9 +77,6 @@ namespace VolusionAccess
 					productsPortion = tmp != null ? tmp.Products : null;
 					if( productsPortion != null )
 						products.AddRange( productsPortion );
-
-					//API requirement
-					this.CreateApiDelay().Wait();
 				} );
 			} while( productsPortion != null && productsPortion.Count != 0 );
 
@@ -106,9 +97,6 @@ namespace VolusionAccess
 					productsPortion = tmp != null ? tmp.Products : null;
 					if( productsPortion != null )
 						products.AddRange( productsPortion );
-
-					//API requirement
-					this.CreateApiDelay().Wait();
 				} );
 			} while( productsPortion != null && productsPortion.Count != 0 );
 
@@ -125,9 +113,6 @@ namespace VolusionAccess
 				var tmp = this._webRequestServices.GetResponse< VolusionProducts >( endpoint );
 				if( tmp != null && tmp.Products != null )
 					products.AddRange( tmp.Products );
-
-				//API requirement
-				this.CreateApiDelay().Wait();
 			} );
 
 			return products;
@@ -143,9 +128,6 @@ namespace VolusionAccess
 				var tmp = await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint );
 				if( tmp != null && tmp.Products != null )
 					products.AddRange( tmp.Products );
-
-				//API requirement
-				this.CreateApiDelay().Wait();
 			} );
 
 			return products;
@@ -173,9 +155,6 @@ namespace VolusionAccess
 				var tmp = this._webRequestServices.GetResponse< VolusionProducts >( endpoint );
 				if( tmp != null && tmp.Products != null )
 					product = tmp.Products.FirstOrDefault();
-
-				//API requirement
-				this.CreateApiDelay().Wait();
 			} );
 
 			return product;
@@ -191,9 +170,6 @@ namespace VolusionAccess
 				var tmp = await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint );
 				if( tmp != null && tmp.Products != null )
 					product = tmp.Products.FirstOrDefault();
-
-				//API requirement
-				this.CreateApiDelay().Wait();
 			} );
 
 			return product;
@@ -209,9 +185,6 @@ namespace VolusionAccess
 				var tmp = this._webRequestServices.GetResponse< VolusionProducts >( endpoint );
 				if( tmp != null && tmp.Products != null )
 					products = tmp.Products;
-
-				//API requirement
-				this.CreateApiDelay().Wait();
 			} );
 
 			return products;
@@ -227,9 +200,6 @@ namespace VolusionAccess
 				var tmp = await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint );
 				if( tmp != null && tmp.Products != null )
 					products = tmp.Products;
-
-				//API requirement
-				this.CreateApiDelay().Wait();
 			} );
 
 			return products;
@@ -243,13 +213,7 @@ namespace VolusionAccess
 			var vp = new VolusionUpdatedProducts { Products = products.ToList() };
 			var xmlContent = XmlSerializeHelpers.Serialize( vp );
 
-			ActionPolicies.Submit.Do( () =>
-			{
-				this._webRequestServices.PostData( endpoint, xmlContent );
-
-				//API requirement
-				this.CreateApiDelay().Wait();
-			} );
+			ActionPolicies.Submit.Do( () => this._webRequestServices.PostData( endpoint, xmlContent ) );
 		}
 
 		public async Task UpdateProductsAsync( IEnumerable< VolusionUpdatedProduct > products )
@@ -261,9 +225,6 @@ namespace VolusionAccess
 			await ActionPolicies.SubmitAsync.Do( async () =>
 			{
 				await this._webRequestServices.PostDataAsync( endpoint, xmlContent );
-
-				//API requirement
-				this.CreateApiDelay().Wait();
 			} );
 		}
 		#endregion
