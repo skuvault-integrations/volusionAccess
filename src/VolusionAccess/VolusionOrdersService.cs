@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CuttingEdge.Conditions;
 using VolusionAccess.Misc;
@@ -62,6 +64,20 @@ namespace VolusionAccess
 				} );
 			} while( ordersPortion != null && ordersPortion.Count != 0 );
 
+			return orders;
+		}
+
+		public IEnumerable< VolusionOrder > GetOrders( DateTime startDate, DateTime endDate )
+		{
+			var orders = GetOrders();
+			orders = orders.Where( x => x.OrderDateUtc >= startDate && x.OrderDateUtc <= endDate ).ToList();
+			return orders;
+		}
+
+		public async Task< IEnumerable< VolusionOrder > > GetOrdersAsync( DateTime startDate, DateTime endDate )
+		{
+			var orders = await GetOrdersAsync();
+			orders = orders.Where( x => x.OrderDateUtc >= startDate && x.OrderDateUtc <= endDate ).ToList();
 			return orders;
 		}
 

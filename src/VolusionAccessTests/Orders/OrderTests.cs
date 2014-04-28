@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LINQtoCSV;
@@ -39,6 +40,24 @@ namespace VolusionAccessTests.Orders
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
 			var orders = await service.GetOrdersAsync();
+
+			orders.Count().Should().BeGreaterThan( 0 );
+		}
+
+		[ Test ]
+		public void GetOrdersByDate()
+		{
+			var service = this.VolusionFactory.CreateOrdersService( this.Config );
+			var orders = service.GetOrders( DateTime.UtcNow.AddDays( -200 ), DateTime.UtcNow );
+
+			orders.Count().Should().BeGreaterThan( 0 );
+		}
+
+		[ Test ]
+		public async Task GetOrdersByDateAsync()
+		{
+			var service = this.VolusionFactory.CreateOrdersService( this.Config );
+			var orders = await service.GetOrdersAsync( DateTime.UtcNow.AddDays( -200 ), DateTime.UtcNow );
 
 			orders.Count().Should().BeGreaterThan( 0 );
 		}
