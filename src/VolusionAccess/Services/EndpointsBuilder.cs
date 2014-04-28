@@ -33,8 +33,12 @@ namespace VolusionAccess.Services
 
 		public static string CreateGetProductEndpoint( string sku )
 		{
-			var endpoint = CreateGetFilteredProductsEndpoint( ProductColumns.Sku.Name, sku );
-			return endpoint;
+			return CreateGetFilteredProductsEndpoint( ProductColumns.Sku.Name, sku );
+		}
+
+		public static string CreateGetChildProductsEndpoint( string sku )
+		{
+			return CreateGetFilteredProductsEndpoint( ProductColumns.IsChildOfSku.Name, sku );
 		}
 
 		public static string CreateProductsUpdateEndpoint()

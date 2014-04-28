@@ -32,6 +32,9 @@ namespace VolusionAccess
 		VolusionProduct GetProduct( string sku );
 		Task< VolusionProduct > GetProductAsync( string sku );
 
+		IEnumerable< VolusionProduct > GetChildProducts( string sku );
+		Task< IEnumerable< VolusionProduct > > GetChildProductAsync( string sku );
+
 		void UpdateProducts( IEnumerable< VolusionUpdatedProduct > products );
 		Task UpdateProductsAsync( IEnumerable< VolusionUpdatedProduct > products );
 	}
