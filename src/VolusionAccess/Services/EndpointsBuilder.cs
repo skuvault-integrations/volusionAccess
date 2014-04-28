@@ -22,12 +22,12 @@ namespace VolusionAccess.Services
 			return endpoint;
 		}
 
-		public static string CreateGetFilteredProductsEndpoint( ProductColumns column, string value )
+		public static string CreateGetFilteredProductsEndpoint( string columnName, string value )
 		{
 			var endpoint = string.Format( "{0}={1}&{2}={3}&{4}={5}&{6}={7}",
 				VolusionParam.ApiName.Name, VolusionCommand.GetProducts.Command,
 				VolusionParam.SelectColumns.Name, GetProductColumns(),
-				VolusionParam.WhereColumn.Name, column.Name,
+				VolusionParam.WhereColumn.Name, columnName,
 				VolusionParam.WhereValue.Name, value );
 			return endpoint;
 		}

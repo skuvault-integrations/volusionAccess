@@ -13,6 +13,8 @@
 		public static readonly ProductColumns ProductPrice = new ProductColumns( "pe.ProductPrice" );
 		public static readonly ProductColumns SalePrice = new ProductColumns( "pe.SalePrice" );
 		public static readonly ProductColumns HideYouSave = new ProductColumns( "pe.Hide_YouSave" );
+		public static readonly ProductColumns HideFreeAccessories = new ProductColumns( "pe.Hide_FreeAccessories" );
+		public static readonly ProductColumns AddToPONow = new ProductColumns( "pe.AddToPO_Now" );
 
 		private ProductColumns( string name )
 		{

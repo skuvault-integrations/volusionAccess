@@ -115,10 +115,10 @@ namespace VolusionAccess
 			return products;
 		}
 
-		public IEnumerable< VolusionProduct > GetFakeFilteredProducts()
+		public IEnumerable< VolusionProduct > GetFilteredProducts( string columnName, string value )
 		{
 			var products = new List< VolusionProduct >();
-			var endpoint = EndpointsBuilder.CreateGetFilteredProductsEndpoint( ProductColumns.HideYouSave, "N" );
+			var endpoint = EndpointsBuilder.CreateGetFilteredProductsEndpoint( columnName, value );
 
 			ActionPolicies.Get.Do( () =>
 			{
@@ -133,10 +133,10 @@ namespace VolusionAccess
 			return products;
 		}
 
-		public async Task< IEnumerable< VolusionProduct > > GetFakeFilteredProductsAsync()
+		public async Task< IEnumerable< VolusionProduct > > GetFilteredProductsAsync( string columnName, string value )
 		{
 			var products = new List< VolusionProduct >();
-			var endpoint = EndpointsBuilder.CreateGetFilteredProductsEndpoint( ProductColumns.HideYouSave, "N" );
+			var endpoint = EndpointsBuilder.CreateGetFilteredProductsEndpoint( columnName, value );
 
 			await ActionPolicies.GetAsync.Do( async () =>
 			{
@@ -148,6 +148,18 @@ namespace VolusionAccess
 				this.CreateApiDelay().Wait();
 			} );
 
+			return products;
+		}
+
+		public IEnumerable< VolusionProduct > GetFakeFilteredProducts()
+		{
+			var products = GetFilteredProducts( ProductColumns.AddToPONow.Name, "N" );
+			return products;
+		}
+
+		public async Task< IEnumerable< VolusionProduct > > GetFakeFilteredProductsAsync()
+		{
+			var products = await GetFilteredProductsAsync( ProductColumns.AddToPONow.Name, "N" );
 			return products;
 		}
 
