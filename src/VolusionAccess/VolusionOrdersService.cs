@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CuttingEdge.Conditions;
 using VolusionAccess.Misc;
@@ -20,11 +19,11 @@ namespace VolusionAccess
 			this._webRequestServices = new WebRequestServices( config );
 		}
 
-		public IEnumerable< VolusionOrder > GetOrders( DateTime dateFrom, DateTime dateTo )
+		public IEnumerable< VolusionOrder > GetOrders()
 		{
 			var orders = new List< VolusionOrder >();
 			IList< VolusionOrder > ordersPortion = null;
-			var endpoint = EndpointsBuilder.CreateGetOrdersEndpoint( dateFrom, dateTo );
+			var endpoint = EndpointsBuilder.CreateGetOrdersEndpoint();
 
 			do
 			{
@@ -43,11 +42,11 @@ namespace VolusionAccess
 			return orders;
 		}
 
-		public async Task< IEnumerable< VolusionOrder > > GetOrdersAsync( DateTime dateFrom, DateTime dateTo )
+		public async Task< IEnumerable< VolusionOrder > > GetOrdersAsync()
 		{
 			var orders = new List< VolusionOrder >();
 			IList< VolusionOrder > ordersPortion = null;
-			var endpoint = EndpointsBuilder.CreateGetOrdersEndpoint( dateFrom, dateTo );
+			var endpoint = EndpointsBuilder.CreateGetOrdersEndpoint();
 
 			do
 			{
@@ -62,6 +61,42 @@ namespace VolusionAccess
 					this.CreateApiDelay().Wait();
 				} );
 			} while( ordersPortion != null && ordersPortion.Count != 0 );
+
+			return orders;
+		}
+
+		public IEnumerable< VolusionOrder > GetFilteredOrders( string columnName, string value )
+		{
+			var orders = new List< VolusionOrder >();
+			var endpoint = EndpointsBuilder.CreateGetFilteredOrdersEndpoint( columnName, value );
+
+			ActionPolicies.Get.Do( () =>
+			{
+				var tmp = this._webRequestServices.GetResponse< VolusionOrders >( endpoint );
+				if( tmp != null && tmp.Orders != null )
+					orders.AddRange( tmp.Orders );
+
+				//API requirement
+				this.CreateApiDelay().Wait();
+			} );
+
+			return orders;
+		}
+
+		public async Task< IEnumerable< VolusionOrder > > GetFilteredOrdersAsync( string columnName, string value )
+		{
+			var orders = new List< VolusionOrder >();
+			var endpoint = EndpointsBuilder.CreateGetFilteredOrdersEndpoint( columnName, value );
+
+			await ActionPolicies.GetAsync.Do( async () =>
+			{
+				var tmp = await this._webRequestServices.GetResponseAsync< VolusionOrders >( endpoint );
+				if( tmp != null && tmp.Orders != null )
+					orders.AddRange( tmp.Orders );
+
+				//API requirement
+				this.CreateApiDelay().Wait();
+			} );
 
 			return orders;
 		}

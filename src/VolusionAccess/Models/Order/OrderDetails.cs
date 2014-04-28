@@ -30,6 +30,12 @@ namespace VolusionAccess.Models.Order
 		[ XmlElement( ElementName = "FreeShippingItem" ) ]
 		public string FreeShippingItem { get; set; }
 
+		[ XmlElement( ElementName = "GiftTrakNumber" ) ]
+		public int GiftTrakNumber { get; set; }
+
+		[ XmlElement( ElementName = "GiftWrapCost" ) ]
+		public decimal GiftWrapCost { get; set; }
+
 		[ XmlElement( ElementName = "IsKitID" ) ]
 		public string IsKitID { get; set; }
 

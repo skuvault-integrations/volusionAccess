@@ -37,6 +37,9 @@ namespace VolusionAccess.Models.Product
 			set { this.LastModified = DateTime.Parse( value, _culture ); }
 		}
 
+		[ XmlElement( ElementName = "warehouses" ) ]
+		public string Warehouses { get; set; }
+
 		private readonly CultureInfo _culture = new CultureInfo( "en-US" );
 	}
 }

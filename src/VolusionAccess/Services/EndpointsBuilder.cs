@@ -1,5 +1,4 @@
-﻿using System;
-using VolusionAccess.Models.Command;
+﻿using VolusionAccess.Models.Command;
 using VolusionAccess.Models.Configuration;
 
 namespace VolusionAccess.Services
@@ -34,11 +33,7 @@ namespace VolusionAccess.Services
 
 		public static string CreateGetProductEndpoint( string sku )
 		{
-			var endpoint = string.Format( "{0}={1}&{2}={3}&{4}={5}&{6}={7}",
-				VolusionParam.ApiName.Name, VolusionCommand.GetProducts.Command,
-				VolusionParam.SelectColumns.Name, GetProductColumns(),
-				VolusionParam.WhereColumn.Name, ProductColumns.Sku.Name,
-				VolusionParam.WhereValue.Name, sku );
+			var endpoint = CreateGetFilteredProductsEndpoint( ProductColumns.Sku.Name, sku );
 			return endpoint;
 		}
 
@@ -48,14 +43,21 @@ namespace VolusionAccess.Services
 			return endpoint;
 		}
 
-		public static string CreateGetOrdersEndpoint( DateTime startDate, DateTime endDate )
+		public static string CreateGetOrdersEndpoint()
 		{
-			var endpoint = string.Format( "{0}={1}&{2}={3}", //&{4}={5}&{6}={7}",
+			var endpoint = string.Format( "{0}={1}&{2}={3}",
 				VolusionParam.ApiName.Name, VolusionCommand.GetOrders.Command,
-				VolusionParam.SelectColumns.Name, "*" //,
-				//VolusionParam.WhereColumn.Name, "o.OrderDate",
-				//VolusionParam.WhereValue.Name, DateTime.SpecifyKind( startDate, DateTimeKind.Utc ).ToString( "o" ) 
-				);
+				VolusionParam.SelectColumns.Name, "*" );
+			return endpoint;
+		}
+
+		public static string CreateGetFilteredOrdersEndpoint( string columnName, string value )
+		{
+			var endpoint = string.Format( "{0}={1}&{2}={3}&{4}={5}&{6}={7}",
+				VolusionParam.ApiName.Name, VolusionCommand.GetOrders.Command,
+				VolusionParam.SelectColumns.Name, "*",
+				VolusionParam.WhereColumn.Name, columnName,
+				VolusionParam.WhereValue.Name, value );
 			return endpoint;
 		}
 
@@ -77,7 +79,7 @@ namespace VolusionAccess.Services
 
 		private static string GetProductColumns()
 		{
-			var columns = string.Format( "{0},{1},{2},{3},{4},{5},{6},{7}",
+			var columns = string.Format( "{0},{1},{2},{3},{4},{5},{6},{7},{8}",
 				ProductColumns.ProductID.Name,
 				ProductColumns.Sku.Name,
 				ProductColumns.Quantity.Name,
@@ -85,7 +87,8 @@ namespace VolusionAccess.Services
 				ProductColumns.LastModified.Name,
 				ProductColumns.ProductPrice.Name,
 				ProductColumns.SalePrice.Name,
-				ProductColumns.IsChildOfSku.Name );
+				ProductColumns.IsChildOfSku.Name,
+				ProductColumns.Warehouses.Name );
 			return columns;
 		}
 	}

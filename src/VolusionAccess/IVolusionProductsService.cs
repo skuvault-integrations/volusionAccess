@@ -23,6 +23,9 @@ namespace VolusionAccess
 		IEnumerable< VolusionProduct > GetProducts();
 		Task< IEnumerable< VolusionProduct > > GetProductsAsync();
 
+		IEnumerable< VolusionProduct > GetFilteredProducts( string columnName, string value );
+		Task< IEnumerable< VolusionProduct > > GetFilteredProductsAsync( string columnName, string value );
+
 		IEnumerable< VolusionProduct > GetFakeFilteredProducts();
 		Task< IEnumerable< VolusionProduct > > GetFakeFilteredProductsAsync();
 

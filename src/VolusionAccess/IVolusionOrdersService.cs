@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using VolusionAccess.Models.Order;
 
@@ -7,7 +6,10 @@ namespace VolusionAccess
 {
 	public interface IVolusionOrdersService
 	{
-		IEnumerable< VolusionOrder > GetOrders( DateTime dateFrom, DateTime dateTo );
-		Task< IEnumerable< VolusionOrder > > GetOrdersAsync( DateTime dateFrom, DateTime dateTo );
+		IEnumerable< VolusionOrder > GetOrders();
+		Task< IEnumerable< VolusionOrder > > GetOrdersAsync();
+
+		IEnumerable< VolusionOrder > GetFilteredOrders( string columnName, string value );
+		Task< IEnumerable< VolusionOrder > > GetFilteredOrdersAsync( string columnName, string value );
 	}
 }

@@ -9,14 +9,35 @@ namespace VolusionAccess.Models.Order
 		[ XmlElement( ElementName = "OrderID" ) ]
 		public string OrderID { get; set; }
 
-		[ XmlElement( ElementName = "AddressValidated" ) ]
-		public string AddressValidated { get; set; }
-
 		[ XmlElement( ElementName = "AccountNumber" ) ]
 		public string AccountNumber { get; set; }
 
 		[ XmlElement( ElementName = "AccountType" ) ]
 		public string AccountType { get; set; }
+
+		[ XmlElement( ElementName = "AddressValidated" ) ]
+		public string AddressValidated { get; set; }
+
+		[ XmlElement( ElementName = "Affiliate_Commissionable_Value" ) ]
+		public decimal AffiliateCommissionableValue { get; set; }
+
+		[ XmlElement( ElementName = "BankName" ) ]
+		public string BankName { get; set; }
+
+		[ XmlElement( ElementName = "CustomerID" ) ]
+		public int CustomerID { get; set; }
+
+		[ XmlElement( ElementName = "IsAGift" ) ]
+		public string IsAGift { get; set; }
+
+		[ XmlElement( ElementName = "IsGTSOrder" ) ]
+		public string IsGTSOrder { get; set; }
+
+		[ XmlElement( ElementName = "Locked" ) ]
+		public string Locked { get; set; }
+
+		[ XmlElement( ElementName = "Order_Entry_System" ) ]
+		public string OrderEntrySystem { get; set; }
 
 		[ XmlIgnore ]
 		public DateTime CancelDate { get; set; }
@@ -95,6 +116,29 @@ namespace VolusionAccess.Models.Order
 		[ XmlElement( ElementName = "TotalShippingCost" ) ]
 		public decimal TotalShippingCost { get; set; }
 
+		#region tax
+		[ XmlElement( ElementName = "SalesTax1" ) ]
+		public decimal SalesTax1 { get; set; }
+
+		[ XmlElement( ElementName = "SalesTax2" ) ]
+		public decimal SalesTax2 { get; set; }
+
+		[ XmlElement( ElementName = "SalesTax3" ) ]
+		public decimal SalesTax3 { get; set; }
+
+		[ XmlElement( ElementName = "SalesTaxRate" ) ]
+		public int SalesTaxRate { get; set; }
+
+		[ XmlElement( ElementName = "SalesTaxRate1" ) ]
+		public int SalesTaxRate1 { get; set; }
+
+		[ XmlElement( ElementName = "SalesTaxRate2" ) ]
+		public int SalesTaxRate2 { get; set; }
+
+		[ XmlElement( ElementName = "SalesTaxRate3" ) ]
+		public int SalesTaxRate3 { get; set; }
+		#endregion
+
 		#region billing
 		[ XmlElement( ElementName = "BillingAddress1" ) ]
 		public string BillingAddress1 { get; set; }
@@ -172,7 +216,7 @@ namespace VolusionAccess.Models.Order
 		public string ShipPhoneNumber { get; set; }
 
 		[ XmlElement( ElementName = "Shipping_Locked" ) ]
-		public string ShippingLockedped { get; set; }
+		public string ShippingLocked { get; set; }
 
 		[ XmlElement( ElementName = "ShippingMethodID" ) ]
 		public int ShippingMethodID { get; set; }
