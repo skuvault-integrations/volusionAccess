@@ -35,8 +35,14 @@ namespace VolusionAccess.Models.Order
 		[ XmlElement( ElementName = "IsGTSOrder" ) ]
 		public string IsGTSOrder { get; set; }
 
+		[ XmlIgnore ]
+		public bool IsLocked
+		{
+			get { return this.IsLockedStr == "Y"; }
+		}
+
 		[ XmlElement( ElementName = "Locked" ) ]
-		public string Locked { get; set; }
+		public string IsLockedStr { get; set; }
 
 		[ XmlElement( ElementName = "Order_Entry_System" ) ]
 		public string OrderEntrySystem { get; set; }
@@ -217,14 +223,26 @@ namespace VolusionAccess.Models.Order
 		[ XmlElement( ElementName = "ShipLastName" ) ]
 		public string ShipLastName { get; set; }
 
+		[ XmlIgnore ]
+		public bool IsShipped
+		{
+			get { return IsShippedStr == "Y"; }
+		}
+
 		[ XmlElement( ElementName = "Shipped" ) ]
-		public string Shipped { get; set; }
+		public string IsShippedStr { get; set; }
 
 		[ XmlElement( ElementName = "ShipPhoneNumber" ) ]
 		public string ShipPhoneNumber { get; set; }
 
+		[ XmlIgnore ]
+		public bool IsShippingLocked
+		{
+			get { return this.IsShippingLockedStr == "Y"; }
+		}
+
 		[ XmlElement( ElementName = "Shipping_Locked" ) ]
-		public string ShippingLocked { get; set; }
+		public string IsShippingLockedStr { get; set; }
 
 		[ XmlElement( ElementName = "ShippingMethodID" ) ]
 		public int ShippingMethodID { get; set; }
