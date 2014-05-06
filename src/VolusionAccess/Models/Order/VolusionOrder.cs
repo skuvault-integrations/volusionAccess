@@ -95,9 +95,9 @@ namespace VolusionAccess.Models.Order
 		}
 
 		[ XmlIgnore ]
-		public OrderStatus OrderStatus
+		public VolusionOrderStatusEnum OrderStatus
 		{
-			get { return OrderStatusStr.ToEnum< OrderStatus >(); }
+			get { return OrderStatusStr.ToEnum< VolusionOrderStatusEnum >(); }
 		}
 
 		[ XmlElement( ElementName = "OrderStatus" ) ]
@@ -245,7 +245,7 @@ namespace VolusionAccess.Models.Order
 		private readonly CultureInfo _culture = new CultureInfo( "en-US" );
 	}
 
-	public enum OrderStatus
+	public enum VolusionOrderStatusEnum
 	{
 		New,
 		Pending,
