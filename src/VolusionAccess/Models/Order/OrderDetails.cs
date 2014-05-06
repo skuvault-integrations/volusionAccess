@@ -7,7 +7,7 @@ namespace VolusionAccess.Models.Order
 	public class VolusionOrderDetails
 	{
 		[ XmlElement( ElementName = "OrderDetailID" ) ]
-		public int OrderDetailID { get; set; }
+		public int Id { get; set; }
 
 		[ XmlElement( ElementName = "AutoDropShip" ) ]
 		public string AutoDropShip { get; set; }

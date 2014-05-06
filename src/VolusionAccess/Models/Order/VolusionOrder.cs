@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.Serialization;
+using VolusionAccess.Misc;
 
 namespace VolusionAccess.Models.Order
 {
 	public class VolusionOrder
 	{
 		[ XmlElement( ElementName = "OrderID" ) ]
-		public string OrderID { get; set; }
+		public int Id { get; set; }
 
 		[ XmlElement( ElementName = "AccountNumber" ) ]
 		public string AccountNumber { get; set; }
@@ -92,8 +94,14 @@ namespace VolusionAccess.Models.Order
 			set { this.OrderDateUtc = DateTime.Parse( value, _culture ); }
 		}
 
+		[ XmlIgnore ]
+		public OrderStatus OrderStatus
+		{
+			get { return OrderStatusStr.ToEnum< OrderStatus >(); }
+		}
+
 		[ XmlElement( ElementName = "OrderStatus" ) ]
-		public string OrderStatus { get; set; }
+		public string OrderStatusStr { get; set; }
 
 		[ XmlElement( ElementName = "PaymentAmount" ) ]
 		public Decimal PaymentAmount { get; set; }
@@ -232,8 +240,28 @@ namespace VolusionAccess.Models.Order
 		#endregion
 
 		[ XmlElement( ElementName = "OrderDetails" ) ]
-		public VolusionOrderDetails OrderDetails { get; set; }
+		public List< VolusionOrderDetails > OrderDetails { get; set; }
 
 		private readonly CultureInfo _culture = new CultureInfo( "en-US" );
+	}
+
+	public enum OrderStatus
+	{
+		New,
+		Pending,
+		Processing,
+		PaymentDeclined,
+		AwaitingPayment,
+		ReadyToShip,
+		PendingShipment,
+		PartiallyShipped,
+		Shipped,
+		PartiallyBackordered,
+		Backordered,
+		SeeLineItems,
+		SeeOrderNotes,
+		PartiallyReturned,
+		Returned,
+		Cancelled
 	}
 }

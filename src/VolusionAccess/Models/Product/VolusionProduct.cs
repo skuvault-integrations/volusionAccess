@@ -7,7 +7,7 @@ namespace VolusionAccess.Models.Product
 	public class VolusionProduct
 	{
 		[ XmlElement( ElementName = "ProductID" ) ]
-		public int ProductID { get; set; }
+		public int Id { get; set; }
 
 		[ XmlElement( ElementName = "ProductCode" ) ]
 		public string Sku { get; set; }

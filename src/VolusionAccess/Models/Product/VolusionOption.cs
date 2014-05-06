@@ -5,7 +5,7 @@ namespace VolusionAccess.Models.Product
 	public class VolusionOption
 	{
 		[ XmlElement( ElementName = "OptionID" ) ]
-		public int OptionID { get; set; }
+		public int Id { get; set; }
 
 		[ XmlElement( ElementName = "OptionsDesc" ) ]
 		public string Description { get; set; }

@@ -2,10 +2,10 @@
 
 namespace VolusionAccess.Models.Product
 {
-	public class VolusionProductCategory
+	public class VolusionCategory
 	{
 		[ XmlElement( ElementName = "CategoryID" ) ]
-		public int CategoryID { get; set; }
+		public int Id { get; set; }
 
 		[ XmlElement( ElementName = "CategoryName" ) ]
 		public string Name { get; set; }

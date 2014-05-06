@@ -22,7 +22,7 @@ namespace VolusionAccess.Models.Product
 
 		[ XmlArray( ElementName = "Categories" ) ]
 		[ XmlArrayItem( ElementName = "Category" ) ]
-		public List< VolusionProductCategory > Categories { get; set; }
+		public List< VolusionCategory > Categories { get; set; }
 
 		[ XmlElement( ElementName = "OptionCategory" ) ]
 		public List< VolusionOptionCategory > OptionCategories { get; set; }

@@ -6,7 +6,7 @@ namespace VolusionAccess.Models.Product
 	public class VolusionOptionCategory
 	{
 		[ XmlElement( ElementName = "OptionCategoryID" ) ]
-		public int OptionCategoryID { get; set; }
+		public int Id { get; set; }
 
 		[ XmlElement( ElementName = "HeadingGroup" ) ]
 		public string Name { get; set; }

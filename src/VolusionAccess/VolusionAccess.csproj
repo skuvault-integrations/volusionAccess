@@ -52,11 +52,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Global\GlobalAssemblyInfo.cs">
-	  <Link>Properties\GlobalAssemblyInfo.cs</Link>
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="IVolusionOrdersService.cs" />
     <Compile Include="IVolusionProductsService.cs" />
     <Compile Include="Misc\ActionPolicies.cs" />
+    <Compile Include="Misc\EnumExtensions.cs" />
     <Compile Include="Misc\XmlSerializeHelpers.cs" />
     <Compile Include="Models\Command\ProductColumns.cs" />
     <Compile Include="Models\Command\VolusionCommand.cs" />
@@ -64,12 +65,10 @@
     <Compile Include="Models\Configuration\VolusionConfig.cs" />
     <Compile Include="Models\Order\OrderDetails.cs" />
     <Compile Include="Models\Order\VolusionOrders.cs" />
-    <Compile Include="Models\Order\VolusionShippingAddress.cs" />
-    <Compile Include="Models\Order\VolusionBillingAddress.cs" />
     <Compile Include="Models\Order\VolusionOrder.cs" />
     <Compile Include="Models\Product\VolusionOption.cs" />
     <Compile Include="Models\Product\VolusionOptionCategory.cs" />
-    <Compile Include="Models\Product\VolusionProductCategory.cs" />
+    <Compile Include="Models\Product\VolusionCategory.cs" />
     <Compile Include="Models\Product\VolusionPublicProduct.cs" />
     <Compile Include="Models\Product\VolusionUpdatedProducts.cs" />
     <Compile Include="Models\Product\VolusionUpdatedProduct.cs" />
