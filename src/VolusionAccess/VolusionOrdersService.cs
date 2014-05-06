@@ -64,15 +64,17 @@ namespace VolusionAccess
 		public IEnumerable< VolusionOrder > GetOrders( DateTime startDate, DateTime endDate )
 		{
 			var orders = GetOrders();
-			orders = orders.Where( x => x.OrderDateUtc >= startDate && x.OrderDateUtc <= endDate ).ToList();
-			return orders;
+			orders = orders.Where( x => x.OrderDateUtc >= startDate && x.OrderDateUtc <= endDate ||
+			                            x.LastModifiedUtc >= startDate && x.LastModifiedUtc <= endDate );
+			return orders.ToList();
 		}
 
 		public async Task< IEnumerable< VolusionOrder > > GetOrdersAsync( DateTime startDate, DateTime endDate )
 		{
 			var orders = await GetOrdersAsync();
-			orders = orders.Where( x => x.OrderDateUtc >= startDate && x.OrderDateUtc <= endDate ).ToList();
-			return orders;
+			orders = orders.Where( x => x.OrderDateUtc >= startDate && x.OrderDateUtc <= endDate ||
+			                            x.LastModifiedUtc >= startDate && x.LastModifiedUtc <= endDate );
+			return orders.ToList();
 		}
 
 		public IEnumerable< VolusionOrder > GetFilteredOrders( string columnName, string value )

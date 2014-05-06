@@ -71,7 +71,7 @@ namespace VolusionAccess.Models.Order
 		public string ProductKeysShipped { get; set; }
 
 		[ XmlElement( ElementName = "ProductCode" ) ]
-		public string ProductCode { get; set; }
+		public string ProductSku { get; set; }
 
 		[ XmlElement( ElementName = "ProductID" ) ]
 		public int ProductID { get; set; }

@@ -81,6 +81,12 @@ namespace VolusionAccess.Models.Order
 		}
 
 		[ XmlIgnore ]
+		public DateTime LastModifiedUtc
+		{
+			get { return LastModified.AddHours( -_timeZoneOffset ); }
+		}
+
+		[ XmlIgnore ]
 		public DateTime OrderDate { get; set; }
 
 		[ XmlElement( ElementName = "OrderDate" ) ]
@@ -141,16 +147,16 @@ namespace VolusionAccess.Models.Order
 		public decimal SalesTax3 { get; set; }
 
 		[ XmlElement( ElementName = "SalesTaxRate" ) ]
-		public int SalesTaxRate { get; set; }
+		public decimal SalesTaxRate { get; set; }
 
 		[ XmlElement( ElementName = "SalesTaxRate1" ) ]
-		public int SalesTaxRate1 { get; set; }
+		public decimal SalesTaxRate1 { get; set; }
 
 		[ XmlElement( ElementName = "SalesTaxRate2" ) ]
-		public int SalesTaxRate2 { get; set; }
+		public decimal SalesTaxRate2 { get; set; }
 
 		[ XmlElement( ElementName = "SalesTaxRate3" ) ]
-		public int SalesTaxRate3 { get; set; }
+		public decimal SalesTaxRate3 { get; set; }
 		#endregion
 
 		#region billing
@@ -261,6 +267,7 @@ namespace VolusionAccess.Models.Order
 		public List< VolusionOrderDetails > OrderDetails { get; set; }
 
 		private readonly CultureInfo _culture = new CultureInfo( "en-US" );
+		private int _timeZoneOffset = -5;
 	}
 
 	public enum VolusionOrderStatusEnum
