@@ -1,4 +1,5 @@
-﻿using VolusionAccess.Models.Command;
+﻿using System.Globalization;
+using VolusionAccess.Models.Command;
 using VolusionAccess.Models.Configuration;
 
 namespace VolusionAccess.Services
@@ -21,24 +22,24 @@ namespace VolusionAccess.Services
 			return endpoint;
 		}
 
-		public static string CreateGetFilteredProductsEndpoint( string columnName, string value )
+		public static string CreateGetFilteredProductsEndpoint( ProductColumns column, object value )
 		{
-			var endpoint = string.Format( "{0}={1}&{2}={3}&{4}={5}&{6}={7}",
+			var endpoint = string.Format( _culture, "{0}={1}&{2}={3}&{4}={5}&{6}={7}",
 				VolusionParam.ApiName.Name, VolusionCommand.GetProducts.Command,
 				VolusionParam.SelectColumns.Name, GetProductColumns(),
-				VolusionParam.WhereColumn.Name, columnName,
+				VolusionParam.WhereColumn.Name, column.Name,
 				VolusionParam.WhereValue.Name, value );
 			return endpoint;
 		}
 
 		public static string CreateGetProductEndpoint( string sku )
 		{
-			return CreateGetFilteredProductsEndpoint( ProductColumns.Sku.Name, sku );
+			return CreateGetFilteredProductsEndpoint( ProductColumns.Sku, sku );
 		}
 
 		public static string CreateGetChildProductsEndpoint( string sku )
 		{
-			return CreateGetFilteredProductsEndpoint( ProductColumns.IsChildOfSku.Name, sku );
+			return CreateGetFilteredProductsEndpoint( ProductColumns.IsChildOfSku, sku );
 		}
 
 		public static string CreateProductsUpdateEndpoint()
@@ -55,12 +56,12 @@ namespace VolusionAccess.Services
 			return endpoint;
 		}
 
-		public static string CreateGetFilteredOrdersEndpoint( string columnName, string value )
+		public static string CreateGetFilteredOrdersEndpoint( OrderColumns column, object value )
 		{
-			var endpoint = string.Format( "{0}={1}&{2}={3}&{4}={5}&{6}={7}",
+			var endpoint = string.Format( _culture, "{0}={1}&{2}={3}&{4}={5}&{6}={7}",
 				VolusionParam.ApiName.Name, VolusionCommand.GetOrders.Command,
 				VolusionParam.SelectColumns.Name, "*",
-				VolusionParam.WhereColumn.Name, columnName,
+				VolusionParam.WhereColumn.Name, column.Name,
 				VolusionParam.WhereValue.Name, value );
 			return endpoint;
 		}
@@ -95,5 +96,7 @@ namespace VolusionAccess.Services
 				ProductColumns.Warehouses.Name );
 			return columns;
 		}
+
+		private static readonly CultureInfo _culture = new CultureInfo( "en-US" );
 	}
 }

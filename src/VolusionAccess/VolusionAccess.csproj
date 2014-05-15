@@ -59,6 +59,7 @@
     <Compile Include="Misc\ActionPolicies.cs" />
     <Compile Include="Misc\EnumExtensions.cs" />
     <Compile Include="Misc\XmlSerializeHelpers.cs" />
+    <Compile Include="Models\Command\OrderColumns.cs" />
     <Compile Include="Models\Command\ProductColumns.cs" />
     <Compile Include="Models\Command\VolusionCommand.cs" />
     <Compile Include="Models\Command\VolusionParam.cs" />

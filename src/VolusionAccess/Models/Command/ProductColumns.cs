@@ -1,6 +1,6 @@
 ﻿namespace VolusionAccess.Models.Command
 {
-	internal class ProductColumns
+	public class ProductColumns
 	{
 		public static readonly ProductColumns Unknown = new ProductColumns( string.Empty );
 		public static readonly ProductColumns ProductID = new ProductColumns( "p.ProductID" );

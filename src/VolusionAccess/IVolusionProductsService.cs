@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using VolusionAccess.Models.Command;
 using VolusionAccess.Models.Product;
 
 namespace VolusionAccess
@@ -23,8 +24,8 @@ namespace VolusionAccess
 		IEnumerable< VolusionProduct > GetProducts();
 		Task< IEnumerable< VolusionProduct > > GetProductsAsync();
 
-		IEnumerable< VolusionProduct > GetFilteredProducts( string columnName, string value );
-		Task< IEnumerable< VolusionProduct > > GetFilteredProductsAsync( string columnName, string value );
+		IEnumerable< VolusionProduct > GetFilteredProducts( ProductColumns column, object value );
+		Task< IEnumerable< VolusionProduct > > GetFilteredProductsAsync( ProductColumns column, object value );
 
 		IEnumerable< VolusionProduct > GetFakeFilteredProducts();
 		Task< IEnumerable< VolusionProduct > > GetFakeFilteredProductsAsync();
