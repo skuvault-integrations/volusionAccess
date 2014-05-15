@@ -11,8 +11,8 @@ namespace VolusionAccess
 		IEnumerable< VolusionOrder > GetAllOrders();
 		Task< IEnumerable< VolusionOrder > > GetAllOrdersAsync();
 
-		IEnumerable< VolusionOrder > GetOrders( DateTime startDate, DateTime endDate );
-		Task< IEnumerable< VolusionOrder > > GetOrdersAsync( DateTime startDate, DateTime endDate );
+		IEnumerable< VolusionOrder > GetOrders( DateTime startDateUtc, DateTime endDateUtc );
+		Task< IEnumerable< VolusionOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc );
 
 		IEnumerable< VolusionOrder > GetFilteredOrders( OrderColumns column, object value );
 		Task< IEnumerable< VolusionOrder > > GetFilteredOrdersAsync( OrderColumns column, object value );

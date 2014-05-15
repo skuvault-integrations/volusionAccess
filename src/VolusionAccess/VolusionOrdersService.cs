@@ -33,17 +33,17 @@ namespace VolusionAccess
 			return orders.ToList();
 		}
 
-		public IEnumerable< VolusionOrder > GetOrders( DateTime startDate, DateTime endDate )
+		public IEnumerable< VolusionOrder > GetOrders( DateTime startDateUtc, DateTime endDateUtc )
 		{
-			var orders = GetOrders( x => x.OrderDateUtc >= startDate && x.OrderDateUtc <= endDate ||
-			                             x.LastModifiedUtc >= startDate && x.LastModifiedUtc <= endDate );
+			var orders = GetOrders( x => ( x.OrderDateUtc >= startDateUtc && x.OrderDateUtc <= endDateUtc ) ||
+			                             ( x.LastModifiedUtc >= startDateUtc && x.LastModifiedUtc <= endDateUtc ) );
 			return orders.ToList();
 		}
 
-		public async Task< IEnumerable< VolusionOrder > > GetOrdersAsync( DateTime startDate, DateTime endDate )
+		public async Task< IEnumerable< VolusionOrder > > GetOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
 		{
-			var orders = await GetOrdersAsync( x => x.OrderDateUtc >= startDate && x.OrderDateUtc <= endDate ||
-			                                        x.LastModifiedUtc >= startDate && x.LastModifiedUtc <= endDate );
+			var orders = await GetOrdersAsync( x => ( x.OrderDateUtc >= startDateUtc && x.OrderDateUtc <= endDateUtc ) ||
+			                                        ( x.LastModifiedUtc >= startDateUtc && x.LastModifiedUtc <= endDateUtc ) );
 			return orders.ToList();
 		}
 
@@ -77,7 +77,7 @@ namespace VolusionAccess
 			return orders;
 		}
 
-		private IEnumerable< VolusionOrder > GetOrders( Func< VolusionOrder, bool > funk )
+		private IEnumerable< VolusionOrder > GetOrders( Func< VolusionOrder, bool > predicate )
 		{
 			var orders = new List< VolusionOrder >();
 			var endpoint = EndpointsBuilder.CreateGetOrdersEndpoint();
@@ -90,11 +90,11 @@ namespace VolusionAccess
 				if( ordersPortion == null || ordersPortion.Orders == null || ordersPortion.Orders.Count == 0 )
 					return orders;
 
-				orders.AddRange( ordersPortion.Orders.Where( funk ) );
+				orders.AddRange( ordersPortion.Orders.Where( predicate ) );
 			}
 		}
 
-		private async Task< IEnumerable< VolusionOrder > > GetOrdersAsync( Func< VolusionOrder, bool > funk )
+		private async Task< IEnumerable< VolusionOrder > > GetOrdersAsync( Func< VolusionOrder, bool > predicate )
 		{
 			var orders = new List< VolusionOrder >();
 			var endpoint = EndpointsBuilder.CreateGetOrdersEndpoint();
@@ -107,7 +107,7 @@ namespace VolusionAccess
 				if( ordersPortion == null || ordersPortion.Orders == null || ordersPortion.Orders.Count == 0 )
 					return orders;
 
-				orders.AddRange( ordersPortion.Orders.Where( funk ) );
+				orders.AddRange( ordersPortion.Orders.Where( predicate ) );
 			}
 		}
 	}
