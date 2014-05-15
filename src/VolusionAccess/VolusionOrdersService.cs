@@ -111,15 +111,18 @@ namespace VolusionAccess
 			}
 		}
 
-		private void AddOrders( ISet< VolusionOrder > orders, IEnumerable< VolusionOrder > ordersPortion )
+		private void AddOrders( HashSet< VolusionOrder > processedOrders, IEnumerable< VolusionOrder > fetchedOrdersPartition )
 		{
-			foreach( var order in ordersPortion )
+			foreach( var order in fetchedOrdersPartition )
 			{
-				var oldOrder = orders.FirstOrDefault( x => x.Id == order.Id && x.LastModified < order.LastModified );
-				if( oldOrder != null )
-					orders.Remove( oldOrder );
+				if( processedOrders.Contains( order ))
+				{ 
+					var oldOrder = processedOrders.FirstOrDefault( x => x.Id == order.Id && x.LastModified < order.LastModified );
+					if( oldOrder != null )
+						processedOrders.Remove( oldOrder );
+				}
 
-				orders.Add( order );
+				processedOrders.Add( order );
 			}
 		}
 	}
