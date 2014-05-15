@@ -90,10 +90,7 @@ namespace VolusionAccess
 				if( ordersPortion == null || ordersPortion.Orders == null || ordersPortion.Orders.Count == 0 )
 					return orders;
 
-				foreach( var order in ordersPortion.Orders.Where( predicate ) )
-				{
-					orders.Add( order );
-				}
+				this.AddOrders( orders, ordersPortion.Orders.Where( predicate ) );
 			}
 		}
 
@@ -110,10 +107,19 @@ namespace VolusionAccess
 				if( ordersPortion == null || ordersPortion.Orders == null || ordersPortion.Orders.Count == 0 )
 					return orders;
 
-				foreach( var order in ordersPortion.Orders.Where( predicate ) )
-				{
-					orders.Add( order );
-				}
+				this.AddOrders( orders, ordersPortion.Orders.Where( predicate ) );
+			}
+		}
+
+		private void AddOrders( ISet< VolusionOrder > orders, IEnumerable< VolusionOrder > ordersPortion )
+		{
+			foreach( var order in ordersPortion )
+			{
+				var oldOrder = orders.FirstOrDefault( x => x.Id == order.Id && x.LastModified < order.LastModified );
+				if( oldOrder != null )
+					orders.Remove( oldOrder );
+
+				orders.Add( order );
 			}
 		}
 	}

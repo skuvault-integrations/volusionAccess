@@ -279,7 +279,7 @@ namespace VolusionAccess.Models.Order
 				return false;
 			if( ReferenceEquals( this, other ) )
 				return true;
-			return this.Id == other.Id && DateTime.Equals( this.OrderDate, other.OrderDate ) && DateTime.Equals( this.LastModified, other.LastModified );
+			return this.Id == other.Id;
 		}
 
 		public override bool Equals( object obj )
@@ -297,7 +297,7 @@ namespace VolusionAccess.Models.Order
 		{
 			unchecked
 			{
-				return ( this.Id.GetHashCode() * 397 ) ^ this.OrderDate.GetHashCode() ^ this.LastModified.GetHashCode();
+				return this.Id.GetHashCode() * 397;
 			}
 		}
 	}
