@@ -83,7 +83,7 @@ namespace VolusionAccess.Models.Order
 		[ XmlIgnore ]
 		public DateTime LastModifiedUtc
 		{
-			get { return LastModified.AddHours( -TimeZoneOffset ); }
+			get { return LastModified.AddHours( TimeZoneOffset ); }
 		}
 
 		[ XmlIgnore ]

@@ -117,7 +117,7 @@ namespace VolusionAccess
 			{
 				if( processedOrders.Contains( order ))
 				{ 
-					var oldOrder = processedOrders.FirstOrDefault( x => x.Id == order.Id && x.LastModified < order.LastModified );
+					var oldOrder = processedOrders.FirstOrDefault( x => x.Id == order.Id && x.LastModified <= order.LastModified );
 					if( oldOrder != null )
 						processedOrders.Remove( oldOrder );
 				}
