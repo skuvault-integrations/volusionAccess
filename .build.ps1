@@ -100,7 +100,7 @@ task NuGet Package, Version, {
 <package>
 	<metadata>
 		<id>$project_name</id>
-		<version>$Version-rc2</version>
+		<version>$Version-rc3</version>
 		<authors>Slav Ivanyuk</authors>
 		<owners>Slav Ivanyuk</owners>
 		<projectUrl>https://github.com/agileharbor/$project_name</projectUrl>
