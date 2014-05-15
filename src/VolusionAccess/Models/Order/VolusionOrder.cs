@@ -6,7 +6,7 @@ using VolusionAccess.Misc;
 
 namespace VolusionAccess.Models.Order
 {
-	public class VolusionOrder
+	public class VolusionOrder : IEquatable< VolusionOrder >
 	{
 		[ XmlElement( ElementName = "OrderID" ) ]
 		public int Id { get; set; }
@@ -83,7 +83,7 @@ namespace VolusionAccess.Models.Order
 		[ XmlIgnore ]
 		public DateTime LastModifiedUtc
 		{
-			get { return LastModified.AddHours( -_timeZoneOffset ); }
+			get { return LastModified.AddHours( -TimeZoneOffset ); }
 		}
 
 		[ XmlIgnore ]
@@ -266,8 +266,40 @@ namespace VolusionAccess.Models.Order
 		[ XmlElement( ElementName = "OrderDetails" ) ]
 		public List< VolusionOrderDetails > OrderDetails { get; set; }
 
+		private int TimeZoneOffset
+		{
+			get { return OrderDateUtc.Hour - OrderDate.Hour; }
+		}
+
 		private readonly CultureInfo _culture = new CultureInfo( "en-US" );
-		private int _timeZoneOffset = -5;
+
+		public bool Equals( VolusionOrder other )
+		{
+			if( ReferenceEquals( null, other ) )
+				return false;
+			if( ReferenceEquals( this, other ) )
+				return true;
+			return this.Id == other.Id && DateTime.Equals( this.OrderDate, other.OrderDate ) && DateTime.Equals( this.LastModified, other.LastModified );
+		}
+
+		public override bool Equals( object obj )
+		{
+			if( ReferenceEquals( null, obj ) )
+				return false;
+			if( ReferenceEquals( this, obj ) )
+				return true;
+			if( obj.GetType() != this.GetType() )
+				return false;
+			return Equals( ( VolusionOrder )obj );
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				return ( this.Id.GetHashCode() * 397 ) ^ this.OrderDate.GetHashCode() ^ this.LastModified.GetHashCode();
+			}
+		}
 	}
 
 	public enum VolusionOrderStatusEnum

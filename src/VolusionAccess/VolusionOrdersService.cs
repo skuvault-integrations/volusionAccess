@@ -79,7 +79,7 @@ namespace VolusionAccess
 
 		private IEnumerable< VolusionOrder > GetOrders( Func< VolusionOrder, bool > predicate )
 		{
-			var orders = new List< VolusionOrder >();
+			var orders = new HashSet< VolusionOrder >();
 			var endpoint = EndpointsBuilder.CreateGetOrdersEndpoint();
 
 			while( true )
@@ -90,13 +90,16 @@ namespace VolusionAccess
 				if( ordersPortion == null || ordersPortion.Orders == null || ordersPortion.Orders.Count == 0 )
 					return orders;
 
-				orders.AddRange( ordersPortion.Orders.Where( predicate ) );
+				foreach( var order in ordersPortion.Orders.Where( predicate ) )
+				{
+					orders.Add( order );
+				}
 			}
 		}
 
 		private async Task< IEnumerable< VolusionOrder > > GetOrdersAsync( Func< VolusionOrder, bool > predicate )
 		{
-			var orders = new List< VolusionOrder >();
+			var orders = new HashSet< VolusionOrder >();
 			var endpoint = EndpointsBuilder.CreateGetOrdersEndpoint();
 
 			while( true )
@@ -107,7 +110,10 @@ namespace VolusionAccess
 				if( ordersPortion == null || ordersPortion.Orders == null || ordersPortion.Orders.Count == 0 )
 					return orders;
 
-				orders.AddRange( ordersPortion.Orders.Where( predicate ) );
+				foreach( var order in ordersPortion.Orders.Where( predicate ) )
+				{
+					orders.Add( order );
+				}
 			}
 		}
 	}
