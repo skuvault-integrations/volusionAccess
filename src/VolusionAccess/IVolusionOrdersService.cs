@@ -11,9 +11,6 @@ namespace VolusionAccess
 		IEnumerable< VolusionOrder > GetAllOrders();
 		Task< IEnumerable< VolusionOrder > > GetAllOrdersAsync();
 
-		/// <summary>
-		/// This method uses yield for getting orders therefore this method more preferred for big data than <see cref="GetOrdersAsync"/>
-		/// </summary>
 		IEnumerable< VolusionOrder > GetOrders( DateTime startDate, DateTime endDate );
 		Task< IEnumerable< VolusionOrder > > GetOrdersAsync( DateTime startDate, DateTime endDate );
 

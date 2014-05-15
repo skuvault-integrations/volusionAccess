@@ -66,41 +66,35 @@ namespace VolusionAccess
 		public IEnumerable< VolusionProduct > GetProducts()
 		{
 			var products = new List< VolusionProduct >();
-			IList< VolusionProduct > productsPortion = null;
 			var endpoint = EndpointsBuilder.CreateGetProductsEndpoint();
 
-			do
+			while( true )
 			{
-				ActionPolicies.Get.Do( () =>
-				{
-					var tmp = this._webRequestServices.GetResponse< VolusionProducts >( endpoint );
-					productsPortion = tmp != null ? tmp.Products : null;
-					if( productsPortion != null )
-						products.AddRange( productsPortion );
-				} );
-			} while( productsPortion != null && productsPortion.Count != 0 );
+				var productsPortion = ActionPolicies.Get.Get( () =>
+					this._webRequestServices.GetResponse< VolusionProducts >( endpoint ) );
 
-			return products;
+				if( productsPortion == null || productsPortion.Products == null || productsPortion.Products.Count == 0 )
+					return products;
+
+				products.AddRange( productsPortion.Products );
+			}
 		}
 
 		public async Task< IEnumerable< VolusionProduct > > GetProductsAsync()
 		{
 			var products = new List< VolusionProduct >();
-			IList< VolusionProduct > productsPortion = null;
 			var endpoint = EndpointsBuilder.CreateGetProductsEndpoint();
 
-			do
+			while( true )
 			{
-				await ActionPolicies.GetAsync.Do( async () =>
-				{
-					var tmp = await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint );
-					productsPortion = tmp != null ? tmp.Products : null;
-					if( productsPortion != null )
-						products.AddRange( productsPortion );
-				} );
-			} while( productsPortion != null && productsPortion.Count != 0 );
+				var productsPortion = await ActionPolicies.Get.Get( async () =>
+					await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint ) );
 
-			return products;
+				if( productsPortion == null || productsPortion.Products == null || productsPortion.Products.Count == 0 )
+					return products;
+
+				products.AddRange( productsPortion.Products );
+			}
 		}
 
 		public IEnumerable< VolusionProduct > GetFilteredProducts( ProductColumns column, object value )
