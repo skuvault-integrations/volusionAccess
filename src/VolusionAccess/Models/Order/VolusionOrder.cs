@@ -47,9 +47,6 @@ namespace VolusionAccess.Models.Order
 		[ XmlElement( ElementName = "Order_Entry_System" ) ]
 		public string OrderEntrySystem { get; set; }
 
-		[ XmlIgnore ]
-		public DateTime CancelDate { get; set; }
-
 		[ XmlElement( ElementName = "CancelDate" ) ]
 		public string CancelDateStr
 		{
@@ -58,16 +55,16 @@ namespace VolusionAccess.Models.Order
 		}
 
 		[ XmlIgnore ]
+		public DateTime CancelDate { get; set; }
+
+		[ XmlIgnore ]
 		public DateTime CancelDateUtc
 		{
-			get { return CancelDate.AddHours( -TimeZoneOffset ); }
+			get { return this.CancelDate != DateTime.MinValue ? this.CancelDate.AddHours( -TimeZoneOffset ) : DateTime.MinValue; }
 		}
 
 		[ XmlElement( ElementName = "CancelReason" ) ]
 		public string CancelReason { get; set; }
-
-		[ XmlIgnore ]
-		public DateTime InitiallyShippedDate { get; set; }
 
 		[ XmlElement( ElementName = "InitiallyShippedDate" ) ]
 		public string InitiallyShippedDateStr
@@ -77,13 +74,13 @@ namespace VolusionAccess.Models.Order
 		}
 
 		[ XmlIgnore ]
-		public DateTime InitiallyShippedDateUtc
-		{
-			get { return InitiallyShippedDate.AddHours( -TimeZoneOffset ); }
-		}
+		public DateTime InitiallyShippedDate { get; set; }
 
 		[ XmlIgnore ]
-		public DateTime LastModified { get; set; }
+		public DateTime InitiallyShippedDateUtc
+		{
+			get { return this.InitiallyShippedDate != DateTime.MinValue ? this.InitiallyShippedDate.AddHours( -TimeZoneOffset ) : DateTime.MinValue; }
+		}
 
 		[ XmlElement( ElementName = "LastModified" ) ]
 		public string LastModifiedStr
@@ -93,13 +90,13 @@ namespace VolusionAccess.Models.Order
 		}
 
 		[ XmlIgnore ]
-		public DateTime LastModifiedUtc
-		{
-			get { return LastModified.AddHours( -TimeZoneOffset ); }
-		}
+		public DateTime LastModified { get; set; }
 
 		[ XmlIgnore ]
-		public DateTime OrderDate { get; set; }
+		public DateTime LastModifiedUtc
+		{
+			get { return this.LastModified != DateTime.MinValue ? this.LastModified.AddHours( -TimeZoneOffset ) : DateTime.MinValue; }
+		}
 
 		[ XmlElement( ElementName = "OrderDate" ) ]
 		public string OrderDateStr
@@ -109,7 +106,7 @@ namespace VolusionAccess.Models.Order
 		}
 
 		[ XmlIgnore ]
-		public DateTime OrderDateUtc { get; set; }
+		public DateTime OrderDate { get; set; }
 
 		[ XmlElement( ElementName = "OrderDateUtc" ) ]
 		public string OrderDateUtcStr
@@ -117,6 +114,9 @@ namespace VolusionAccess.Models.Order
 			get { return this.OrderDateUtc.ToString( _culture ); }
 			set { this.OrderDateUtc = DateTime.Parse( value, _culture ); }
 		}
+
+		[ XmlIgnore ]
+		public DateTime OrderDateUtc { get; set; }
 
 		[ XmlIgnore ]
 		public VolusionOrderStatusEnum OrderStatus
@@ -222,9 +222,6 @@ namespace VolusionAccess.Models.Order
 		[ XmlElement( ElementName = "ShipCountry" ) ]
 		public string ShipCountry { get; set; }
 
-		[ XmlIgnore ]
-		public DateTime ShipDate { get; set; }
-
 		[ XmlElement( ElementName = "ShipDate" ) ]
 		public string ShipDateStr
 		{
@@ -233,9 +230,12 @@ namespace VolusionAccess.Models.Order
 		}
 
 		[ XmlIgnore ]
+		public DateTime ShipDate { get; set; }
+
+		[ XmlIgnore ]
 		public DateTime ShipDateUtc
 		{
-			get { return ShipDate.AddHours( -TimeZoneOffset ); }
+			get { return this.ShipDate != DateTime.MinValue ? this.ShipDate.AddHours( -TimeZoneOffset ) : DateTime.MinValue; }
 		}
 
 		[ XmlElement( ElementName = "ShipFaxNumber" ) ]
@@ -286,9 +286,15 @@ namespace VolusionAccess.Models.Order
 
 		public int TimeZoneOffset
 		{
-			get { return OrderDate.Hour - OrderDateUtc.Hour; }
+			get
+			{
+				if( _timeZoneOffset == 0 )
+					_timeZoneOffset = OrderDate != DateTime.MinValue && OrderDateUtc != DateTime.MinValue ? ( OrderDate - OrderDateUtc ).Hours : -5;
+				return _timeZoneOffset;
+			}
 		}
 
+		private int _timeZoneOffset;
 		private readonly CultureInfo _culture = new CultureInfo( "en-US" );
 
 		public bool Equals( VolusionOrder other )
