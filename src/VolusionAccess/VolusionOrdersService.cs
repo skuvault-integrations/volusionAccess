@@ -22,6 +22,18 @@ namespace VolusionAccess
 			this._webRequestServices = new WebRequestServices( config );
 		}
 
+		public VolusionOrder GetOrder( int orderId )
+		{
+			var orders = this.GetFilteredOrders( OrderColumns.OrderId, orderId );
+			return orders.FirstOrDefault();
+		}
+
+		public async Task< VolusionOrder > GetOrderAsync( int orderId )
+		{
+			var orders = await this.GetFilteredOrdersAsync( OrderColumns.OrderId, orderId );
+			return orders.FirstOrDefault();
+		}
+
 		public IEnumerable< VolusionOrder > GetAllOrders()
 		{
 			return GetOrders( x => true ).ToList();
@@ -45,6 +57,49 @@ namespace VolusionAccess
 			var orders = await GetOrdersAsync( x => ( x.OrderDateUtc >= startDateUtc && x.OrderDateUtc <= endDateUtc ) ||
 			                                        ( x.LastModifiedUtc >= startDateUtc && x.LastModifiedUtc <= endDateUtc ) );
 			return orders.ToList();
+		}
+
+		public IEnumerable< VolusionOrder > GetNotFinishedOrders( DateTime startDateUtc, DateTime endDateUtc )
+		{
+			var statuses = GetAllStatusesExceptShippedAndCancelled();
+			var orders = new HashSet< VolusionOrder >();
+			foreach( var status in statuses )
+			{
+				var ordersPortion = this.GetFilteredOrders( OrderColumns.OrderStatus, status.ToString() ).ToList();
+				if( ordersPortion.Count > 0 )
+				{
+					this.AddOrders( orders, ordersPortion
+						.Where( x => ( x.OrderDateUtc >= startDateUtc && x.OrderDateUtc <= endDateUtc ) ||
+						             ( x.LastModifiedUtc >= startDateUtc && x.LastModifiedUtc <= endDateUtc ) ) );
+				}
+			}
+
+			return orders;
+		}
+
+		public async Task< IEnumerable< VolusionOrder > > GetNotFinishedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
+		{
+			var statuses = GetAllStatusesExceptShippedAndCancelled();
+			var orders = new HashSet< VolusionOrder >();
+			var tasks = new List< Task< IEnumerable< VolusionOrder > > >();
+			foreach( var status in statuses )
+			{
+				tasks.Add( this.GetFilteredOrdersAsync( OrderColumns.OrderStatus, status.ToString() ) );
+			}
+			await Task.WhenAll( tasks ).ConfigureAwait( false );
+
+			foreach( var task in tasks )
+			{
+				var ordersPortion = task.Result.ToList();
+				if( ordersPortion.Count > 0 )
+				{
+					this.AddOrders( orders, ordersPortion
+						.Where( x => ( x.OrderDateUtc >= startDateUtc && x.OrderDateUtc <= endDateUtc ) ||
+						             ( x.LastModifiedUtc >= startDateUtc && x.LastModifiedUtc <= endDateUtc ) ) );
+				}
+			}
+
+			return orders;
 		}
 
 		public IEnumerable< VolusionOrder > GetFilteredOrders( OrderColumns column, object value )
@@ -77,6 +132,7 @@ namespace VolusionAccess
 			return orders;
 		}
 
+		#region Misc
 		private IEnumerable< VolusionOrder > GetOrders( Func< VolusionOrder, bool > predicate )
 		{
 			var orders = new HashSet< VolusionOrder >();
@@ -115,8 +171,8 @@ namespace VolusionAccess
 		{
 			foreach( var order in fetchedOrdersPartition )
 			{
-				if( processedOrders.Contains( order ))
-				{ 
+				if( processedOrders.Contains( order ) )
+				{
 					var oldOrder = processedOrders.FirstOrDefault( x => x.Id == order.Id && x.LastModified <= order.LastModified );
 					if( oldOrder != null )
 						processedOrders.Remove( oldOrder );
@@ -125,5 +181,27 @@ namespace VolusionAccess
 				processedOrders.Add( order );
 			}
 		}
+
+		private IEnumerable< VolusionOrderStatusEnum > GetAllStatusesExceptShippedAndCancelled()
+		{
+			return new List< VolusionOrderStatusEnum >
+			{
+				VolusionOrderStatusEnum.New,
+				VolusionOrderStatusEnum.Pending,
+				VolusionOrderStatusEnum.Processing,
+				VolusionOrderStatusEnum.PaymentDeclined,
+				VolusionOrderStatusEnum.AwaitingPayment,
+				VolusionOrderStatusEnum.ReadyToShip,
+				VolusionOrderStatusEnum.PendingShipment,
+				VolusionOrderStatusEnum.PartiallyShipped,
+				VolusionOrderStatusEnum.PartiallyBackordered,
+				VolusionOrderStatusEnum.Backordered,
+				VolusionOrderStatusEnum.SeeLineItems,
+				VolusionOrderStatusEnum.SeeOrderNotes,
+				VolusionOrderStatusEnum.PartiallyReturned,
+				VolusionOrderStatusEnum.Returned
+			};
+		}
+		#endregion misc
 	}
 }

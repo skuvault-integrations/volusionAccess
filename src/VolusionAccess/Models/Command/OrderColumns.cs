@@ -7,6 +7,7 @@
 		public static readonly OrderColumns OrderDate = new OrderColumns( "o.OrderDate" );
 		public static readonly OrderColumns OrderDateUtc = new OrderColumns( "o.OrderDateUtc" );
 		public static readonly OrderColumns IsAGift = new OrderColumns( "o.IsAGift" );
+		public static readonly OrderColumns OrderStatus = new OrderColumns( "o.OrderStatus" );
 
 		private OrderColumns( string name )
 		{
