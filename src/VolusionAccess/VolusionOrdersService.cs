@@ -157,7 +157,7 @@ namespace VolusionAccess
 
 			while( true )
 			{
-				var ordersPortion = await ActionPolicies.Get.Get( async () =>
+				var ordersPortion = await ActionPolicies.GetAsync.Get( async () =>
 					await this._webRequestServices.GetResponseAsync< VolusionOrders >( endpoint ) );
 
 				if( ordersPortion == null || ordersPortion.Orders == null || ordersPortion.Orders.Count == 0 )
