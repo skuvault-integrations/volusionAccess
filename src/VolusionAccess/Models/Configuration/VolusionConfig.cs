@@ -15,7 +15,8 @@ namespace VolusionAccess.Models.Configuration
 			Condition.Requires( userName, "userName" ).IsNotNullOrWhiteSpace();
 			Condition.Requires( password, "password" ).IsNotNullOrWhiteSpace();
 
-			this.Host = string.Format( "{0}/net/WebService.aspx", shopName );
+			shopName = shopName.ToLower().TrimEnd( '\\', '/' ).Replace( "https://", "" ).Replace( "http://", "" );
+			this.Host = string.Format( "http://{0}/net/WebService.aspx", shopName );
 			this.ShopName = shopName;
 			this.UserName = userName;
 			this.Password = password;

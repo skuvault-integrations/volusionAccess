@@ -18,5 +18,8 @@ namespace VolusionAccess
 
 		IEnumerable< VolusionOrder > GetNotFinishedOrders( DateTime startDateUtc, DateTime endDateUtc );
 		Task< IEnumerable< VolusionOrder > > GetNotFinishedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc );
+
+		IEnumerable< VolusionOrder > GetFinishedOrders( IEnumerable< int > ordersIds );
+		Task< IEnumerable< VolusionOrder > > GetFinishedOrdersAsync( IEnumerable< int > ordersIds );
 	}
 }

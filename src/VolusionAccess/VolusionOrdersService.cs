@@ -96,6 +96,32 @@ namespace VolusionAccess
 			return orders;
 		}
 
+		public IEnumerable< VolusionOrder > GetFinishedOrders( IEnumerable< int > ordersIds )
+		{
+			var orders = new List< VolusionOrder >();
+			foreach( var orderId in ordersIds )
+			{
+				var order = this.GetOrder( orderId );
+				if( order.OrderStatus == VolusionOrderStatusEnum.Shipped || order.OrderStatus == VolusionOrderStatusEnum.Cancelled )
+					orders.Add( order );
+			}
+
+			return orders;
+		}
+
+		public async Task< IEnumerable< VolusionOrder > > GetFinishedOrdersAsync( IEnumerable< int > ordersIds )
+		{
+			var orders = new List< VolusionOrder >();
+			foreach( var orderId in ordersIds )
+			{
+				var order = await this.GetOrderAsync( orderId );
+				if( order.OrderStatus == VolusionOrderStatusEnum.Shipped || order.OrderStatus == VolusionOrderStatusEnum.Cancelled )
+					orders.Add( order );
+			}
+
+			return orders;
+		}
+
 		#region Misc
 		private IEnumerable< VolusionOrder > GetFilteredOrders( OrderColumns column, object value )
 		{

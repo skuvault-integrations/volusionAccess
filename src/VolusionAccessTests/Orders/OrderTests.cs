@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -94,6 +95,24 @@ namespace VolusionAccessTests.Orders
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
 			var orders = await service.GetNotFinishedOrdersAsync( DateTime.UtcNow.AddDays( -60 ), DateTime.UtcNow );
+
+			orders.Count().Should().BeGreaterThan( 0 );
+		}
+
+		[ Test ]
+		public void GetFinishedOrders()
+		{
+			var service = this.VolusionFactory.CreateOrdersService( this.Config );
+			var orders = service.GetFinishedOrders( new List< int > { 52, 55 } );
+
+			orders.Count().Should().BeGreaterThan( 0 );
+		}
+
+		[ Test ]
+		public async Task GetFinishedOrdersAsync()
+		{
+			var service = this.VolusionFactory.CreateOrdersService( this.Config );
+			var orders = await service.GetFinishedOrdersAsync( new List< int > { 52, 55 } );
 
 			orders.Count().Should().BeGreaterThan( 0 );
 		}
