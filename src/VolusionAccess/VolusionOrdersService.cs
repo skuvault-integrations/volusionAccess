@@ -34,28 +34,28 @@ namespace VolusionAccess
 			return orders.FirstOrDefault();
 		}
 
-		public IEnumerable< VolusionOrder > GetAllNewOrUpdatedOrders()
+		public IEnumerable< VolusionOrder > GetNewOrUpdatedOrders()
 		{
-			return GetNewOrUpdatedOrders( x => true ).ToList();
+			return GetFilteredNewOrUpdatedOrders( x => true ).ToList();
 		}
 
-		public async Task< IEnumerable< VolusionOrder > > GetAllNewOrUpdatedOrdersAsync()
+		public async Task< IEnumerable< VolusionOrder > > GetNewOrUpdatedOrdersAsync()
 		{
-			var orders = await GetNewOrUpdatedOrdersAsync( x => true );
+			var orders = await GetFilteredNewOrUpdatedOrdersAsync( x => true );
 			return orders.ToList();
 		}
 
 		public IEnumerable< VolusionOrder > GetNewOrUpdatedOrders( DateTime startDateUtc, DateTime endDateUtc )
 		{
-			var orders = GetNewOrUpdatedOrders( x => ( x.OrderDateUtc >= startDateUtc && x.OrderDateUtc <= endDateUtc ) ||
-			                                         ( x.LastModifiedUtc >= startDateUtc && x.LastModifiedUtc <= endDateUtc ) );
+			var orders = GetFilteredNewOrUpdatedOrders( x => ( x.OrderDateUtc >= startDateUtc && x.OrderDateUtc <= endDateUtc ) ||
+			                                                 ( x.LastModifiedUtc >= startDateUtc && x.LastModifiedUtc <= endDateUtc ) );
 			return orders.ToList();
 		}
 
 		public async Task< IEnumerable< VolusionOrder > > GetNewOrUpdatedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
 		{
-			var orders = await GetNewOrUpdatedOrdersAsync( x => ( x.OrderDateUtc >= startDateUtc && x.OrderDateUtc <= endDateUtc ) ||
-			                                                    ( x.LastModifiedUtc >= startDateUtc && x.LastModifiedUtc <= endDateUtc ) );
+			var orders = await GetFilteredNewOrUpdatedOrdersAsync( x => ( x.OrderDateUtc >= startDateUtc && x.OrderDateUtc <= endDateUtc ) ||
+			                                                            ( x.LastModifiedUtc >= startDateUtc && x.LastModifiedUtc <= endDateUtc ) );
 			return orders.ToList();
 		}
 
@@ -121,7 +121,7 @@ namespace VolusionAccess
 			return orders;
 		}
 
-		private IEnumerable< VolusionOrder > GetNewOrUpdatedOrders( Func< VolusionOrder, bool > predicate )
+		private IEnumerable< VolusionOrder > GetFilteredNewOrUpdatedOrders( Func< VolusionOrder, bool > predicate )
 		{
 			var orders = new HashSet< VolusionOrder >();
 			var endpoint = EndpointsBuilder.CreateGetOrdersEndpoint();
@@ -136,7 +136,7 @@ namespace VolusionAccess
 			}
 		}
 
-		private async Task< IEnumerable< VolusionOrder > > GetNewOrUpdatedOrdersAsync( Func< VolusionOrder, bool > predicate )
+		private async Task< IEnumerable< VolusionOrder > > GetFilteredNewOrUpdatedOrdersAsync( Func< VolusionOrder, bool > predicate )
 		{
 			var orders = new HashSet< VolusionOrder >();
 			var endpoint = EndpointsBuilder.CreateGetOrdersEndpoint();

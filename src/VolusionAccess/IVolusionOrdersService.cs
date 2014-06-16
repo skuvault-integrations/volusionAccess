@@ -10,8 +10,8 @@ namespace VolusionAccess
 		VolusionOrder GetOrder( int orderId );
 		Task< VolusionOrder > GetOrderAsync( int orderId );
 
-		IEnumerable< VolusionOrder > GetAllNewOrUpdatedOrders();
-		Task< IEnumerable< VolusionOrder > > GetAllNewOrUpdatedOrdersAsync();
+		IEnumerable< VolusionOrder > GetNewOrUpdatedOrders();
+		Task< IEnumerable< VolusionOrder > > GetNewOrUpdatedOrdersAsync();
 
 		IEnumerable< VolusionOrder > GetNewOrUpdatedOrders( DateTime startDateUtc, DateTime endDateUtc );
 		Task< IEnumerable< VolusionOrder > > GetNewOrUpdatedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc );

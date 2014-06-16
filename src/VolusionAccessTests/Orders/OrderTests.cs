@@ -5,7 +5,6 @@ using FluentAssertions;
 using LINQtoCSV;
 using NUnit.Framework;
 using VolusionAccess;
-using VolusionAccess.Models.Command;
 using VolusionAccess.Models.Configuration;
 
 namespace VolusionAccessTests.Orders
@@ -46,19 +45,19 @@ namespace VolusionAccessTests.Orders
 		}
 
 		[ Test ]
-		public void GetAllNewOrUpdatedOrders()
+		public void GetNewOrUpdatedOrders()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = service.GetAllNewOrUpdatedOrders();
+			var orders = service.GetNewOrUpdatedOrders();
 
 			orders.Count().Should().BeGreaterThan( 0 );
 		}
 
 		[ Test ]
-		public async Task GetAllNewOrUpdatedOrdersAsync()
+		public async Task GetNewOrUpdatedOrdersAsync()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = await service.GetAllNewOrUpdatedOrdersAsync();
+			var orders = await service.GetNewOrUpdatedOrdersAsync();
 
 			orders.Count().Should().BeGreaterThan( 0 );
 		}
