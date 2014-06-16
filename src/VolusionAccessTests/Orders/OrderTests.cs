@@ -46,37 +46,37 @@ namespace VolusionAccessTests.Orders
 		}
 
 		[ Test ]
-		public void GetOrders()
+		public void GetAllNewOrUpdatedOrders()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = service.GetAllOrders();
+			var orders = service.GetAllNewOrUpdatedOrders();
 
 			orders.Count().Should().BeGreaterThan( 0 );
 		}
 
 		[ Test ]
-		public async Task GetOrdersAsync()
+		public async Task GetAllNewOrUpdatedOrdersAsync()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = await service.GetAllOrdersAsync();
+			var orders = await service.GetAllNewOrUpdatedOrdersAsync();
 
 			orders.Count().Should().BeGreaterThan( 0 );
 		}
 
 		[ Test ]
-		public void GetOrdersByDate()
+		public void GetNewOrUpdatedOrdersByDate()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = service.GetOrders( DateTime.UtcNow.AddDays( -10 ), DateTime.UtcNow );
+			var orders = service.GetNewOrUpdatedOrders( DateTime.UtcNow.AddDays( -10 ), DateTime.UtcNow );
 
 			orders.Count().Should().BeGreaterThan( 0 );
 		}
 
 		[ Test ]
-		public async Task GetOrdersByDateAsync()
+		public async Task GetNewOrUpdatedOrdersByDateAsync()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = await service.GetOrdersAsync( DateTime.UtcNow.AddDays( -10 ), DateTime.UtcNow );
+			var orders = await service.GetNewOrUpdatedOrdersAsync( DateTime.UtcNow.AddDays( -10 ), DateTime.UtcNow );
 
 			orders.Count().Should().BeGreaterThan( 0 );
 		}
@@ -95,24 +95,6 @@ namespace VolusionAccessTests.Orders
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
 			var orders = await service.GetNotFinishedOrdersAsync( DateTime.UtcNow.AddDays( -60 ), DateTime.UtcNow );
-
-			orders.Count().Should().BeGreaterThan( 0 );
-		}
-
-		[ Test ]
-		public void GetFilteredOrders()
-		{
-			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = service.GetFilteredOrders( OrderColumns.OrderDate, new DateTime( 2014, 4, 22, 7, 44, 0 ) );
-
-			orders.Count().Should().BeGreaterThan( 0 );
-		}
-
-		[ Test ]
-		public async Task GetFilteredOrdersAsync()
-		{
-			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = await service.GetFilteredOrdersAsync( OrderColumns.IsAGift, "N" );
 
 			orders.Count().Should().BeGreaterThan( 0 );
 		}
