@@ -112,7 +112,7 @@ namespace VolusionAccessTests.Orders
 		public async Task GetFinishedOrdersAsync()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = await service.GetFinishedOrdersAsync( new List< int > { 52, 55 } );
+			var orders = await service.GetFinishedOrdersAsync( new List< int > { 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 777 } );
 
 			orders.Count().Should().BeGreaterThan( 0 );
 		}

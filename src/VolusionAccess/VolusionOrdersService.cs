@@ -112,12 +112,19 @@ namespace VolusionAccess
 		public async Task< IEnumerable< VolusionOrder > > GetFinishedOrdersAsync( IEnumerable< int > ordersIds )
 		{
 			var orders = new List< VolusionOrder >();
+			var tasks = new List< Task< VolusionOrder > >();
 			foreach( var orderId in ordersIds )
 			{
-				var order = await this.GetOrderAsync( orderId );
-				if( order.OrderStatus == VolusionOrderStatusEnum.Shipped || order.OrderStatus == VolusionOrderStatusEnum.Cancelled )
-					orders.Add( order );
+				tasks.Add( this.GetOrderAsync( orderId ) );
+				if( tasks.Count >= 10 )
+				{
+					await this.AddFinishedOrdersAsync( orders, tasks );
+					tasks = new List< Task< VolusionOrder > >();
+				}
 			}
+
+			if( tasks.Count > 0 )
+				await this.AddFinishedOrdersAsync( orders, tasks );
 
 			return orders;
 		}
@@ -190,6 +197,13 @@ namespace VolusionAccess
 
 				processedOrders.Add( order );
 			}
+		}
+
+		private async Task AddFinishedOrdersAsync( List< VolusionOrder > orders, List< Task< VolusionOrder > > tasks )
+		{
+			await Task.WhenAll( tasks ).ConfigureAwait( false );
+			orders.AddRange( tasks.Select( t => t.Result )
+				.Where( o => o != null && ( o.OrderStatus == VolusionOrderStatusEnum.Shipped || o.OrderStatus == VolusionOrderStatusEnum.Cancelled ) ) );
 		}
 
 		private IEnumerable< VolusionOrderStatusEnum > GetAllStatusesExceptShippedAndCancelled()
