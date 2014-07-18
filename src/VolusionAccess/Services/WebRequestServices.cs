@@ -106,7 +106,7 @@ namespace VolusionAccess.Services
 				var reader = new StreamReader( stream );
 				var xmlResponse = reader.ReadToEnd();
 
-				this.Log().Trace( "[volusion]\tResponse\t{0} - {1}", response.ResponseUri, xmlResponse );
+				VolusionLogger.Log.Trace( "Response\t{0} - {1}", response.ResponseUri, xmlResponse );
 
 				if( !String.IsNullOrEmpty( xmlResponse ) )
 					result = XmlSerializeHelpers.Deserialize< T >( xmlResponse );
@@ -117,7 +117,7 @@ namespace VolusionAccess.Services
 
 		private void LogUpdateInfo( string url, HttpStatusCode statusCode, string xmlContent )
 		{
-			this.Log().Trace( "[volusion]\tPUT/POST call for the url '{0}' has been completed with code '{1}'.\n{2}", url, statusCode, xmlContent );
+			VolusionLogger.Log.Trace( "Response\tPUT/POST call for the url '{0}' has been completed with code '{1}'.\n{2}", url, statusCode, xmlContent );
 		}
 		#endregion
 

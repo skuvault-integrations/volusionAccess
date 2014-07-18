@@ -58,6 +58,11 @@ task Init Clean, {
     New-Item $build_dir -itemType directory | Out-Null
     New-Item $build_artifacts_dir -itemType directory | Out-Null
     New-Item $build_output_dir -itemType directory | Out-Null
+}, NuGetRestore
+
+task NuGetRestore {
+	$nuget = "$src_dir\.nuget\NuGet.exe"
+	& $nuget restore $solution_file
 }
 
 task Build {
@@ -100,7 +105,7 @@ task NuGet Package, Version, {
 <package>
 	<metadata>
 		<id>$project_name</id>
-		<version>$Version-rc7</version>
+		<version>$Version</version>
 		<authors>Slav Ivanyuk</authors>
 		<owners>Slav Ivanyuk</owners>
 		<projectUrl>https://github.com/agileharbor/$project_name</projectUrl>
@@ -113,7 +118,7 @@ task NuGet Package, Version, {
 		<dependencies> 
 			<group targetFramework="net45">
 				<dependency id="Netco" version="1.3.1" />
-				<dependency id="ServiceStack.Text" version="4.0.18" />
+				<dependency id="ServiceStack.Text" version="4.0.23" />
 				<dependency id="CuttingEdge.Conditions" version="1.2.0.0" />
 			</group>
 		</dependencies>

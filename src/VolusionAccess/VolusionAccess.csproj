@@ -38,8 +38,9 @@
     <Reference Include="Netco">
       <HintPath>..\packages\Netco.1.3.1\lib\net45\Netco.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Text">
-      <HintPath>..\packages\ServiceStack.Text.4.0.18\lib\net40\ServiceStack.Text.dll</HintPath>
+    <Reference Include="ServiceStack.Text, Version=4.0.23.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ServiceStack.Text.4.0.23\lib\net40\ServiceStack.Text.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -58,6 +59,7 @@
     <Compile Include="IVolusionProductsService.cs" />
     <Compile Include="Misc\ActionPolicies.cs" />
     <Compile Include="Misc\EnumExtensions.cs" />
+    <Compile Include="Misc\VolusionLogger.cs" />
     <Compile Include="Misc\XmlSerializeHelpers.cs" />
     <Compile Include="Models\Command\OrderColumns.cs" />
     <Compile Include="Models\Command\ProductColumns.cs" />
