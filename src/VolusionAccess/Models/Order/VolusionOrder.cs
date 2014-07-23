@@ -8,6 +8,8 @@ namespace VolusionAccess.Models.Order
 {
 	public class VolusionOrder : IEquatable< VolusionOrder >
 	{
+		public const int DEFAULT_TIME_ZONE = -5;
+
 		[ XmlElement( ElementName = "OrderID" ) ]
 		public int Id { get; set; }
 
@@ -109,14 +111,17 @@ namespace VolusionAccess.Models.Order
 		public DateTime OrderDate { get; set; }
 
 		[ XmlElement( ElementName = "OrderDateUtc" ) ]
-		public string OrderDateUtcStr
-		{
-			get { return this.OrderDateUtc.ToString( _culture ); }
-			set { this.OrderDateUtc = DateTime.Parse( value, _culture ); }
-		}
+		public string OrderDateUtcStr { get; set; }
 
 		[ XmlIgnore ]
-		public DateTime OrderDateUtc { get; set; }
+		public DateTime OrderDateUtc
+		{
+			get
+			{
+				return !string.IsNullOrEmpty( this.OrderDateUtcStr ) ? DateTime.Parse( this.OrderDateUtcStr, _culture )
+					: this.OrderDate != DateTime.MinValue ? this.OrderDate.AddHours( -DEFAULT_TIME_ZONE ) : DateTime.MinValue;
+			}
+		}
 
 		[ XmlIgnore ]
 		public VolusionOrderStatusEnum OrderStatus
@@ -289,7 +294,7 @@ namespace VolusionAccess.Models.Order
 			get
 			{
 				if( _timeZoneOffset == 0 )
-					_timeZoneOffset = OrderDate != DateTime.MinValue && OrderDateUtc != DateTime.MinValue ? ( OrderDate - OrderDateUtc ).Hours : -5;
+					_timeZoneOffset = OrderDate != DateTime.MinValue && OrderDateUtc != DateTime.MinValue ? ( OrderDate - OrderDateUtc ).Hours : DEFAULT_TIME_ZONE;
 				return _timeZoneOffset;
 			}
 		}
