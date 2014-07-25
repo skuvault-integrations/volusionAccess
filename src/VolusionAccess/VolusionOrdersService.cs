@@ -47,6 +47,7 @@ namespace VolusionAccess
 
 		public IEnumerable< VolusionOrder > GetNewOrUpdatedOrders( DateTime startDateUtc, DateTime endDateUtc )
 		{
+			startDateUtc = startDateUtc.AddSeconds( -startDateUtc.Second );
 			var orders = GetFilteredNewOrUpdatedOrders( x => ( x.OrderDateUtc >= startDateUtc && x.OrderDateUtc <= endDateUtc ) ||
 			                                                 ( x.LastModifiedUtc >= startDateUtc && x.LastModifiedUtc <= endDateUtc ) );
 			return orders.ToList();
@@ -54,6 +55,7 @@ namespace VolusionAccess
 
 		public async Task< IEnumerable< VolusionOrder > > GetNewOrUpdatedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
 		{
+			startDateUtc = startDateUtc.AddSeconds( -startDateUtc.Second );
 			var orders = await GetFilteredNewOrUpdatedOrdersAsync( x => ( x.OrderDateUtc >= startDateUtc && x.OrderDateUtc <= endDateUtc ) ||
 			                                                            ( x.LastModifiedUtc >= startDateUtc && x.LastModifiedUtc <= endDateUtc ) );
 			return orders.ToList();
@@ -61,11 +63,12 @@ namespace VolusionAccess
 
 		public IEnumerable< VolusionOrder > GetNotFinishedOrders( DateTime startDateUtc, DateTime endDateUtc )
 		{
+			startDateUtc = startDateUtc.AddSeconds( -startDateUtc.Second );
 			var statuses = GetAllStatusesExceptShippedAndCancelled();
 			var orders = new HashSet< VolusionOrder >();
 			foreach( var status in statuses )
 			{
-				var ordersPortion = this.GetFilteredOrders( OrderColumns.OrderStatus, status.ToString() ).ToList();
+				var ordersPortion = this.GetFilteredOrders( OrderColumns.OrderStatus, status ).ToList();
 				var filtered = ordersPortion.Where( x => ( x.OrderDateUtc >= startDateUtc && x.OrderDateUtc <= endDateUtc ) ||
 				                                         ( x.LastModifiedUtc >= startDateUtc && x.LastModifiedUtc <= endDateUtc ) );
 				this.AddOrders( orders, filtered );
@@ -76,12 +79,13 @@ namespace VolusionAccess
 
 		public async Task< IEnumerable< VolusionOrder > > GetNotFinishedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
 		{
+			startDateUtc = startDateUtc.AddSeconds( -startDateUtc.Second );
 			var statuses = GetAllStatusesExceptShippedAndCancelled();
 			var orders = new HashSet< VolusionOrder >();
 			var tasks = new List< Task< IEnumerable< VolusionOrder > > >();
 			foreach( var status in statuses )
 			{
-				tasks.Add( this.GetFilteredOrdersAsync( OrderColumns.OrderStatus, status.ToString() ) );
+				tasks.Add( this.GetFilteredOrdersAsync( OrderColumns.OrderStatus, status ) );
 			}
 			await Task.WhenAll( tasks ).ConfigureAwait( false );
 
@@ -206,24 +210,24 @@ namespace VolusionAccess
 				.Where( o => o != null && ( o.OrderStatus == VolusionOrderStatusEnum.Shipped || o.OrderStatus == VolusionOrderStatusEnum.Cancelled ) ) );
 		}
 
-		private IEnumerable< VolusionOrderStatusEnum > GetAllStatusesExceptShippedAndCancelled()
+		private IEnumerable< String > GetAllStatusesExceptShippedAndCancelled()
 		{
-			return new List< VolusionOrderStatusEnum >
+			return new List< String >
 			{
-				VolusionOrderStatusEnum.New,
-				VolusionOrderStatusEnum.Pending,
-				VolusionOrderStatusEnum.Processing,
-				VolusionOrderStatusEnum.PaymentDeclined,
-				VolusionOrderStatusEnum.AwaitingPayment,
-				VolusionOrderStatusEnum.ReadyToShip,
-				VolusionOrderStatusEnum.PendingShipment,
-				VolusionOrderStatusEnum.PartiallyShipped,
-				VolusionOrderStatusEnum.PartiallyBackordered,
-				VolusionOrderStatusEnum.Backordered,
-				VolusionOrderStatusEnum.SeeLineItems,
-				VolusionOrderStatusEnum.SeeOrderNotes,
-				VolusionOrderStatusEnum.PartiallyReturned,
-				VolusionOrderStatusEnum.Returned
+				VolusionOrderStatusEnum.New.ToString(),
+				VolusionOrderStatusEnum.Pending.ToString(),
+				VolusionOrderStatusEnum.Processing.ToString(),
+				"Payment Declined", //VolusionOrderStatusEnum.PaymentDeclined,
+				"Awaiting Payment", //VolusionOrderStatusEnum.AwaitingPayment,
+				"Ready To Ship", //VolusionOrderStatusEnum.ReadyToShip,
+				"Pending Shipment", //VolusionOrderStatusEnum.PendingShipment,
+				"Partially Shipped", //VolusionOrderStatusEnum.PartiallyShipped,
+				"Partially Backordered", //VolusionOrderStatusEnum.PartiallyBackordered,
+				VolusionOrderStatusEnum.Backordered.ToString(),
+				"See Line Items", //VolusionOrderStatusEnum.SeeLineItems,
+				"See Order Notes", //VolusionOrderStatusEnum.SeeOrderNotes,
+				"Partially Returned", //VolusionOrderStatusEnum.PartiallyReturned,
+				VolusionOrderStatusEnum.Returned.ToString()
 			};
 		}
 		#endregion misc

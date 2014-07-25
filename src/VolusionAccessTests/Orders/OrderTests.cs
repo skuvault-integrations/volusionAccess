@@ -85,7 +85,7 @@ namespace VolusionAccessTests.Orders
 		public void GetNotFinishedOrders()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = service.GetNotFinishedOrders( DateTime.UtcNow.AddDays( -60 ), DateTime.UtcNow );
+			var orders = service.GetNotFinishedOrders( new DateTime( 2014, 7, 25, 8, 13, 5 ), new DateTime( 2014, 7, 25, 8, 40, 40 ) );
 
 			orders.Count().Should().BeGreaterThan( 0 );
 		}
@@ -94,7 +94,7 @@ namespace VolusionAccessTests.Orders
 		public async Task GetNotFinishedOrdersAsync()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = await service.GetNotFinishedOrdersAsync( DateTime.UtcNow.AddDays( -60 ), DateTime.UtcNow );
+			var orders = await service.GetNotFinishedOrdersAsync( new DateTime( 2014, 7, 25, 8, 13, 5 ), new DateTime( 2014, 7, 25, 8, 40, 40 ) );
 
 			orders.Count().Should().BeGreaterThan( 0 );
 		}
