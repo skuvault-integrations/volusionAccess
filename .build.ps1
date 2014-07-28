@@ -44,7 +44,8 @@ $release_dir = "$BuildRoot\release"
 $archive_dir = "$release_dir\archive"
 
 $src_dir = "$BuildRoot\src"
-$solution_file = "$src_dir\$project_name\$project_name.csproj"
+$solution_file = "$src_dir\$project_name.sln"
+$nuget = "$src_dir\.nuget\NuGet.exe"
 	
 # Use MSBuild.
 use Framework\v4.0.30319 MSBuild
@@ -61,7 +62,6 @@ task Init Clean, {
 }, NuGetRestore
 
 task NuGetRestore {
-	$nuget = "$src_dir\.nuget\NuGet.exe"
 	& $nuget restore $solution_file
 }
 
@@ -111,13 +111,13 @@ task NuGet Package, Version, {
 		<projectUrl>https://github.com/agileharbor/$project_name</projectUrl>
 		<licenseUrl>https://raw.github.com/agileharbor/$project_name/master/License.txt</licenseUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<copyright>Copyright (C) Agile Harbor, LLC 2014</copyright>
+		<copyright>Copyright (C) Agile Harbor, LLC</copyright>
 		<summary>$text</summary>
 		<description>$text</description>
 		<tags>$project_short_name</tags>
 		<dependencies> 
 			<group targetFramework="net45">
-				<dependency id="Netco" version="1.3.1" />
+				<dependency id="Netco" version="1.4.3" />
 				<dependency id="ServiceStack.Text" version="4.0.23" />
 				<dependency id="CuttingEdge.Conditions" version="1.2.0.0" />
 			</group>
@@ -125,9 +125,7 @@ task NuGet Package, Version, {
 	</metadata>
 </package>
 "@
-	# pack
-	$nuget = "$($src_dir)\.nuget\NuGet"
-	
+	# pack	
 	exec { & $nuget pack $build_output_dir\$project_name\$project_name.nuspec -Output $build_dir }
 	
 	$push_project = Read-Host "Push $($project_name) " $Version " to NuGet? (Y/N)"
