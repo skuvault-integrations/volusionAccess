@@ -6,36 +6,36 @@ using Netco.Extensions;
 
 namespace VolusionAccess.Models.Order
 {
-	public class VolusionOrder: IEquatable< VolusionOrder >
+	public class VolusionOrder : IEquatable< VolusionOrder >
 	{
 		public const int DEFAULT_TIME_ZONE = -12;
 
 		[ XmlElement( ElementName = "OrderID" ) ]
-		public int Id{ get; set; }
+		public int Id { get; set; }
 
 		[ XmlElement( ElementName = "AccountNumber" ) ]
-		public string AccountNumber{ get; set; }
+		public string AccountNumber { get; set; }
 
 		[ XmlElement( ElementName = "AccountType" ) ]
-		public string AccountType{ get; set; }
+		public string AccountType { get; set; }
 
 		[ XmlElement( ElementName = "AddressValidated" ) ]
-		public string AddressValidated{ get; set; }
+		public string AddressValidated { get; set; }
 
 		[ XmlElement( ElementName = "Affiliate_Commissionable_Value" ) ]
-		public decimal AffiliateCommissionableValue{ get; set; }
+		public decimal AffiliateCommissionableValue { get; set; }
 
 		[ XmlElement( ElementName = "BankName" ) ]
-		public string BankName{ get; set; }
+		public string BankName { get; set; }
 
 		[ XmlElement( ElementName = "CustomerID" ) ]
-		public int CustomerID{ get; set; }
+		public int CustomerID { get; set; }
 
 		[ XmlElement( ElementName = "IsAGift" ) ]
-		public string IsAGift{ get; set; }
+		public string IsAGift { get; set; }
 
 		[ XmlElement( ElementName = "IsGTSOrder" ) ]
-		public string IsGTSOrder{ get; set; }
+		public string IsGTSOrder { get; set; }
 
 		[ XmlIgnore ]
 		public bool IsLocked
@@ -44,10 +44,10 @@ namespace VolusionAccess.Models.Order
 		}
 
 		[ XmlElement( ElementName = "Locked" ) ]
-		public string IsLockedStr{ get; set; }
+		public string IsLockedStr { get; set; }
 
 		[ XmlElement( ElementName = "Order_Entry_System" ) ]
-		public string OrderEntrySystem{ get; set; }
+		public string OrderEntrySystem { get; set; }
 
 		[ XmlElement( ElementName = "CancelDate" ) ]
 		public string CancelDateStr
@@ -57,16 +57,16 @@ namespace VolusionAccess.Models.Order
 		}
 
 		[ XmlIgnore ]
-		public DateTime CancelDate{ get; set; }
+		public DateTime CancelDate { get; set; }
 
 		[ XmlIgnore ]
 		public DateTime CancelDateUtc
 		{
-			get { return this.CancelDate != DateTime.MinValue ? this.CancelDate.AddHours( -this.TimeZoneOffset ) : DateTime.MinValue; }
+			get { return this.GetUtcDate( this.CancelDate ); }
 		}
 
 		[ XmlElement( ElementName = "CancelReason" ) ]
-		public string CancelReason{ get; set; }
+		public string CancelReason { get; set; }
 
 		[ XmlElement( ElementName = "InitiallyShippedDate" ) ]
 		public string InitiallyShippedDateStr
@@ -76,12 +76,12 @@ namespace VolusionAccess.Models.Order
 		}
 
 		[ XmlIgnore ]
-		public DateTime InitiallyShippedDate{ get; set; }
+		public DateTime InitiallyShippedDate { get; set; }
 
 		[ XmlIgnore ]
 		public DateTime InitiallyShippedDateUtc
 		{
-			get { return this.InitiallyShippedDate != DateTime.MinValue ? this.InitiallyShippedDate.AddHours( -this.TimeZoneOffset ) : DateTime.MinValue; }
+			get { return this.GetUtcDate( this.InitiallyShippedDate ); }
 		}
 
 		[ XmlElement( ElementName = "LastModified" ) ]
@@ -92,12 +92,12 @@ namespace VolusionAccess.Models.Order
 		}
 
 		[ XmlIgnore ]
-		public DateTime LastModified{ get; set; }
+		public DateTime LastModified { get; set; }
 
 		[ XmlIgnore ]
 		public DateTime LastModifiedUtc
 		{
-			get { return this.LastModified != DateTime.MinValue ? this.LastModified.AddHours( -this.TimeZoneOffset ) : DateTime.MinValue; }
+			get { return this.GetUtcDate( this.LastModified ); }
 		}
 
 		[ XmlElement( ElementName = "OrderDate" ) ]
@@ -108,19 +108,15 @@ namespace VolusionAccess.Models.Order
 		}
 
 		[ XmlIgnore ]
-		public DateTime OrderDate{ get; set; }
+		public DateTime OrderDate { get; set; }
 
 		[ XmlElement( ElementName = "OrderDateUtc" ) ]
-		public string OrderDateUtcStr{ get; set; }
+		public string OrderDateUtcStr { get; set; }
 
 		[ XmlIgnore ]
 		public DateTime OrderDateUtc
 		{
-			get
-			{
-				return !string.IsNullOrEmpty( this.OrderDateUtcStr ) ? DateTime.Parse( this.OrderDateUtcStr, this._culture )
-					: this.OrderDate != DateTime.MinValue ? this.OrderDate.AddHours( -DEFAULT_TIME_ZONE ) : DateTime.MinValue;
-			}
+			get { return !string.IsNullOrEmpty( this.OrderDateUtcStr ) ? DateTime.Parse( this.OrderDateUtcStr, this._culture ) : this.GetUtcDate( this.OrderDate ); }
 		}
 
 		[ XmlIgnore ]
@@ -130,102 +126,102 @@ namespace VolusionAccess.Models.Order
 		}
 
 		[ XmlElement( ElementName = "OrderStatus" ) ]
-		public string OrderStatusStr{ get; set; }
+		public string OrderStatusStr { get; set; }
 
 		[ XmlElement( ElementName = "PaymentAmount" ) ]
-		public Decimal PaymentAmount{ get; set; }
+		public Decimal PaymentAmount { get; set; }
 
 		[ XmlElement( ElementName = "PaymentDeclined" ) ]
-		public string PaymentDeclined{ get; set; }
+		public string PaymentDeclined { get; set; }
 
 		[ XmlElement( ElementName = "PaymentMethodID" ) ]
-		public int PaymentMethodID{ get; set; }
+		public int PaymentMethodID { get; set; }
 
 		[ XmlElement( ElementName = "Stock_Priority" ) ]
-		public int StockPriority{ get; set; }
+		public int StockPriority { get; set; }
 
 		[ XmlElement( ElementName = "Total_Payment_Authorized" ) ]
-		public decimal TotalPaymentAuthorized{ get; set; }
+		public decimal TotalPaymentAuthorized { get; set; }
 
 		[ XmlElement( ElementName = "Total_Payment_Received" ) ]
-		public decimal TotalPaymentReceived{ get; set; }
+		public decimal TotalPaymentReceived { get; set; }
 
 		[ XmlElement( ElementName = "TotalShippingCost" ) ]
-		public decimal TotalShippingCost{ get; set; }
+		public decimal TotalShippingCost { get; set; }
 
 		#region tax
 		[ XmlElement( ElementName = "SalesTax1" ) ]
-		public decimal SalesTax1{ get; set; }
+		public decimal SalesTax1 { get; set; }
 
 		[ XmlElement( ElementName = "SalesTax2" ) ]
-		public decimal SalesTax2{ get; set; }
+		public decimal SalesTax2 { get; set; }
 
 		[ XmlElement( ElementName = "SalesTax3" ) ]
-		public decimal SalesTax3{ get; set; }
+		public decimal SalesTax3 { get; set; }
 
 		[ XmlElement( ElementName = "SalesTaxRate" ) ]
-		public decimal SalesTaxRate{ get; set; }
+		public decimal SalesTaxRate { get; set; }
 
 		[ XmlElement( ElementName = "SalesTaxRate1" ) ]
-		public decimal SalesTaxRate1{ get; set; }
+		public decimal SalesTaxRate1 { get; set; }
 
 		[ XmlElement( ElementName = "SalesTaxRate2" ) ]
-		public decimal SalesTaxRate2{ get; set; }
+		public decimal SalesTaxRate2 { get; set; }
 
 		[ XmlElement( ElementName = "SalesTaxRate3" ) ]
-		public decimal SalesTaxRate3{ get; set; }
+		public decimal SalesTaxRate3 { get; set; }
 		#endregion
 
 		#region billing
 		[ XmlElement( ElementName = "BillingAddress1" ) ]
-		public string BillingAddress1{ get; set; }
+		public string BillingAddress1 { get; set; }
 
 		[ XmlElement( ElementName = "BillingAddress2" ) ]
-		public string BillingAddress2{ get; set; }
+		public string BillingAddress2 { get; set; }
 
 		[ XmlElement( ElementName = "BillingCity" ) ]
-		public string BillingCity{ get; set; }
+		public string BillingCity { get; set; }
 
 		[ XmlElement( ElementName = "BillingCompanyName" ) ]
-		public string BillingCompanyName{ get; set; }
+		public string BillingCompanyName { get; set; }
 
 		[ XmlElement( ElementName = "BillingCountry" ) ]
-		public string BillingCountry{ get; set; }
+		public string BillingCountry { get; set; }
 
 		[ XmlElement( ElementName = "BillingFaxNumber" ) ]
-		public string BillingFaxNumber{ get; set; }
+		public string BillingFaxNumber { get; set; }
 
 		[ XmlElement( ElementName = "BillingFirstName" ) ]
-		public string BillingFirstName{ get; set; }
+		public string BillingFirstName { get; set; }
 
 		[ XmlElement( ElementName = "BillingLastName" ) ]
-		public string BillingLastName{ get; set; }
+		public string BillingLastName { get; set; }
 
 		[ XmlElement( ElementName = "BillingPhoneNumber" ) ]
-		public string BillingPhoneNumber{ get; set; }
+		public string BillingPhoneNumber { get; set; }
 
 		[ XmlElement( ElementName = "BillingPostalCode" ) ]
-		public string BillingPostalCode{ get; set; }
+		public string BillingPostalCode { get; set; }
 
 		[ XmlElement( ElementName = "BillingState" ) ]
-		public string BillingState{ get; set; }
+		public string BillingState { get; set; }
 		#endregion
 
 		#region shipping
 		[ XmlElement( ElementName = "ShipAddress1" ) ]
-		public string ShipAddress1{ get; set; }
+		public string ShipAddress1 { get; set; }
 
 		[ XmlElement( ElementName = "ShipAddress2" ) ]
-		public string ShipAddress2{ get; set; }
+		public string ShipAddress2 { get; set; }
 
 		[ XmlElement( ElementName = "ShipCity" ) ]
-		public string ShipCity{ get; set; }
+		public string ShipCity { get; set; }
 
 		[ XmlElement( ElementName = "ShipCompanyName" ) ]
-		public string ShipCompanyName{ get; set; }
+		public string ShipCompanyName { get; set; }
 
 		[ XmlElement( ElementName = "ShipCountry" ) ]
-		public string ShipCountry{ get; set; }
+		public string ShipCountry { get; set; }
 
 		[ XmlElement( ElementName = "ShipDate" ) ]
 		public string ShipDateStr
@@ -235,22 +231,22 @@ namespace VolusionAccess.Models.Order
 		}
 
 		[ XmlIgnore ]
-		public DateTime ShipDate{ get; set; }
+		public DateTime ShipDate { get; set; }
 
 		[ XmlIgnore ]
 		public DateTime ShipDateUtc
 		{
-			get { return this.ShipDate != DateTime.MinValue ? this.ShipDate.AddHours( -this.TimeZoneOffset ) : DateTime.MinValue; }
+			get { return this.GetUtcDate( this.ShipDate ); }
 		}
 
 		[ XmlElement( ElementName = "ShipFaxNumber" ) ]
-		public string ShipFaxNumber{ get; set; }
+		public string ShipFaxNumber { get; set; }
 
 		[ XmlElement( ElementName = "ShipFirstName" ) ]
-		public string ShipFirstName{ get; set; }
+		public string ShipFirstName { get; set; }
 
 		[ XmlElement( ElementName = "ShipLastName" ) ]
-		public string ShipLastName{ get; set; }
+		public string ShipLastName { get; set; }
 
 		[ XmlIgnore ]
 		public bool IsShipped
@@ -259,10 +255,10 @@ namespace VolusionAccess.Models.Order
 		}
 
 		[ XmlElement( ElementName = "Shipped" ) ]
-		public string IsShippedStr{ get; set; }
+		public string IsShippedStr { get; set; }
 
 		[ XmlElement( ElementName = "ShipPhoneNumber" ) ]
-		public string ShipPhoneNumber{ get; set; }
+		public string ShipPhoneNumber { get; set; }
 
 		[ XmlIgnore ]
 		public bool IsShippingLocked
@@ -271,36 +267,41 @@ namespace VolusionAccess.Models.Order
 		}
 
 		[ XmlElement( ElementName = "Shipping_Locked" ) ]
-		public string IsShippingLockedStr{ get; set; }
+		public string IsShippingLockedStr { get; set; }
 
 		[ XmlElement( ElementName = "ShippingMethodID" ) ]
-		public int ShippingMethodID{ get; set; }
+		public int ShippingMethodID { get; set; }
 
 		[ XmlElement( ElementName = "ShipPostalCode" ) ]
-		public string ShipPostalCode{ get; set; }
+		public string ShipPostalCode { get; set; }
 
 		[ XmlElement( ElementName = "ShipResidential" ) ]
-		public string ShipResidential{ get; set; }
+		public string ShipResidential { get; set; }
 
 		[ XmlElement( ElementName = "ShipState" ) ]
-		public string ShipState{ get; set; }
+		public string ShipState { get; set; }
 		#endregion
 
 		[ XmlElement( ElementName = "OrderDetails" ) ]
-		public List< VolusionOrderDetails > OrderDetails{ get; set; }
+		public List< VolusionOrderDetails > OrderDetails { get; set; }
 
 		public int TimeZoneOffset
 		{
 			get
 			{
-				if( this._timeZoneOffset == 0 )
+				if( this._timeZoneOffset == int.MinValue )
 					this._timeZoneOffset = this.OrderDate != DateTime.MinValue && this.OrderDateUtc != DateTime.MinValue ? ( this.OrderDate - this.OrderDateUtc ).Hours : DEFAULT_TIME_ZONE;
 				return this._timeZoneOffset;
 			}
 		}
 
-		private int _timeZoneOffset;
+		private int _timeZoneOffset = int.MinValue;
 		private readonly CultureInfo _culture = new CultureInfo( "en-US" );
+
+		private DateTime GetUtcDate( DateTime localDateTime )
+		{
+			return localDateTime != DateTime.MinValue ? localDateTime.AddHours( -this.TimeZoneOffset ) : DateTime.MinValue;
+		}
 
 		public bool Equals( VolusionOrder other )
 		{
