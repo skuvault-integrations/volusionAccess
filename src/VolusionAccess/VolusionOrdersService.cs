@@ -48,29 +48,26 @@ namespace VolusionAccess
 		public IEnumerable< VolusionOrder > GetNewOrUpdatedOrders( DateTime startDateUtc, DateTime endDateUtc )
 		{
 			startDateUtc = startDateUtc.AddSeconds( -startDateUtc.Second );
-			var orders = GetFilteredNewOrUpdatedOrders( x => ( x.OrderDateUtc >= startDateUtc && x.OrderDateUtc <= endDateUtc ) ||
-			                                                 ( x.LastModifiedUtc >= startDateUtc && x.LastModifiedUtc <= endDateUtc ) );
+			var orders = GetFilteredNewOrUpdatedOrders( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) );
 			return orders.ToList();
 		}
 
 		public async Task< IEnumerable< VolusionOrder > > GetNewOrUpdatedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
 		{
 			startDateUtc = startDateUtc.AddSeconds( -startDateUtc.Second );
-			var orders = await GetFilteredNewOrUpdatedOrdersAsync( x => ( x.OrderDateUtc >= startDateUtc && x.OrderDateUtc <= endDateUtc ) ||
-			                                                            ( x.LastModifiedUtc >= startDateUtc && x.LastModifiedUtc <= endDateUtc ) );
+			var orders = await GetFilteredNewOrUpdatedOrdersAsync( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) );
 			return orders.ToList();
 		}
 
 		public IEnumerable< VolusionOrder > GetNotFinishedOrders( DateTime startDateUtc, DateTime endDateUtc )
 		{
 			startDateUtc = startDateUtc.AddSeconds( -startDateUtc.Second );
-			var statuses = GetAllStatusesExceptShippedAndCancelled();
+			var notFinishedStatuses = this.GetNotFinishedStatuses();
 			var orders = new HashSet< VolusionOrder >();
-			foreach( var status in statuses )
+			foreach( var status in notFinishedStatuses )
 			{
 				var ordersPortion = this.GetFilteredOrders( OrderColumns.OrderStatus, status ).ToList();
-				var filtered = ordersPortion.Where( x => ( x.OrderDateUtc >= startDateUtc && x.OrderDateUtc <= endDateUtc ) ||
-				                                         ( x.LastModifiedUtc >= startDateUtc && x.LastModifiedUtc <= endDateUtc ) );
+				var filtered = ordersPortion.Where( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) );
 				this.AddOrders( orders, filtered );
 			}
 
@@ -80,10 +77,10 @@ namespace VolusionAccess
 		public async Task< IEnumerable< VolusionOrder > > GetNotFinishedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
 		{
 			startDateUtc = startDateUtc.AddSeconds( -startDateUtc.Second );
-			var statuses = GetAllStatusesExceptShippedAndCancelled();
+			var notFinishedStatuses = this.GetNotFinishedStatuses();
 			var orders = new HashSet< VolusionOrder >();
 			var tasks = new List< Task< IEnumerable< VolusionOrder > > >();
-			foreach( var status in statuses )
+			foreach( var status in notFinishedStatuses )
 			{
 				tasks.Add( this.GetFilteredOrdersAsync( OrderColumns.OrderStatus, status ) );
 			}
@@ -92,8 +89,7 @@ namespace VolusionAccess
 			foreach( var task in tasks )
 			{
 				var ordersPortion = task.Result.ToList();
-				var filtered = ordersPortion.Where( x => ( x.OrderDateUtc >= startDateUtc && x.OrderDateUtc <= endDateUtc ) ||
-				                                         ( x.LastModifiedUtc >= startDateUtc && x.LastModifiedUtc <= endDateUtc ) );
+				var filtered = ordersPortion.Where( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) );
 				this.AddOrders( orders, filtered );
 			}
 
@@ -102,11 +98,12 @@ namespace VolusionAccess
 
 		public IEnumerable< VolusionOrder > GetFinishedOrders( IEnumerable< int > ordersIds )
 		{
+			var finishedStatuses = this.GetFinishedStatuses();
 			var orders = new List< VolusionOrder >();
 			foreach( var orderId in ordersIds )
 			{
 				var order = this.GetOrder( orderId );
-				if( order.OrderStatus == VolusionOrderStatusEnum.Shipped || order.OrderStatus == VolusionOrderStatusEnum.Cancelled )
+				if( finishedStatuses.Contains( order.OrderStatus.ToString() ) )
 					orders.Add( order );
 			}
 
@@ -205,12 +202,19 @@ namespace VolusionAccess
 
 		private async Task AddFinishedOrdersAsync( List< VolusionOrder > orders, List< Task< VolusionOrder > > tasks )
 		{
+			var finishedStatuses = this.GetFinishedStatuses();
 			await Task.WhenAll( tasks ).ConfigureAwait( false );
 			orders.AddRange( tasks.Select( t => t.Result )
-				.Where( o => o != null && ( o.OrderStatus == VolusionOrderStatusEnum.Shipped || o.OrderStatus == VolusionOrderStatusEnum.Cancelled ) ) );
+				.Where( o => o != null && finishedStatuses.Contains( o.OrderStatus.ToString() ) ) );
 		}
 
-		private IEnumerable< String > GetAllStatusesExceptShippedAndCancelled()
+		private bool DoesOrderCreatedOrUpdatedInDateRange( VolusionOrder order, DateTime startDateUtc, DateTime endDateUtc )
+		{
+			return ( order.OrderDateUtc >= startDateUtc && order.OrderDateUtc <= endDateUtc ) ||
+			       ( order.LastModifiedUtc >= startDateUtc && order.LastModifiedUtc <= endDateUtc );
+		}
+
+		private IEnumerable< String > GetNotFinishedStatuses()
 		{
 			return new List< String >
 			{
@@ -225,7 +229,16 @@ namespace VolusionAccess
 				"Partially Backordered", //VolusionOrderStatusEnum.PartiallyBackordered,
 				VolusionOrderStatusEnum.Backordered.ToString(),
 				"See Line Items", //VolusionOrderStatusEnum.SeeLineItems,
-				"See Order Notes", //VolusionOrderStatusEnum.SeeOrderNotes,
+				"See Order Notes" //VolusionOrderStatusEnum.SeeOrderNotes,
+			};
+		}
+
+		private IList< String > GetFinishedStatuses()
+		{
+			return new List< String >
+			{
+				VolusionOrderStatusEnum.Shipped.ToString(),
+				VolusionOrderStatusEnum.Cancelled.ToString(),
 				"Partially Returned", //VolusionOrderStatusEnum.PartiallyReturned,
 				VolusionOrderStatusEnum.Returned.ToString()
 			};

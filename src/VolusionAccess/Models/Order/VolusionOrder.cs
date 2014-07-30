@@ -8,7 +8,7 @@ namespace VolusionAccess.Models.Order
 {
 	public class VolusionOrder: IEquatable< VolusionOrder >
 	{
-		public const int DEFAULT_TIME_ZONE = -5;
+		public const int DEFAULT_TIME_ZONE = -12;
 
 		[ XmlElement( ElementName = "OrderID" ) ]
 		public int Id{ get; set; }
