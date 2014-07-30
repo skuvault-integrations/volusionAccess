@@ -47,27 +47,27 @@ namespace VolusionAccess
 
 		public IEnumerable< VolusionOrder > GetNewOrUpdatedOrders( DateTime startDateUtc, DateTime endDateUtc )
 		{
-			startDateUtc = startDateUtc.AddSeconds( -startDateUtc.Second );
-			var orders = GetFilteredNewOrUpdatedOrders( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) );
+			var dateRange = new VolusionDateRange( startDateUtc, endDateUtc );
+			var orders = GetFilteredNewOrUpdatedOrders( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, dateRange ) );
 			return orders.ToList();
 		}
 
 		public async Task< IEnumerable< VolusionOrder > > GetNewOrUpdatedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
 		{
-			startDateUtc = startDateUtc.AddSeconds( -startDateUtc.Second );
-			var orders = await GetFilteredNewOrUpdatedOrdersAsync( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) );
+			var dateRange = new VolusionDateRange( startDateUtc, endDateUtc );
+			var orders = await GetFilteredNewOrUpdatedOrdersAsync( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, dateRange ) );
 			return orders.ToList();
 		}
 
 		public IEnumerable< VolusionOrder > GetNotFinishedOrders( DateTime startDateUtc, DateTime endDateUtc )
 		{
-			startDateUtc = startDateUtc.AddSeconds( -startDateUtc.Second );
+			var dateRange = new VolusionDateRange( startDateUtc, endDateUtc );
 			var notFinishedStatuses = this.GetNotFinishedStatuses();
 			var orders = new HashSet< VolusionOrder >();
 			foreach( var status in notFinishedStatuses )
 			{
 				var ordersPortion = this.GetFilteredOrders( OrderColumns.OrderStatus, status ).ToList();
-				var filtered = ordersPortion.Where( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) );
+				var filtered = ordersPortion.Where( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, dateRange ) );
 				this.AddOrders( orders, filtered );
 			}
 
@@ -76,7 +76,7 @@ namespace VolusionAccess
 
 		public async Task< IEnumerable< VolusionOrder > > GetNotFinishedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
 		{
-			startDateUtc = startDateUtc.AddSeconds( -startDateUtc.Second );
+			var dateRange = new VolusionDateRange( startDateUtc, endDateUtc );
 			var notFinishedStatuses = this.GetNotFinishedStatuses();
 			var orders = new HashSet< VolusionOrder >();
 			var tasks = new List< Task< IEnumerable< VolusionOrder > > >();
@@ -89,7 +89,7 @@ namespace VolusionAccess
 			foreach( var task in tasks )
 			{
 				var ordersPortion = task.Result.ToList();
-				var filtered = ordersPortion.Where( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) );
+				var filtered = ordersPortion.Where( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, dateRange ) );
 				this.AddOrders( orders, filtered );
 			}
 
@@ -208,10 +208,18 @@ namespace VolusionAccess
 				.Where( o => o != null && finishedStatuses.Contains( o.OrderStatus.ToString() ) ) );
 		}
 
-		private bool DoesOrderCreatedOrUpdatedInDateRange( VolusionOrder order, DateTime startDateUtc, DateTime endDateUtc )
+		private bool DoesOrderCreatedOrUpdatedInDateRange( VolusionOrder order, VolusionDateRange dateRange )
 		{
-			return ( order.OrderDateUtc >= startDateUtc && order.OrderDateUtc <= endDateUtc ) ||
-			       ( order.LastModifiedUtc >= startDateUtc && order.LastModifiedUtc <= endDateUtc );
+			if( order.OrderDateUtc != DateTime.MinValue )
+			{
+				return ( order.OrderDateUtc >= dateRange.StartDateUtc && order.OrderDateUtc <= dateRange.EndDateUtc ) ||
+				       ( order.LastModifiedUtc >= dateRange.StartDateUtc && order.LastModifiedUtc <= dateRange.EndDateUtc );
+			}
+			else
+			{
+				return ( order.OrderDate >= dateRange.ReservedStartDate && order.OrderDate <= dateRange.ReservedEndDate ) ||
+				       ( order.LastModified >= dateRange.ReservedStartDate && order.LastModified <= dateRange.ReservedEndDate );
+			}
 		}
 
 		private IEnumerable< String > GetNotFinishedStatuses()
@@ -244,5 +252,21 @@ namespace VolusionAccess
 			};
 		}
 		#endregion misc
+
+		private class VolusionDateRange
+		{
+			public DateTime StartDateUtc { get; private set; }
+			public DateTime EndDateUtc { get; private set; }
+			public DateTime ReservedStartDate { get; private set; }
+			public DateTime ReservedEndDate { get; private set; }
+
+			public VolusionDateRange( DateTime startDateUtc, DateTime endDateUtc )
+			{
+				this.StartDateUtc = startDateUtc.AddSeconds( -startDateUtc.Second );
+				this.EndDateUtc = endDateUtc;
+				this.ReservedStartDate = this.StartDateUtc.AddHours( -12 );
+				this.ReservedEndDate = this.EndDateUtc.AddHours( -12 );
+			}
+		}
 	}
 }
