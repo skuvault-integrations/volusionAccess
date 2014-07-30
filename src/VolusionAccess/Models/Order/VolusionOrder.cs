@@ -114,7 +114,7 @@ namespace VolusionAccess.Models.Order
 		[ XmlIgnore ]
 		public DateTime OrderDateUtc
 		{
-			get { return string.IsNullOrEmpty( this.OrderDateUtcStr ) ? this.OrderDate.AddHours( -_defaultTimeZone ) : DateTime.Parse( this.OrderDateUtcStr, this._culture ); }
+			get { return string.IsNullOrEmpty( this.OrderDateUtcStr ) ? this.OrderDate.AddHours( -this.DefaultTimeZone ) : DateTime.Parse( this.OrderDateUtcStr, this._culture ); }
 		}
 
 		[ XmlIgnore ]
@@ -283,25 +283,21 @@ namespace VolusionAccess.Models.Order
 		[ XmlElement( ElementName = "OrderDetails" ) ]
 		public List< VolusionOrderDetails > OrderDetails { get; set; }
 
+		[ XmlIgnore ]
+		public int DefaultTimeZone { get; internal set; }
+
 		public int TimeZone
 		{
 			get
 			{
 				if( this._timeZone == int.MinValue )
-					this._timeZone = this.OrderDate == DateTime.MinValue || this.OrderDateUtc == DateTime.MinValue ? _defaultTimeZone : ( this.OrderDate - this.OrderDateUtc ).Hours;
+					this._timeZone = this.OrderDate == DateTime.MinValue || this.OrderDateUtc == DateTime.MinValue ? this.DefaultTimeZone : ( this.OrderDate - this.OrderDateUtc ).Hours;
 				return this._timeZone;
 			}
 		}
 
 		private int _timeZone = int.MinValue;
-		private static int _defaultTimeZone;
 		private readonly CultureInfo _culture = new CultureInfo( "en-US" );
-
-		internal static void SetDefaultTimeZone( int defaultTimeZone )
-		{
-			if( _defaultTimeZone == 0 )
-				_defaultTimeZone = defaultTimeZone;
-		}
 
 		private DateTime GetUtcDate( DateTime localDateTime )
 		{

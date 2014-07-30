@@ -14,6 +14,7 @@ namespace VolusionAccessTests.Orders
 	{
 		private readonly IVolusionFactory VolusionFactory = new VolusionFactory();
 		private VolusionConfig Config;
+		private int TimeZone = -8;
 
 		[ SetUp ]
 		public void Init()
@@ -24,7 +25,7 @@ namespace VolusionAccessTests.Orders
 			var testConfig = cc.Read< TestConfig >( credentialsFilePath, new CsvFileDescription { FirstLineHasColumnNames = true } ).FirstOrDefault();
 
 			if( testConfig != null )
-				this.Config = new VolusionConfig( testConfig.ShopName, testConfig.UserName, testConfig.Password, -8 );
+				this.Config = new VolusionConfig( testConfig.ShopName, testConfig.UserName, testConfig.Password, TimeZone );
 		}
 
 		[ Test ]
@@ -32,7 +33,9 @@ namespace VolusionAccessTests.Orders
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
 			var order = service.GetOrder( 75 );
+
 			order.Should().NotBeNull();
+			order.DefaultTimeZone.Should().Be( TimeZone );
 		}
 
 		[ Test ]
@@ -42,6 +45,7 @@ namespace VolusionAccessTests.Orders
 			var order = await service.GetOrderAsync( 1 );
 
 			order.Should().NotBeNull();
+			order.DefaultTimeZone.Should().Be( TimeZone );
 		}
 
 		[ Test ]
@@ -51,6 +55,10 @@ namespace VolusionAccessTests.Orders
 			var orders = service.GetNewOrUpdatedOrders();
 
 			orders.Count().Should().BeGreaterThan( 0 );
+			foreach( var order in orders )
+			{
+				order.DefaultTimeZone.Should().Be( TimeZone );
+			}
 		}
 
 		[ Test ]
@@ -60,6 +68,10 @@ namespace VolusionAccessTests.Orders
 			var orders = await service.GetNewOrUpdatedOrdersAsync();
 
 			orders.Count().Should().BeGreaterThan( 0 );
+			foreach( var order in orders )
+			{
+				order.DefaultTimeZone.Should().Be( TimeZone );
+			}
 		}
 
 		[ Test ]
@@ -69,6 +81,10 @@ namespace VolusionAccessTests.Orders
 			var orders = service.GetNewOrUpdatedOrders( DateTime.UtcNow.AddDays( -10 ), DateTime.UtcNow );
 
 			orders.Count().Should().BeGreaterThan( 0 );
+			foreach( var order in orders )
+			{
+				order.DefaultTimeZone.Should().Be( TimeZone );
+			}
 		}
 
 		[ Test ]
@@ -78,15 +94,23 @@ namespace VolusionAccessTests.Orders
 			var orders = await service.GetNewOrUpdatedOrdersAsync( DateTime.UtcNow.AddDays( -10 ), DateTime.UtcNow );
 
 			orders.Count().Should().BeGreaterThan( 0 );
+			foreach( var order in orders )
+			{
+				order.DefaultTimeZone.Should().Be( TimeZone );
+			}
 		}
 
 		[ Test ]
 		public void GetNotFinishedOrders()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = service.GetNotFinishedOrders( new DateTime( 2014, 7, 30, 12, 30, 0 ), new DateTime( 2014, 7, 30, 13, 30, 0 ) );
+			var orders = service.GetNotFinishedOrders( new DateTime( 2013, 7, 30, 12, 30, 0 ), new DateTime( 2014, 7, 30, 13, 30, 0 ) );
 
 			orders.Count().Should().BeGreaterThan( 0 );
+			foreach( var order in orders )
+			{
+				order.DefaultTimeZone.Should().Be( TimeZone );
+			}
 		}
 
 		[ Test ]
@@ -96,6 +120,10 @@ namespace VolusionAccessTests.Orders
 			var orders = await service.GetNotFinishedOrdersAsync( new DateTime( 2013, 7, 30, 7, 30, 0 ), new DateTime( 2014, 7, 30, 8, 30, 0 ) );
 
 			orders.Count().Should().BeGreaterThan( 0 );
+			foreach( var order in orders )
+			{
+				order.DefaultTimeZone.Should().Be( TimeZone );
+			}
 		}
 
 		[ Test ]
@@ -105,6 +133,10 @@ namespace VolusionAccessTests.Orders
 			var orders = service.GetFinishedOrders( new List< int > { 52, 55 } );
 
 			orders.Count().Should().BeGreaterThan( 0 );
+			foreach( var order in orders )
+			{
+				order.DefaultTimeZone.Should().Be( TimeZone );
+			}
 		}
 
 		[ Test ]
@@ -114,6 +146,10 @@ namespace VolusionAccessTests.Orders
 			var orders = await service.GetFinishedOrdersAsync( new List< int > { 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 777 } );
 
 			orders.Count().Should().BeGreaterThan( 0 );
+			foreach( var order in orders )
+			{
+				order.DefaultTimeZone.Should().Be( TimeZone );
+			}
 		}
 	}
 }

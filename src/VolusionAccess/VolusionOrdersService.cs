@@ -13,13 +13,14 @@ namespace VolusionAccess
 {
 	public class VolusionOrdersService : IVolusionOrdersService
 	{
+		private readonly VolusionConfig _config;
 		private readonly WebRequestServices _webRequestServices;
 
 		public VolusionOrdersService( VolusionConfig config )
 		{
 			Condition.Requires( config, "config" ).IsNotNull();
 
-			VolusionOrder.SetDefaultTimeZone( config.DefaultTimeZone );
+			this._config = config;
 			this._webRequestServices = new WebRequestServices( config );
 		}
 
@@ -141,6 +142,7 @@ namespace VolusionAccess
 			if( ordersPortion != null && ordersPortion.Orders != null )
 				orders.AddRange( ordersPortion.Orders );
 
+			this.SetDefaultTimeZone( orders );
 			return orders;
 		}
 
@@ -153,6 +155,7 @@ namespace VolusionAccess
 			if( ordersPortion != null && ordersPortion.Orders != null )
 				orders.AddRange( ordersPortion.Orders );
 
+			this.SetDefaultTimeZone( orders );
 			return orders;
 		}
 
@@ -167,6 +170,7 @@ namespace VolusionAccess
 				if( ordersPortion == null || ordersPortion.Orders == null || ordersPortion.Orders.Count == 0 )
 					return orders;
 
+				this.SetDefaultTimeZone( ordersPortion.Orders );
 				this.AddOrders( orders, ordersPortion.Orders.Where( predicate ) );
 			}
 		}
@@ -182,6 +186,7 @@ namespace VolusionAccess
 				if( ordersPortion == null || ordersPortion.Orders == null || ordersPortion.Orders.Count == 0 )
 					return orders;
 
+				this.SetDefaultTimeZone( ordersPortion.Orders );
 				this.AddOrders( orders, ordersPortion.Orders.Where( predicate ) );
 			}
 		}
@@ -213,6 +218,14 @@ namespace VolusionAccess
 		{
 			return ( order.OrderDateUtc >= startDateUtc && order.OrderDateUtc <= endDateUtc ) ||
 			       ( order.LastModifiedUtc >= startDateUtc && order.LastModifiedUtc <= endDateUtc );
+		}
+
+		private void SetDefaultTimeZone( IEnumerable< VolusionOrder > orders )
+		{
+			foreach( var order in orders )
+			{
+				order.DefaultTimeZone = this._config.DefaultTimeZone;
+			}
 		}
 
 		private IEnumerable< String > GetNotFinishedStatuses()

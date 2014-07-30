@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using Netco.Logging;
 using VolusionAccess.Misc;
 using VolusionAccess.Models.Configuration;
 
