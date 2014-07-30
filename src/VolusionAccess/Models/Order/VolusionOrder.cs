@@ -8,8 +8,6 @@ namespace VolusionAccess.Models.Order
 {
 	public class VolusionOrder : IEquatable< VolusionOrder >
 	{
-		public const int DEFAULT_TIME_ZONE = -12;
-
 		[ XmlElement( ElementName = "OrderID" ) ]
 		public int Id { get; set; }
 
@@ -116,11 +114,7 @@ namespace VolusionAccess.Models.Order
 		[ XmlIgnore ]
 		public DateTime OrderDateUtc
 		{
-			get
-			{
-				return !string.IsNullOrEmpty( this.OrderDateUtcStr ) ? DateTime.Parse( this.OrderDateUtcStr, this._culture ) :
-					this.OrderDate != DateTime.MinValue ? this.OrderDate.AddHours( -DEFAULT_TIME_ZONE ) : DateTime.MinValue;
-			}
+			get { return string.IsNullOrEmpty( this.OrderDateUtcStr ) ? this.OrderDate.AddHours( -_defaultTimeZone ) : DateTime.Parse( this.OrderDateUtcStr, this._culture ); }
 		}
 
 		[ XmlIgnore ]
@@ -289,22 +283,29 @@ namespace VolusionAccess.Models.Order
 		[ XmlElement( ElementName = "OrderDetails" ) ]
 		public List< VolusionOrderDetails > OrderDetails { get; set; }
 
-		public int TimeZoneOffset
+		public int TimeZone
 		{
 			get
 			{
-				if( this._timeZoneOffset == int.MinValue )
-					this._timeZoneOffset = this.OrderDate != DateTime.MinValue && this.OrderDateUtc != DateTime.MinValue ? ( this.OrderDate - this.OrderDateUtc ).Hours : DEFAULT_TIME_ZONE;
-				return this._timeZoneOffset;
+				if( this._timeZone == int.MinValue )
+					this._timeZone = this.OrderDate == DateTime.MinValue || this.OrderDateUtc == DateTime.MinValue ? _defaultTimeZone : ( this.OrderDate - this.OrderDateUtc ).Hours;
+				return this._timeZone;
 			}
 		}
 
-		private int _timeZoneOffset = int.MinValue;
+		private int _timeZone = int.MinValue;
+		private static int _defaultTimeZone;
 		private readonly CultureInfo _culture = new CultureInfo( "en-US" );
+
+		internal static void SetDefaultTimeZone( int defaultTimeZone )
+		{
+			if( _defaultTimeZone == 0 )
+				_defaultTimeZone = defaultTimeZone;
+		}
 
 		private DateTime GetUtcDate( DateTime localDateTime )
 		{
-			return localDateTime != DateTime.MinValue ? localDateTime.AddHours( -this.TimeZoneOffset ) : DateTime.MinValue;
+			return localDateTime == DateTime.MinValue ? DateTime.MinValue : localDateTime.AddHours( -this.TimeZone );
 		}
 
 		public bool Equals( VolusionOrder other )

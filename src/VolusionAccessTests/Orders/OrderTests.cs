@@ -24,15 +24,14 @@ namespace VolusionAccessTests.Orders
 			var testConfig = cc.Read< TestConfig >( credentialsFilePath, new CsvFileDescription { FirstLineHasColumnNames = true } ).FirstOrDefault();
 
 			if( testConfig != null )
-				this.Config = new VolusionConfig( testConfig.ShopName, testConfig.UserName, testConfig.Password );
+				this.Config = new VolusionConfig( testConfig.ShopName, testConfig.UserName, testConfig.Password, -8 );
 		}
 
 		[ Test ]
 		public void GetOrder()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var order = service.GetOrder( 1 );
-
+			var order = service.GetOrder( 75 );
 			order.Should().NotBeNull();
 		}
 
@@ -85,7 +84,7 @@ namespace VolusionAccessTests.Orders
 		public void GetNotFinishedOrders()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = service.GetNotFinishedOrders( new DateTime( 2014, 7, 25, 8, 13, 5 ), new DateTime( 2014, 7, 25, 8, 40, 40 ) );
+			var orders = service.GetNotFinishedOrders( new DateTime( 2014, 7, 30, 12, 30, 0 ), new DateTime( 2014, 7, 30, 13, 30, 0 ) );
 
 			orders.Count().Should().BeGreaterThan( 0 );
 		}
@@ -94,7 +93,7 @@ namespace VolusionAccessTests.Orders
 		public async Task GetNotFinishedOrdersAsync()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = await service.GetNotFinishedOrdersAsync( new DateTime( 2014, 7, 25, 8, 13, 5 ), new DateTime( 2014, 7, 25, 8, 40, 40 ) );
+			var orders = await service.GetNotFinishedOrdersAsync( new DateTime( 2013, 7, 30, 7, 30, 0 ), new DateTime( 2014, 7, 30, 8, 30, 0 ) );
 
 			orders.Count().Should().BeGreaterThan( 0 );
 		}

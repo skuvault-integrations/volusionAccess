@@ -19,6 +19,7 @@ namespace VolusionAccess
 		{
 			Condition.Requires( config, "config" ).IsNotNull();
 
+			VolusionOrder.SetDefaultTimeZone( config.DefaultTimeZone );
 			this._webRequestServices = new WebRequestServices( config );
 		}
 
