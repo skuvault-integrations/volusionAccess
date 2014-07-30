@@ -116,7 +116,11 @@ namespace VolusionAccess.Models.Order
 		[ XmlIgnore ]
 		public DateTime OrderDateUtc
 		{
-			get { return !string.IsNullOrEmpty( this.OrderDateUtcStr ) ? DateTime.Parse( this.OrderDateUtcStr, this._culture ) : this.GetUtcDate( this.OrderDate ); }
+			get
+			{
+				return !string.IsNullOrEmpty( this.OrderDateUtcStr ) ? DateTime.Parse( this.OrderDateUtcStr, this._culture ) :
+					this.OrderDate != DateTime.MinValue ? this.OrderDate.AddHours( -DEFAULT_TIME_ZONE ) : DateTime.MinValue;
+			}
 		}
 
 		[ XmlIgnore ]
