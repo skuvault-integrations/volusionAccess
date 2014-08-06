@@ -14,7 +14,7 @@ namespace VolusionAccessTests.Orders
 	{
 		private readonly IVolusionFactory VolusionFactory = new VolusionFactory();
 		private VolusionConfig Config;
-		private int TimeZone = -8;
+		private int TimeZone = -7;
 
 		[ SetUp ]
 		public void Init()
@@ -32,7 +32,7 @@ namespace VolusionAccessTests.Orders
 		public void GetOrder()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var order = service.GetOrder( 75 );
+			var order = service.GetOrder( 34109 );
 
 			order.Should().NotBeNull();
 			order.DefaultTimeZone.Should().Be( TimeZone );
@@ -117,7 +117,7 @@ namespace VolusionAccessTests.Orders
 		public async Task GetNotFinishedOrdersAsync()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = await service.GetNotFinishedOrdersAsync( new DateTime( 2013, 7, 30, 7, 30, 0 ), new DateTime( 2014, 7, 30, 8, 30, 0 ) );
+			var orders = await service.GetNotFinishedOrdersAsync( new DateTime( 2014, 7, 6, 11, 45, 04 ), new DateTime( 2014, 8, 6, 12, 45, 35 ) );
 
 			orders.Count().Should().BeGreaterThan( 0 );
 			foreach( var order in orders )

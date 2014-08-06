@@ -49,21 +49,21 @@ namespace VolusionAccess
 
 		public IEnumerable< VolusionOrder > GetNewOrUpdatedOrders( DateTime startDateUtc, DateTime endDateUtc )
 		{
-			startDateUtc = startDateUtc.AddSeconds( -startDateUtc.Second );
+			startDateUtc = startDateUtc.AddMinutes( -1 );
 			var orders = GetFilteredNewOrUpdatedOrders( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) );
 			return orders.ToList();
 		}
 
 		public async Task< IEnumerable< VolusionOrder > > GetNewOrUpdatedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
 		{
-			startDateUtc = startDateUtc.AddSeconds( -startDateUtc.Second );
+			startDateUtc = startDateUtc.AddMinutes( -1 );
 			var orders = await GetFilteredNewOrUpdatedOrdersAsync( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) );
 			return orders.ToList();
 		}
 
 		public IEnumerable< VolusionOrder > GetNotFinishedOrders( DateTime startDateUtc, DateTime endDateUtc )
 		{
-			startDateUtc = startDateUtc.AddSeconds( -startDateUtc.Second );
+			startDateUtc = startDateUtc.AddMinutes( -1 );
 			var notFinishedStatuses = this.GetNotFinishedStatuses();
 			var orders = new HashSet< VolusionOrder >();
 			foreach( var status in notFinishedStatuses )
@@ -78,7 +78,7 @@ namespace VolusionAccess
 
 		public async Task< IEnumerable< VolusionOrder > > GetNotFinishedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
 		{
-			startDateUtc = startDateUtc.AddSeconds( -startDateUtc.Second );
+			startDateUtc = startDateUtc.AddMinutes( -1 );
 			var notFinishedStatuses = this.GetNotFinishedStatuses();
 			var orders = new HashSet< VolusionOrder >();
 			var tasks = new List< Task< IEnumerable< VolusionOrder > > >();
@@ -94,6 +94,10 @@ namespace VolusionAccess
 				var filtered = ordersPortion.Where( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) );
 				this.AddOrders( orders, filtered );
 			}
+
+			//TODO: Remove it if all works fine
+			VolusionLogger.Log.Trace( "Received order ids: {0}",
+				string.Join( ",", orders.Select( x => x.Id ) ) );
 
 			return orders;
 		}
@@ -216,8 +220,15 @@ namespace VolusionAccess
 
 		private bool DoesOrderCreatedOrUpdatedInDateRange( VolusionOrder order, DateTime startDateUtc, DateTime endDateUtc )
 		{
-			return ( order.OrderDateUtc >= startDateUtc && order.OrderDateUtc <= endDateUtc ) ||
-			       ( order.LastModifiedUtc >= startDateUtc && order.LastModifiedUtc <= endDateUtc );
+			var isValid = ( order.OrderDateUtc >= startDateUtc && order.OrderDateUtc <= endDateUtc ) ||
+			              ( order.LastModifiedUtc >= startDateUtc && order.LastModifiedUtc <= endDateUtc );
+			if( !isValid )
+			{
+				//TODO: Remove it if all works fine
+				VolusionLogger.Log.Trace( "Order '{0}' with OrderDateUtc '{1}' LastModifiedUtc '{2}' DefaultTimeZone '{3}' and TimeZone '{4}' isn't in date range startDateUtc '{5}' and endDateUtc '{6}'",
+					order.Id, order.OrderDateUtc, order.LastModifiedUtc, order.DefaultTimeZone, order.TimeZone, startDateUtc, endDateUtc );
+			}
+			return isValid;
 		}
 
 		private void SetDefaultTimeZone( IEnumerable< VolusionOrder > orders )
