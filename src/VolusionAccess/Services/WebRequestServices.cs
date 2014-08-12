@@ -56,14 +56,14 @@ namespace VolusionAccess.Services
 		{
 			var request = this.CreateServicePostRequest( endpoint, xmlContent );
 			using( var response = ( HttpWebResponse )request.GetResponse() )
-				this.LogUpdateInfo( endpoint, response.StatusCode, xmlContent );
+				this.LogUpdateInfo( request.Address.OriginalString, response.StatusCode, xmlContent );
 		}
 
 		public async Task PostDataAsync( string endpoint, string xmlContent )
 		{
 			var request = this.CreateServicePostRequest( endpoint, xmlContent );
 			using( var response = await request.GetResponseAsync() )
-				this.LogUpdateInfo( endpoint, ( ( HttpWebResponse )response ).StatusCode, xmlContent );
+				this.LogUpdateInfo( request.Address.OriginalString, ( ( HttpWebResponse )response ).StatusCode, xmlContent );
 		}
 
 		#region WebRequest configuration
