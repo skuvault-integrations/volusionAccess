@@ -117,7 +117,7 @@ namespace VolusionAccessTests.Orders
 		public async Task GetNotFinishedOrdersAsync()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = await service.GetNotFinishedOrdersAsync( new DateTime( 2014, 7, 6, 11, 45, 04 ), new DateTime( 2014, 8, 6, 12, 45, 35 ) );
+			var orders = await service.GetNotFinishedOrdersAsync( DateTime.Now.AddDays( -20 ), DateTime.Now );
 
 			orders.Count().Should().BeGreaterThan( 0 );
 			foreach( var order in orders )

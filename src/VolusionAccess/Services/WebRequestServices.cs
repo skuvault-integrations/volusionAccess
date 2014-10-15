@@ -27,12 +27,19 @@ namespace VolusionAccess.Services
 
 		public T GetResponseForSpecificUrl< T >( string url )
 		{
-			T result;
-			var request = this.CreateGetServiceGetRequest( url );
-			using( var response = request.GetResponse() )
-				result = ParseResponse< T >( response );
+			try
+			{
+				T result;
+				var request = this.CreateGetServiceGetRequest( url );
+				using( var response = request.GetResponse() )
+					result = ParseResponse< T >( response );
 
-			return result;
+				return result;
+			}
+			catch( Exception ex )
+			{
+				throw new Exception( "Can't to get data for " + this._config.ShopName, ex );
+			}
 		}
 
 		public async Task< T > GetResponseAsync< T >( string commandParams )
@@ -44,26 +51,47 @@ namespace VolusionAccess.Services
 
 		public async Task< T > GetResponseForSpecificUrlAsync< T >( string url )
 		{
-			T result;
-			var request = this.CreateGetServiceGetRequest( url );
-			using( var response = await request.GetResponseAsync() )
-				result = ParseResponse< T >( response );
+			try
+			{
+				T result;
+				var request = this.CreateGetServiceGetRequest( url );
+				using( var response = await request.GetResponseAsync() )
+					result = ParseResponse< T >( response );
 
-			return result;
+				return result;
+			}
+			catch( Exception ex )
+			{
+				throw new Exception( "Can't to get data for " + this._config.ShopName, ex );
+			}
 		}
 
 		public void PostData( string endpoint, string xmlContent )
 		{
-			var request = this.CreateServicePostRequest( endpoint, xmlContent );
-			using( var response = ( HttpWebResponse )request.GetResponse() )
-				this.LogUpdateInfo( request.Address.OriginalString, response.StatusCode, xmlContent );
+			try
+			{
+				var request = this.CreateServicePostRequest( endpoint, xmlContent );
+				using( var response = ( HttpWebResponse )request.GetResponse() )
+					this.LogUpdateInfo( request.Address.OriginalString, response.StatusCode, xmlContent );
+			}
+			catch( Exception ex )
+			{
+				throw new Exception( "Can't to post data for " + this._config.ShopName, ex );
+			}
 		}
 
 		public async Task PostDataAsync( string endpoint, string xmlContent )
 		{
-			var request = this.CreateServicePostRequest( endpoint, xmlContent );
-			using( var response = await request.GetResponseAsync() )
-				this.LogUpdateInfo( request.Address.OriginalString, ( ( HttpWebResponse )response ).StatusCode, xmlContent );
+			try
+			{
+				var request = this.CreateServicePostRequest( endpoint, xmlContent );
+				using( var response = await request.GetResponseAsync() )
+					this.LogUpdateInfo( request.Address.OriginalString, ( ( HttpWebResponse )response ).StatusCode, xmlContent );
+			}
+			catch( Exception ex )
+			{
+				throw new Exception( "Can't to post data for " + this._config.ShopName, ex );
+			}
 		}
 
 		#region WebRequest configuration
@@ -99,7 +127,6 @@ namespace VolusionAccess.Services
 		#region Misc
 		private T ParseResponse< T >( WebResponse response )
 		{
-			var result = default( T );
 			using( var stream = response.GetResponseStream() )
 			{
 				var reader = new StreamReader( stream );
@@ -107,11 +134,19 @@ namespace VolusionAccess.Services
 
 				VolusionLogger.Log.Trace( "Response\t{0} - {1}", response.ResponseUri, xmlResponse );
 
-				if( !String.IsNullOrEmpty( xmlResponse ) )
-					result = XmlSerializeHelpers.Deserialize< T >( xmlResponse );
-			}
+				if( String.IsNullOrEmpty( xmlResponse ) )
+					throw new Exception( "Volusion returned empty result for " + this._config.ShopName + ". One of possible problems is incorrect credentials." );
 
-			return result;
+				try
+				{
+					var result = XmlSerializeHelpers.Deserialize< T >( xmlResponse );
+					return result;
+				}
+				catch( Exception ex )
+				{
+					throw new Exception( "Can't to deserialize response for " + this._config.ShopName, ex );
+				}
+			}
 		}
 
 		private void LogUpdateInfo( string url, HttpStatusCode statusCode, string xmlContent )
