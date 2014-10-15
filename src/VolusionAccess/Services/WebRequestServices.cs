@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using VolusionAccess.Misc;
 using VolusionAccess.Models.Configuration;
@@ -38,7 +39,8 @@ namespace VolusionAccess.Services
 			}
 			catch( Exception ex )
 			{
-				throw new Exception( "Can't to get data for " + this._config.ShopName, ex );
+				var urlWithoutPass = this.GetUrlWithoutPassword( url );
+				throw new Exception( "Can't to get data for " + urlWithoutPass, ex );
 			}
 		}
 
@@ -62,35 +64,38 @@ namespace VolusionAccess.Services
 			}
 			catch( Exception ex )
 			{
-				throw new Exception( "Can't to get data for " + this._config.ShopName, ex );
+				var urlWithoutPass = this.GetUrlWithoutPassword( url );
+				throw new Exception( "Can't to get data for " + urlWithoutPass, ex );
 			}
 		}
 
 		public void PostData( string endpoint, string xmlContent )
 		{
+			var request = this.CreateServicePostRequest( endpoint, xmlContent );
 			try
 			{
-				var request = this.CreateServicePostRequest( endpoint, xmlContent );
 				using( var response = ( HttpWebResponse )request.GetResponse() )
 					this.LogUpdateInfo( request.Address.OriginalString, response.StatusCode, xmlContent );
 			}
 			catch( Exception ex )
 			{
-				throw new Exception( "Can't to post data for " + this._config.ShopName, ex );
+				var urlWithoutPass = this.GetUrlWithoutPassword( request.Address.OriginalString );
+				throw new Exception( "Can't to post data for " + urlWithoutPass, ex );
 			}
 		}
 
 		public async Task PostDataAsync( string endpoint, string xmlContent )
 		{
+			var request = this.CreateServicePostRequest( endpoint, xmlContent );
 			try
 			{
-				var request = this.CreateServicePostRequest( endpoint, xmlContent );
 				using( var response = await request.GetResponseAsync() )
 					this.LogUpdateInfo( request.Address.OriginalString, ( ( HttpWebResponse )response ).StatusCode, xmlContent );
 			}
 			catch( Exception ex )
 			{
-				throw new Exception( "Can't to post data for " + this._config.ShopName, ex );
+				var urlWithoutPass = this.GetUrlWithoutPassword( request.Address.OriginalString );
+				throw new Exception( "Can't to post data for " + urlWithoutPass, ex );
 			}
 		}
 
@@ -132,10 +137,11 @@ namespace VolusionAccess.Services
 				var reader = new StreamReader( stream );
 				var xmlResponse = reader.ReadToEnd();
 
-				VolusionLogger.Log.Trace( "Response\t{0} - {1}", response.ResponseUri, xmlResponse );
+				var urlWithoutPass = this.GetUrlWithoutPassword( response.ResponseUri.ToString() );
+				VolusionLogger.Log.Trace( "Response\t{0} - {1}", urlWithoutPass, xmlResponse );
 
 				if( String.IsNullOrEmpty( xmlResponse ) )
-					throw new Exception( "Volusion returned empty result for " + this._config.ShopName + ". One of possible problems is incorrect credentials." );
+					throw new Exception( "Volusion returned empty result for " + urlWithoutPass + ". One of possible problems is incorrect credentials." );
 
 				try
 				{
@@ -144,14 +150,21 @@ namespace VolusionAccess.Services
 				}
 				catch( Exception ex )
 				{
-					throw new Exception( "Can't to deserialize response for " + this._config.ShopName, ex );
+					throw new Exception( "Can't to deserialize response for " + urlWithoutPass, ex );
 				}
 			}
 		}
 
 		private void LogUpdateInfo( string url, HttpStatusCode statusCode, string xmlContent )
 		{
-			VolusionLogger.Log.Trace( "Response\tPUT/POST call for the url '{0}' has been completed with code '{1}'.\n{2}", url, statusCode, xmlContent );
+			var urlWithoutPass = this.GetUrlWithoutPassword( url );
+			VolusionLogger.Log.Trace( "Response\tPUT/POST call for the url '{0}' has been completed with code '{1}'.\n{2}", urlWithoutPass, statusCode, xmlContent );
+		}
+
+		private string GetUrlWithoutPassword( string url )
+		{
+			var urlWithoutPass = Regex.Replace( url, "(EncryptedPassword=)\\w+", "EncryptedPassword=***" );
+			return urlWithoutPass;
 		}
 		#endregion
 
