@@ -50,17 +50,17 @@ namespace VolusionAccess.Services
 
 		public static string CreateGetOrdersEndpoint()
 		{
-			var endpoint = string.Format( "{0}={1}&{2}={3}",
+			var endpoint = string.Format( "{0}={1}&{2}={3},{4}",
 				VolusionParam.ApiName.Name, VolusionCommand.GetOrders.Command,
-				VolusionParam.SelectColumns.Name, "*" );
+				VolusionParam.SelectColumns.Name, GetOrderColumns(), GetOrderDetailsColumns() );
 			return endpoint;
 		}
 
 		public static string CreateGetFilteredOrdersEndpoint( OrderColumns column, object value )
 		{
-			var endpoint = string.Format( _culture, "{0}={1}&{2}={3}&{4}={5}&{6}={7}",
+			var endpoint = string.Format( _culture, "{0}={1}&{2}={3},{4}&{5}={6}&{7}={8}",
 				VolusionParam.ApiName.Name, VolusionCommand.GetOrders.Command,
-				VolusionParam.SelectColumns.Name, "*",
+				VolusionParam.SelectColumns.Name, GetOrderColumns(), GetOrderDetailsColumns(),
 				VolusionParam.WhereColumn.Name, column.Name,
 				VolusionParam.WhereValue.Name, value );
 			return endpoint;
@@ -94,6 +94,114 @@ namespace VolusionAccess.Services
 				ProductColumns.SalePrice.Name,
 				ProductColumns.IsChildOfSku.Name,
 				ProductColumns.Warehouses.Name );
+			return columns;
+		}
+
+		private static string GetOrderColumns()
+		{
+			var columns = "o.OrderID," +
+			              "o.AccountNumber," +
+			              "o.AccountType," +
+			              "o.AddressValidated," +
+			              "o.Affiliate_Commissionable_Value," +
+			              "o.BankName," +
+			              "o.CustomerID," +
+			              "o.IsAGift," +
+			              "o.IsGTSOrder," +
+			              "o.Locked," +
+			              "o.Order_Entry_System," +
+			              "o.CancelDate," +
+			              "o.CancelReason," +
+			              "o.InitiallyShippedDate," +
+			              "o.LastModified," +
+			              "o.OrderDate," +
+			              "o.OrderDateUtc," +
+			              "o.OrderStatus," +
+			              "o.PaymentAmount," +
+			              "o.PaymentDeclined," +
+			              "o.PaymentMethodID," +
+			              "o.Stock_Priority," +
+			              "o.Total_Payment_Authorized," +
+			              "o.Total_Payment_Received," +
+			              "o.TotalShippingCost," +
+			              "o.SalesTax1," +
+			              "o.SalesTax2," +
+			              "o.SalesTax3," +
+			              "o.SalesTaxRate," +
+			              "o.SalesTaxRate1," +
+			              "o.SalesTaxRate2," +
+			              "o.SalesTaxRate3," +
+			              "o.BillingAddress1," +
+			              "o.BillingAddress2," +
+			              "o.BillingCity," +
+			              "o.BillingCompanyName," +
+			              "o.BillingCountry," +
+			              "o.BillingFaxNumber," +
+			              "o.BillingFirstName," +
+			              "o.BillingLastName," +
+			              "o.BillingPhoneNumber," +
+			              "o.BillingPostalCode," +
+			              "o.BillingState," +
+			              "o.ShipAddress1," +
+			              "o.ShipAddress2," +
+			              "o.ShipCity," +
+			              "o.ShipCompanyName," +
+			              "o.ShipCountry," +
+			              "o.ShipDate," +
+			              "o.ShipFaxNumber," +
+			              "o.ShipFirstName," +
+			              "o.ShipLastName," +
+			              "o.Shipped," +
+			              "o.ShipPhoneNumber," +
+			              "o.Shipping_Locked," +
+			              "o.ShippingMethodID," +
+			              "o.ShipPostalCode," +
+			              "o.ShipResidential," +
+			              "o.ShipState," +
+			              "o.OrderDetails";
+			return columns;
+		}
+
+		private static string GetOrderDetailsColumns()
+		{
+			var columns = "od.OrderDetailID," +
+			              "od.AutoDropShip," +
+			              "od.CategoryID," +
+			              "od.CouponCode," +
+			              "od.CustomLineItem," +
+			              "od.Fixed_ShippingCost," +
+			              "od.Fixed_ShippingCost_Outside_LocalRegion," +
+			              "od.FreeShippingItem," +
+			              "od.GiftTrakNumber," +
+			              "od.GiftWrapCost," +
+			              "od.IsKitID," +
+			              "od.KitID," +
+			              "od.Locked," +
+			              "od.LastModified," +
+			              "od.OnOrder_Qty," +
+			              "od.OptionID," +
+			              "od.OptionIDs," +
+			              "od.Package_Type," +
+			              "od.Product_Keys_Shipped," +
+			              "od.ProductCode," +
+			              "od.ProductID," +
+			              "od.ProductName," +
+			              "od.ProductPrice," +
+			              "od.QtyOnBackOrder," +
+			              "od.QtyOnHold," +
+			              "od.QtyOnPackingSlip," +
+			              "od.QtyShipped," +
+			              "od.Quantity," +
+			              "od.Returned," +
+			              "od.Returned_Date," +
+			              "od.Reward_Points_Given_For_Purchase," +
+			              "od.ShipDate," +
+			              "od.Shipped," +
+			              "od.Ships_By_Itself," +
+			              "od.TaxableProduct," +
+			              "od.TotalPrice," +
+			              "od.Vendor_Price," +
+			              "od.Warehouses";
 			return columns;
 		}
 
