@@ -75,7 +75,7 @@ namespace VolusionAccess
 		}
 		#endregion
 
-		#region GetNewOrUpdatedOrders
+		#region GetNewOrUpdatedOrders by date range
 		public IEnumerable< VolusionOrder > GetNewOrUpdatedOrders( DateTime startDateUtc, DateTime endDateUtc )
 		{
 			startDateUtc = startDateUtc.AddMinutes( -1 );
