@@ -15,7 +15,7 @@ namespace VolusionAccessTests.Orders
 	{
 		private readonly IVolusionFactory VolusionFactory = new VolusionFactory();
 		private VolusionConfig Config;
-		private int TimeZone = -7;
+		private readonly int TimeZone = -7;
 
 		[ SetUp ]
 		public void Init()
@@ -30,6 +30,7 @@ namespace VolusionAccessTests.Orders
 				this.Config = new VolusionConfig( testConfig.ShopName, testConfig.UserName, testConfig.Password, TimeZone );
 		}
 
+		#region GetOrder
 		[ Test ]
 		public void GetOrder()
 		{
@@ -49,7 +50,9 @@ namespace VolusionAccessTests.Orders
 			order.Should().NotBeNull();
 			order.DefaultTimeZone.Should().Be( TimeZone );
 		}
+		#endregion
 
+		#region GetNewOrUpdatedOrders
 		[ Test ]
 		public void GetNewOrUpdatedOrders()
 		{
@@ -75,7 +78,9 @@ namespace VolusionAccessTests.Orders
 				order.DefaultTimeZone.Should().Be( TimeZone );
 			}
 		}
+		#endregion
 
+		#region GetNewOrUpdatedOrdersByDate
 		[ Test ]
 		public void GetNewOrUpdatedOrdersByDate()
 		{
@@ -101,7 +106,9 @@ namespace VolusionAccessTests.Orders
 				order.DefaultTimeZone.Should().Be( TimeZone );
 			}
 		}
+		#endregion
 
+		#region GetNotFinishedOrders
 		[ Test ]
 		public void GetNotFinishedOrders()
 		{
@@ -127,7 +134,9 @@ namespace VolusionAccessTests.Orders
 				order.DefaultTimeZone.Should().Be( TimeZone );
 			}
 		}
+		#endregion
 
+		#region GetFinishedOrders
 		[ Test ]
 		public void GetFinishedOrders()
 		{
@@ -153,5 +162,6 @@ namespace VolusionAccessTests.Orders
 				order.DefaultTimeZone.Should().Be( TimeZone );
 			}
 		}
+		#endregion
 	}
 }
