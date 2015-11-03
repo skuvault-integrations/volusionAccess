@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LINQtoCSV;
+using Netco.Logging;
 using NUnit.Framework;
 using VolusionAccess;
 using VolusionAccess.Models.Configuration;
@@ -19,6 +20,7 @@ namespace VolusionAccessTests.Orders
 		[ SetUp ]
 		public void Init()
 		{
+			NetcoLogger.LoggerFactory = new ConsoleLoggerFactory();
 			const string credentialsFilePath = @"..\..\Files\VolusionCredentials.csv";
 
 			var cc = new CsvContext();
@@ -104,7 +106,7 @@ namespace VolusionAccessTests.Orders
 		public void GetNotFinishedOrders()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = service.GetNotFinishedOrders( new DateTime( 2013, 7, 30, 12, 30, 0 ), new DateTime( 2014, 7, 30, 13, 30, 0 ) );
+			var orders = service.GetNotFinishedOrders( new DateTime( 2015, 10, 30, 12, 30, 0 ), new DateTime( 2015, 11, 3, 13, 30, 0 ) );
 
 			orders.Count().Should().BeGreaterThan( 0 );
 			foreach( var order in orders )
@@ -130,7 +132,7 @@ namespace VolusionAccessTests.Orders
 		public void GetFinishedOrders()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = service.GetFinishedOrders( new List< int > { 52, 55 } );
+			var orders = service.GetFinishedOrders( new List< int > { 71423, 55 } );
 
 			orders.Count().Should().BeGreaterThan( 0 );
 			foreach( var order in orders )

@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CuttingEdge.Conditions, Version=1.2.0.11174, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\CuttingEdge.Conditions.1.2.0.0\lib\NET35\CuttingEdge.Conditions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="FluentAssertions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentAssertions.3.5.0\lib\net45\FluentAssertions.dll</HintPath>
       <Private>True</Private>
@@ -42,6 +46,10 @@
     </Reference>
     <Reference Include="LINQtoCSV">
       <HintPath>..\packages\LINQtoCSV.1.5.0.0\lib\net35\LINQtoCSV.dll</HintPath>
+    </Reference>
+    <Reference Include="Netco, Version=1.5.1.0, Culture=neutral, PublicKeyToken=9d732c15ac2ec2c9, processorArchitecture=MSIL">
+      <HintPath>..\packages\Netco.1.5.1\lib\net45\Netco.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>

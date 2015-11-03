@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LINQtoCSV;
+using Netco.Logging;
 using NUnit.Framework;
 using VolusionAccess;
 using VolusionAccess.Models.Configuration;
@@ -19,6 +20,7 @@ namespace VolusionAccessTests.Products
 		[ SetUp ]
 		public void Init()
 		{
+			NetcoLogger.LoggerFactory = new ConsoleLoggerFactory();
 			const string credentialsFilePath = @"..\..\Files\VolusionCredentials.csv";
 
 			var cc = new CsvContext();

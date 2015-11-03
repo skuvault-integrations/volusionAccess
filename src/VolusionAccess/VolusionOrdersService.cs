@@ -109,7 +109,7 @@ namespace VolusionAccess
 			foreach( var orderId in ordersIds )
 			{
 				var order = this.GetOrder( orderId );
-				if( finishedStatuses.Contains( order.OrderStatus.ToString() ) )
+				if( order!= null && finishedStatuses.Contains( order.OrderStatus.ToString() ) )
 					orders.Add( order );
 			}
 
