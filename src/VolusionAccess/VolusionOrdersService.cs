@@ -51,13 +51,15 @@ namespace VolusionAccess
 		#region GetOrder
 		public VolusionOrder GetOrder( int orderId )
 		{
-			var orders = this.GetFilteredOrders( OrderColumns.OrderId, orderId );
+			var marker = this.GetMarker();
+			var orders = this.GetFilteredOrders( OrderColumns.OrderId, orderId, marker );
 			return orders.FirstOrDefault();
 		}
 
 		public async Task< VolusionOrder > GetOrderAsync( int orderId )
 		{
-			var orders = await this.GetFilteredOrdersAsync( OrderColumns.OrderId, orderId );
+			var marker = this.GetMarker();
+			var orders = await this.GetFilteredOrdersAsync( OrderColumns.OrderId, orderId, marker );
 			return orders.FirstOrDefault();
 		}
 		#endregion
@@ -65,12 +67,14 @@ namespace VolusionAccess
 		#region GetNewOrUpdatedOrders
 		public IEnumerable< VolusionOrder > GetNewOrUpdatedOrders()
 		{
-			return this.GetFilteredNewOrUpdatedOrders( x => true ).ToList();
+			var marker = this.GetMarker();
+			return this.GetFilteredNewOrUpdatedOrders( x => true, marker ).ToList();
 		}
 
 		public async Task< IEnumerable< VolusionOrder > > GetNewOrUpdatedOrdersAsync()
 		{
-			var orders = await this.GetFilteredNewOrUpdatedOrdersAsync( x => true );
+			var marker = this.GetMarker();
+			var orders = await this.GetFilteredNewOrUpdatedOrdersAsync( x => true, marker );
 			return orders.ToList();
 		}
 		#endregion
@@ -79,14 +83,16 @@ namespace VolusionAccess
 		public IEnumerable< VolusionOrder > GetNewOrUpdatedOrders( DateTime startDateUtc, DateTime endDateUtc )
 		{
 			startDateUtc = startDateUtc.AddMinutes( -1 );
-			var orders = this.GetFilteredNewOrUpdatedOrders( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) );
+			var marker = this.GetMarker();
+			var orders = this.GetFilteredNewOrUpdatedOrders( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ), marker );
 			return orders.ToList();
 		}
 
 		public async Task< IEnumerable< VolusionOrder > > GetNewOrUpdatedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
 		{
 			startDateUtc = startDateUtc.AddMinutes( -1 );
-			var orders = await this.GetFilteredNewOrUpdatedOrdersAsync( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) );
+			var marker = this.GetMarker();
+			var orders = await this.GetFilteredNewOrUpdatedOrdersAsync( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ), marker );
 			return orders.ToList();
 		}
 		#endregion
@@ -95,10 +101,11 @@ namespace VolusionAccess
 		public IEnumerable< VolusionOrder > GetNotFinishedOrders( DateTime startDateUtc, DateTime endDateUtc )
 		{
 			startDateUtc = startDateUtc.AddMinutes( -1 );
+			var marker = this.GetMarker();
 			var orders = new HashSet< VolusionOrder >();
 			foreach( var status in this.NotFinishedStatuses )
 			{
-				var ordersPortion = this.GetFilteredOrders( OrderColumns.OrderStatus, status ).ToList();
+				var ordersPortion = this.GetFilteredOrders( OrderColumns.OrderStatus, status, marker ).ToList();
 				var filtered = ordersPortion.Where( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) );
 				this.AddOrders( orders, filtered );
 			}
@@ -109,11 +116,12 @@ namespace VolusionAccess
 		public async Task< IEnumerable< VolusionOrder > > GetNotFinishedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc )
 		{
 			startDateUtc = startDateUtc.AddMinutes( -1 );
+			var marker = this.GetMarker();
 			var orders = new HashSet< VolusionOrder >();
 			var tasks = new List< Task< IEnumerable< VolusionOrder > > >();
 			foreach( var status in this.NotFinishedStatuses )
 			{
-				tasks.Add( this.GetFilteredOrdersAsync( OrderColumns.OrderStatus, status ) );
+				tasks.Add( this.GetFilteredOrdersAsync( OrderColumns.OrderStatus, status, marker ) );
 			}
 			await Task.WhenAll( tasks ).ConfigureAwait( false );
 
@@ -168,12 +176,12 @@ namespace VolusionAccess
 		#endregion
 
 		#region Misc
-		private IEnumerable< VolusionOrder > GetFilteredOrders( OrderColumns column, object value )
+		private IEnumerable< VolusionOrder > GetFilteredOrders( OrderColumns column, object value, string marker )
 		{
 			var orders = new List< VolusionOrder >();
 			var endpoint = EndpointsBuilder.CreateGetFilteredOrdersEndpoint( column, value );
 
-			var ordersPortion = ActionPolicies.Get.Get( () => this._webRequestServices.GetResponse< VolusionOrders >( endpoint ) );
+			var ordersPortion = ActionPolicies.Get.Get( () => this._webRequestServices.GetResponse< VolusionOrders >( endpoint, marker ) );
 			if( ordersPortion != null && ordersPortion.Orders != null )
 				orders.AddRange( ordersPortion.Orders );
 
@@ -181,12 +189,12 @@ namespace VolusionAccess
 			return orders;
 		}
 
-		private async Task< IEnumerable< VolusionOrder > > GetFilteredOrdersAsync( OrderColumns column, object value )
+		private async Task< IEnumerable< VolusionOrder > > GetFilteredOrdersAsync( OrderColumns column, object value, string marker )
 		{
 			var orders = new List< VolusionOrder >();
 			var endpoint = EndpointsBuilder.CreateGetFilteredOrdersEndpoint( column, value );
 
-			var ordersPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionOrders >( endpoint ) );
+			var ordersPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionOrders >( endpoint, marker ) );
 			if( ordersPortion != null && ordersPortion.Orders != null )
 				orders.AddRange( ordersPortion.Orders );
 
@@ -194,14 +202,14 @@ namespace VolusionAccess
 			return orders;
 		}
 
-		private IEnumerable< VolusionOrder > GetFilteredNewOrUpdatedOrders( Func< VolusionOrder, bool > predicate )
+		private IEnumerable< VolusionOrder > GetFilteredNewOrUpdatedOrders( Func< VolusionOrder, bool > predicate, string marker )
 		{
 			var orders = new HashSet< VolusionOrder >();
 			var endpoint = EndpointsBuilder.CreateGetOrdersEndpoint();
 
 			while( true )
 			{
-				var ordersPortion = ActionPolicies.Get.Get( () => this._webRequestServices.GetResponse< VolusionOrders >( endpoint ) );
+				var ordersPortion = ActionPolicies.Get.Get( () => this._webRequestServices.GetResponse< VolusionOrders >( endpoint, marker ) );
 				if( ordersPortion == null || ordersPortion.Orders == null || ordersPortion.Orders.Count == 0 )
 					return orders;
 
@@ -210,14 +218,14 @@ namespace VolusionAccess
 			}
 		}
 
-		private async Task< IEnumerable< VolusionOrder > > GetFilteredNewOrUpdatedOrdersAsync( Func< VolusionOrder, bool > predicate )
+		private async Task< IEnumerable< VolusionOrder > > GetFilteredNewOrUpdatedOrdersAsync( Func< VolusionOrder, bool > predicate, string marker )
 		{
 			var orders = new HashSet< VolusionOrder >();
 			var endpoint = EndpointsBuilder.CreateGetOrdersEndpoint();
 
 			while( true )
 			{
-				var ordersPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionOrders >( endpoint ) );
+				var ordersPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionOrders >( endpoint, marker ) );
 				if( ordersPortion == null || ordersPortion.Orders == null || ordersPortion.Orders.Count == 0 )
 					return orders;
 
@@ -267,6 +275,11 @@ namespace VolusionAccess
 			{
 				order.DefaultTimeZone = this._config.DefaultTimeZone;
 			}
+		}
+
+		private string GetMarker()
+		{
+			return Guid.NewGuid().ToString();
 		}
 		#endregion misc
 	}

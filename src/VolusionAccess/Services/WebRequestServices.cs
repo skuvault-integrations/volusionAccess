@@ -19,87 +19,87 @@ namespace VolusionAccess.Services
 			this._config = config;
 		}
 
-		public T GetResponse< T >( string commandParams )
+		public T GetResponse< T >( string commandParams, string marker )
 		{
 			var url = commandParams.GetFullEndpointWithAuth( this._config );
-			var result = this.GetResponseForSpecificUrl< T >( url );
+			var result = this.GetResponseForSpecificUrl< T >( url, marker );
 			return result;
 		}
 
-		public T GetResponseForSpecificUrl< T >( string url )
+		public T GetResponseForSpecificUrl< T >( string url, string marker )
 		{
 			try
 			{
-				this.LogGetRequest( url );
+				this.LogGetRequest( url, marker );
 
 				T result;
 				var request = this.CreateGetServiceGetRequest( url );
 				using( var response = request.GetResponse() )
-					result = this.ParseResponse< T >( response );
+					result = this.ParseResponse< T >( response, marker );
 
 				return result;
 			}
 			catch( Exception ex )
 			{
-				throw this.GetException( url, ex );
+				throw this.GetException( url, ex, marker );
 			}
 		}
 
-		public async Task< T > GetResponseAsync< T >( string commandParams )
+		public async Task< T > GetResponseAsync< T >( string commandParams, string marker )
 		{
 			var url = commandParams.GetFullEndpointWithAuth( this._config );
-			var result = await this.GetResponseForSpecificUrlAsync< T >( url );
+			var result = await this.GetResponseForSpecificUrlAsync< T >( url, marker );
 			return result;
 		}
 
-		public async Task< T > GetResponseForSpecificUrlAsync< T >( string url )
+		public async Task< T > GetResponseForSpecificUrlAsync< T >( string url, string marker )
 		{
 			try
 			{
-				this.LogGetRequest( url );
+				this.LogGetRequest( url, marker );
 
 				T result;
 				var request = this.CreateGetServiceGetRequest( url );
 				using( var response = await request.GetResponseAsync() )
-					result = this.ParseResponse< T >( response );
+					result = this.ParseResponse< T >( response, marker );
 
 				return result;
 			}
 			catch( Exception ex )
 			{
-				throw this.GetException( url, ex );
+				throw this.GetException( url, ex, marker );
 			}
 		}
 
-		public void PostData( string endpoint, string xmlContent )
+		public void PostData( string endpoint, string xmlContent, string marker )
 		{
 			var request = this.CreateServicePostRequest( endpoint, xmlContent );
 			try
 			{
-				this.LogUpdateRequest( request.Address.OriginalString, xmlContent );
+				this.LogUpdateRequest( request.Address.OriginalString, xmlContent, marker );
 
 				using( var response = ( HttpWebResponse )request.GetResponse() )
-					this.LogUpdateResponse( request.Address.OriginalString, response.StatusCode );
+					this.LogUpdateResponse( request.Address.OriginalString, response.StatusCode, marker );
 			}
 			catch( Exception ex )
 			{
-				throw this.UpdateException( request.Address.OriginalString, ex );
+				throw this.UpdateException( request.Address.OriginalString, ex, marker );
 			}
 		}
 
-		public async Task PostDataAsync( string endpoint, string xmlContent )
+		public async Task PostDataAsync( string endpoint, string xmlContent, string marker )
 		{
 			var request = this.CreateServicePostRequest( endpoint, xmlContent );
 			try
 			{
-				this.LogUpdateRequest( request.Address.OriginalString, xmlContent );
+				this.LogUpdateRequest( request.Address.OriginalString, xmlContent, marker );
 
 				using( var response = await request.GetResponseAsync() )
-					this.LogUpdateResponse( request.Address.OriginalString, ( ( HttpWebResponse )response ).StatusCode );
+					this.LogUpdateResponse( request.Address.OriginalString, ( ( HttpWebResponse )response ).StatusCode, marker );
 			}
 			catch( Exception ex )
 			{
-				throw this.UpdateException( request.Address.OriginalString, ex );
+				throw this.UpdateException( request.Address.OriginalString, ex, marker );
 			}
 		}
 
@@ -134,17 +134,17 @@ namespace VolusionAccess.Services
 		#endregion
 
 		#region Misc
-		private T ParseResponse< T >( WebResponse response )
+		private T ParseResponse< T >( WebResponse response, string marker )
 		{
 			using( var stream = response.GetResponseStream() )
 			{
 				var reader = new StreamReader( stream );
 				var xmlResponse = reader.ReadToEnd();
 
-				var urlWithoutPass = this.LogGetResponse( response.ResponseUri.ToString(), xmlResponse );
+				var urlWithoutPass = this.LogGetResponse( response.ResponseUri.ToString(), xmlResponse, marker );
 
 				if( string.IsNullOrEmpty( xmlResponse ) )
-					throw new Exception( "Volusion returned empty result for " + urlWithoutPass + ". One of possible problems is incorrect credentials." );
+					throw new Exception( "Marker:" + marker + " Volusion returned empty result for " + urlWithoutPass + ". One of possible problems is incorrect credentials." );
 
 				try
 				{
@@ -153,46 +153,48 @@ namespace VolusionAccess.Services
 				}
 				catch( Exception ex )
 				{
-					throw new Exception( "Can't to deserialize response for " + urlWithoutPass, ex );
+					throw new Exception( "Marker:" + marker + " Can't to deserialize response for " + urlWithoutPass, ex );
 				}
 			}
 		}
 
-		private void LogGetRequest( string url )
+		private void LogGetRequest( string url, string marker )
 		{
 			var urlWithoutPass = this.GetUrlWithoutPassword( url );
-			VolusionLogger.Log.Trace( "Get Request for url '{0}'", urlWithoutPass );
+			VolusionLogger.Log.Trace( "Marker:{0}\tGet Request for url '{1}'", marker, urlWithoutPass );
 		}
 
-		private string LogGetResponse( string originalUrl, string xmlResponse )
+		private string LogGetResponse( string originalUrl, string xmlResponse, string marker )
 		{
 			var urlWithoutPass = this.GetUrlWithoutPassword( originalUrl );
-			VolusionLogger.Log.Trace( "Get Response for url '{0}'\n{1}", urlWithoutPass, xmlResponse );
+			VolusionLogger.Log.Trace( "Marker:{0}\tGet Response for url '{1}'\n{2}", marker, urlWithoutPass, xmlResponse );
 			return urlWithoutPass;
 		}
 
-		private Exception GetException( string url, Exception ex )
+		private Exception GetException( string url, Exception ex, string marker )
 		{
 			var urlWithoutPass = this.GetUrlWithoutPassword( url );
-			return new Exception( "Can't to get data for " + urlWithoutPass, ex );
+			var message = string.Format( "Marker:{0}\tCan't to get data for url '{1}'", marker, urlWithoutPass );
+			return new Exception( message, ex );
 		}
 
-		private void LogUpdateRequest( string url, string xmlContent )
+		private void LogUpdateRequest( string url, string xmlContent, string marker )
 		{
 			var urlWithoutPass = this.GetUrlWithoutPassword( url );
-			VolusionLogger.Log.Trace( "PUT/POST Request for url '{0}'\n{1}", urlWithoutPass, xmlContent );
+			VolusionLogger.Log.Trace( "Marker:{0}\tPUT/POST Request for url '{1}'\n{2}", marker, urlWithoutPass, xmlContent );
 		}
 
-		private void LogUpdateResponse( string url, HttpStatusCode statusCode )
+		private void LogUpdateResponse( string url, HttpStatusCode statusCode, string marker )
 		{
 			var urlWithoutPass = this.GetUrlWithoutPassword( url );
-			VolusionLogger.Log.Trace( "PUT/POST Response for url '{0}' with code '{1}'", urlWithoutPass, statusCode );
+			VolusionLogger.Log.Trace( "Marker:{0}\tPUT/POST Response for url '{1}' with code '{2}'", marker, urlWithoutPass, statusCode );
 		}
 
-		private Exception UpdateException( string url, Exception ex )
+		private Exception UpdateException( string url, Exception ex, string marker )
 		{
 			var urlWithoutPass = this.GetUrlWithoutPassword( url );
-			return new Exception( "Can't to put/post data for " + urlWithoutPass, ex );
+			var message = string.Format( "Marker:{0}\tCan't to put/post data for url '{1}'", marker, urlWithoutPass );
+			return new Exception( message, ex );
 		}
 
 		private string GetUrlWithoutPassword( string url )
