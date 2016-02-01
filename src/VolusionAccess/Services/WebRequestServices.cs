@@ -30,6 +30,8 @@ namespace VolusionAccess.Services
 		{
 			try
 			{
+				this.LogGetRequest( url );
+
 				T result;
 				var request = this.CreateGetServiceGetRequest( url );
 				using( var response = request.GetResponse() )
@@ -39,8 +41,7 @@ namespace VolusionAccess.Services
 			}
 			catch( Exception ex )
 			{
-				var urlWithoutPass = this.GetUrlWithoutPassword( url );
-				throw new Exception( "Can't to get data for " + urlWithoutPass, ex );
+				throw this.GetException( url, ex );
 			}
 		}
 
@@ -55,6 +56,8 @@ namespace VolusionAccess.Services
 		{
 			try
 			{
+				this.LogGetRequest( url );
+
 				T result;
 				var request = this.CreateGetServiceGetRequest( url );
 				using( var response = await request.GetResponseAsync() )
@@ -64,8 +67,7 @@ namespace VolusionAccess.Services
 			}
 			catch( Exception ex )
 			{
-				var urlWithoutPass = this.GetUrlWithoutPassword( url );
-				throw new Exception( "Can't to get data for " + urlWithoutPass, ex );
+				throw this.GetException( url, ex );
 			}
 		}
 
@@ -74,13 +76,14 @@ namespace VolusionAccess.Services
 			var request = this.CreateServicePostRequest( endpoint, xmlContent );
 			try
 			{
+				this.LogUpdateRequest( request.Address.OriginalString, xmlContent );
+
 				using( var response = ( HttpWebResponse )request.GetResponse() )
-					this.LogUpdateInfo( request.Address.OriginalString, response.StatusCode, xmlContent );
+					this.LogUpdateResponse( request.Address.OriginalString, response.StatusCode );
 			}
 			catch( Exception ex )
 			{
-				var urlWithoutPass = this.GetUrlWithoutPassword( request.Address.OriginalString );
-				throw new Exception( "Can't to post data for " + urlWithoutPass, ex );
+				throw this.UpdateException( request.Address.OriginalString, ex );
 			}
 		}
 
@@ -89,13 +92,14 @@ namespace VolusionAccess.Services
 			var request = this.CreateServicePostRequest( endpoint, xmlContent );
 			try
 			{
+				this.LogUpdateRequest( request.Address.OriginalString, xmlContent );
+
 				using( var response = await request.GetResponseAsync() )
-					this.LogUpdateInfo( request.Address.OriginalString, ( ( HttpWebResponse )response ).StatusCode, xmlContent );
+					this.LogUpdateResponse( request.Address.OriginalString, ( ( HttpWebResponse )response ).StatusCode );
 			}
 			catch( Exception ex )
 			{
-				var urlWithoutPass = this.GetUrlWithoutPassword( request.Address.OriginalString );
-				throw new Exception( "Can't to post data for " + urlWithoutPass, ex );
+				throw this.UpdateException( request.Address.OriginalString, ex );
 			}
 		}
 
@@ -137,8 +141,7 @@ namespace VolusionAccess.Services
 				var reader = new StreamReader( stream );
 				var xmlResponse = reader.ReadToEnd();
 
-				var urlWithoutPass = this.GetUrlWithoutPassword( response.ResponseUri.ToString() );
-				VolusionLogger.Log.Trace( "Response\t{0} - {1}", urlWithoutPass, xmlResponse );
+				var urlWithoutPass = this.LogGetResponse( response.ResponseUri.ToString(), xmlResponse );
 
 				if( string.IsNullOrEmpty( xmlResponse ) )
 					throw new Exception( "Volusion returned empty result for " + urlWithoutPass + ". One of possible problems is incorrect credentials." );
@@ -155,10 +158,41 @@ namespace VolusionAccess.Services
 			}
 		}
 
-		private void LogUpdateInfo( string url, HttpStatusCode statusCode, string xmlContent )
+		private void LogGetRequest( string url )
 		{
 			var urlWithoutPass = this.GetUrlWithoutPassword( url );
-			VolusionLogger.Log.Trace( "Response\tPUT/POST call for the url '{0}' has been completed with code '{1}'.\n{2}", urlWithoutPass, statusCode, xmlContent );
+			VolusionLogger.Log.Trace( "Get Request for url '{0}'", urlWithoutPass );
+		}
+
+		private string LogGetResponse( string originalUrl, string xmlResponse )
+		{
+			var urlWithoutPass = this.GetUrlWithoutPassword( originalUrl );
+			VolusionLogger.Log.Trace( "Get Response for url '{0}'\n{1}", urlWithoutPass, xmlResponse );
+			return urlWithoutPass;
+		}
+
+		private Exception GetException( string url, Exception ex )
+		{
+			var urlWithoutPass = this.GetUrlWithoutPassword( url );
+			return new Exception( "Can't to get data for " + urlWithoutPass, ex );
+		}
+
+		private void LogUpdateRequest( string url, string xmlContent )
+		{
+			var urlWithoutPass = this.GetUrlWithoutPassword( url );
+			VolusionLogger.Log.Trace( "PUT/POST Request for url '{0}'\n{1}", urlWithoutPass, xmlContent );
+		}
+
+		private void LogUpdateResponse( string url, HttpStatusCode statusCode )
+		{
+			var urlWithoutPass = this.GetUrlWithoutPassword( url );
+			VolusionLogger.Log.Trace( "PUT/POST Response for url '{0}' with code '{1}'", urlWithoutPass, statusCode );
+		}
+
+		private Exception UpdateException( string url, Exception ex )
+		{
+			var urlWithoutPass = this.GetUrlWithoutPassword( url );
+			return new Exception( "Can't to put/post data for " + urlWithoutPass, ex );
 		}
 
 		private string GetUrlWithoutPassword( string url )
