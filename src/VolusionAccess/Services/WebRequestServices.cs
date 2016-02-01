@@ -33,7 +33,7 @@ namespace VolusionAccess.Services
 				T result;
 				var request = this.CreateGetServiceGetRequest( url );
 				using( var response = request.GetResponse() )
-					result = ParseResponse< T >( response );
+					result = this.ParseResponse< T >( response );
 
 				return result;
 			}
@@ -58,7 +58,7 @@ namespace VolusionAccess.Services
 				T result;
 				var request = this.CreateGetServiceGetRequest( url );
 				using( var response = await request.GetResponseAsync() )
-					result = ParseResponse< T >( response );
+					result = this.ParseResponse< T >( response );
 
 				return result;
 			}
@@ -140,7 +140,7 @@ namespace VolusionAccess.Services
 				var urlWithoutPass = this.GetUrlWithoutPassword( response.ResponseUri.ToString() );
 				VolusionLogger.Log.Trace( "Response\t{0} - {1}", urlWithoutPass, xmlResponse );
 
-				if( String.IsNullOrEmpty( xmlResponse ) )
+				if( string.IsNullOrEmpty( xmlResponse ) )
 					throw new Exception( "Volusion returned empty result for " + urlWithoutPass + ". One of possible problems is incorrect credentials." );
 
 				try
@@ -171,7 +171,7 @@ namespace VolusionAccess.Services
 		#region SSL certificate hack
 		private void AllowInvalidCertificate()
 		{
-			ServicePointManager.ServerCertificateValidationCallback += AllowCert;
+			ServicePointManager.ServerCertificateValidationCallback += this.AllowCert;
 		}
 
 		private bool AllowCert( object sender, X509Certificate cert, X509Chain chain, SslPolicyErrors error )

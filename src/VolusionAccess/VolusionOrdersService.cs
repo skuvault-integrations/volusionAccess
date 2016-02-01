@@ -186,7 +186,7 @@ namespace VolusionAccess
 			var orders = new List< VolusionOrder >();
 			var endpoint = EndpointsBuilder.CreateGetFilteredOrdersEndpoint( column, value );
 
-			var ordersPortion = await ActionPolicies.GetAsync.Get( () => this._webRequestServices.GetResponseAsync< VolusionOrders >( endpoint ) );
+			var ordersPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionOrders >( endpoint ) );
 			if( ordersPortion != null && ordersPortion.Orders != null )
 				orders.AddRange( ordersPortion.Orders );
 
@@ -217,7 +217,7 @@ namespace VolusionAccess
 
 			while( true )
 			{
-				var ordersPortion = await ActionPolicies.GetAsync.Get( () => this._webRequestServices.GetResponseAsync< VolusionOrders >( endpoint ) );
+				var ordersPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionOrders >( endpoint ) );
 				if( ordersPortion == null || ordersPortion.Orders == null || ordersPortion.Orders.Count == 0 )
 					return orders;
 

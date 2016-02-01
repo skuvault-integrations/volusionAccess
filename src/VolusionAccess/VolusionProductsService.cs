@@ -10,7 +10,7 @@ using VolusionAccess.Services;
 
 namespace VolusionAccess
 {
-	public class VolusionProductsService : IVolusionProductsService
+	public class VolusionProductsService: IVolusionProductsService
 	{
 		private readonly WebRequestServices _webRequestServices;
 		private readonly VolusionConfig _config;
@@ -19,7 +19,7 @@ namespace VolusionAccess
 		{
 			Condition.Requires( config, "config" ).IsNotNull();
 			this._webRequestServices = new WebRequestServices( config );
-			_config = config;
+			this._config = config;
 		}
 
 		#region Get
@@ -31,7 +31,7 @@ namespace VolusionAccess
 		public IEnumerable< VolusionPublicProduct > GetPublicProducts()
 		{
 			var products = new List< VolusionPublicProduct >();
-			var endpoint = EndpointsBuilder.CreateGetPublicProductsEndpoint().GetFullEndpoint( _config );
+			var endpoint = EndpointsBuilder.CreateGetPublicProductsEndpoint().GetFullEndpoint( this._config );
 
 			var productsPortion = ActionPolicies.Get.Get( () => this._webRequestServices.GetResponseForSpecificUrl< VolusionPublicProducts >( endpoint ) );
 			if( productsPortion != null && productsPortion.Products != null )
@@ -48,9 +48,9 @@ namespace VolusionAccess
 		public async Task< IEnumerable< VolusionPublicProduct > > GetPublicProductsAsync()
 		{
 			var products = new List< VolusionPublicProduct >();
-			var endpoint = EndpointsBuilder.CreateGetPublicProductsEndpoint().GetFullEndpoint( _config );
+			var endpoint = EndpointsBuilder.CreateGetPublicProductsEndpoint().GetFullEndpoint( this._config );
 
-			var productsPortion = await ActionPolicies.GetAsync.Get( () => this._webRequestServices.GetResponseForSpecificUrlAsync< VolusionPublicProducts >( endpoint ) );
+			var productsPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseForSpecificUrlAsync< VolusionPublicProducts >( endpoint ) );
 			if( productsPortion != null && productsPortion.Products != null )
 				products.AddRange( productsPortion.Products );
 
@@ -79,7 +79,7 @@ namespace VolusionAccess
 
 			while( true )
 			{
-				var productsPortion = await ActionPolicies.GetAsync.Get( () => this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint ) );
+				var productsPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint ) );
 				if( productsPortion == null || productsPortion.Products == null || productsPortion.Products.Count == 0 )
 					return products;
 
@@ -104,7 +104,7 @@ namespace VolusionAccess
 			var products = new List< VolusionProduct >();
 			var endpoint = EndpointsBuilder.CreateGetFilteredProductsEndpoint( column, value );
 
-			var productsPortion = await ActionPolicies.GetAsync.Get( () => this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint ) );
+			var productsPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint ) );
 			if( productsPortion != null && productsPortion.Products != null )
 				products.AddRange( productsPortion.Products );
 
@@ -113,13 +113,13 @@ namespace VolusionAccess
 
 		public IEnumerable< VolusionProduct > GetFakeFilteredProducts()
 		{
-			var products = GetFilteredProducts( ProductColumns.AddToPONow, "N" );
+			var products = this.GetFilteredProducts( ProductColumns.AddToPONow, "N" );
 			return products;
 		}
 
 		public async Task< IEnumerable< VolusionProduct > > GetFakeFilteredProductsAsync()
 		{
-			var products = await GetFilteredProductsAsync( ProductColumns.AddToPONow, "N" );
+			var products = await this.GetFilteredProductsAsync( ProductColumns.AddToPONow, "N" );
 			return products;
 		}
 
@@ -140,7 +140,7 @@ namespace VolusionAccess
 			VolusionProduct product = null;
 			var endpoint = EndpointsBuilder.CreateGetProductEndpoint( sku );
 
-			var productsPortion = await ActionPolicies.GetAsync.Get( () => this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint ) );
+			var productsPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint ) );
 			if( productsPortion != null && productsPortion.Products != null )
 				product = productsPortion.Products.FirstOrDefault();
 
@@ -164,7 +164,7 @@ namespace VolusionAccess
 			List< VolusionProduct > products = null;
 			var endpoint = EndpointsBuilder.CreateGetChildProductsEndpoint( sku );
 
-			var productsPortion = await ActionPolicies.GetAsync.Get( () => this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint ) );
+			var productsPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint ) );
 			if( productsPortion != null && productsPortion.Products != null )
 				products = productsPortion.Products;
 
@@ -188,7 +188,7 @@ namespace VolusionAccess
 			var vp = new VolusionUpdatedProducts { Products = products.ToList() };
 			var xmlContent = XmlSerializeHelpers.Serialize( vp );
 
-			await ActionPolicies.SubmitAsync.Do( () => this._webRequestServices.PostDataAsync( endpoint, xmlContent ) );
+			await ActionPolicies.SubmitAsync.Do( async () => await this._webRequestServices.PostDataAsync( endpoint, xmlContent ) );
 		}
 		#endregion
 	}
