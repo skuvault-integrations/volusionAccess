@@ -350,6 +350,7 @@ namespace VolusionAccess.Models.Order
 		SeeOrderNotes,
 		PartiallyReturned,
 		Returned,
-		Cancelled
+		Cancelled,
+		CancelOrder
 	}
 }

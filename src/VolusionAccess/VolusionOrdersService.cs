@@ -36,6 +36,7 @@ namespace VolusionAccess
 		{
 			VolusionOrderStatusEnum.Shipped.ToString(),
 			VolusionOrderStatusEnum.Cancelled.ToString(),
+			"Cancel Order", //VolusionOrderStatusEnum.CancelOrder,
 			"Partially Returned", //VolusionOrderStatusEnum.PartiallyReturned,
 			VolusionOrderStatusEnum.Returned.ToString()
 		};
@@ -147,7 +148,7 @@ namespace VolusionAccess
 			foreach( var orderId in ordersIds )
 			{
 				var order = this.GetOrder( orderId );
-				if( order != null && this.FinishedStatuses.Contains( order.OrderStatus.ToString() ) )
+				if( order != null && this.FinishedStatuses.Contains( order.OrderStatusStr ) )
 					orders.Add( order );
 			}
 
@@ -253,7 +254,7 @@ namespace VolusionAccess
 		{
 			await Task.WhenAll( tasks ).ConfigureAwait( false );
 			orders.AddRange( tasks.Select( t => t.Result )
-				.Where( o => o != null && this.FinishedStatuses.Contains( o.OrderStatus.ToString() ) ) );
+				.Where( o => o != null && this.FinishedStatuses.Contains( o.OrderStatusStr ) ) );
 		}
 
 		private bool DoesOrderCreatedOrUpdatedInDateRange( VolusionOrder order, DateTime startDateUtc, DateTime endDateUtc )
