@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CuttingEdge.Conditions;
+using Netco.Extensions;
 using VolusionAccess.Misc;
 using VolusionAccess.Models.Command;
 using VolusionAccess.Models.Configuration;
@@ -13,6 +14,8 @@ namespace VolusionAccess
 {
 	public class VolusionProductsService: IVolusionProductsService
 	{
+		private const int UpdateInventoryLimit = 3000;
+		private readonly TimeSpan UpdateInventoryDelay = TimeSpan.FromSeconds( 2 );
 		private readonly WebRequestServices _webRequestServices;
 		private readonly VolusionConfig _config;
 
@@ -187,21 +190,33 @@ namespace VolusionAccess
 		public void UpdateProducts( IEnumerable< VolusionUpdatedProduct > products )
 		{
 			var endpoint = EndpointsBuilder.CreateProductsUpdateEndpoint();
-			var vp = new VolusionUpdatedProducts { Products = products.ToList() };
-			var xmlContent = XmlSerializeHelpers.Serialize( vp );
-			var marker = this.GetMarker();
 
-			ActionPolicies.Submit.Do( () => this._webRequestServices.PostData( endpoint, xmlContent, marker ) );
+			var parts = products.Slice( UpdateInventoryLimit );
+			foreach( var part in parts )
+			{
+				var vp = new VolusionUpdatedProducts { Products = part.ToList() };
+				var xmlContent = XmlSerializeHelpers.Serialize( vp );
+				var marker = this.GetMarker();
+
+				ActionPolicies.Submit.Do( () => this._webRequestServices.PostData( endpoint, xmlContent, marker ) );
+				Task.Delay( this.UpdateInventoryDelay ).Wait();
+			}
 		}
 
 		public async Task UpdateProductsAsync( IEnumerable< VolusionUpdatedProduct > products )
 		{
 			var endpoint = EndpointsBuilder.CreateProductsUpdateEndpoint();
-			var vp = new VolusionUpdatedProducts { Products = products.ToList() };
-			var xmlContent = XmlSerializeHelpers.Serialize( vp );
-			var marker = this.GetMarker();
 
-			await ActionPolicies.SubmitAsync.Do( async () => await this._webRequestServices.PostDataAsync( endpoint, xmlContent, marker ) );
+			var parts = products.Slice( UpdateInventoryLimit );
+			foreach( var part in parts )
+			{
+				var vp = new VolusionUpdatedProducts { Products = part.ToList() };
+				var xmlContent = XmlSerializeHelpers.Serialize( vp );
+				var marker = this.GetMarker();
+
+				await ActionPolicies.SubmitAsync.Do( async () => await this._webRequestServices.PostDataAsync( endpoint, xmlContent, marker ) );
+				await Task.Delay( this.UpdateInventoryDelay );
+			}
 		}
 		#endregion
 
