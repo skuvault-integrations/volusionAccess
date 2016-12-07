@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CuttingEdge.Conditions;
+using Netco.Extensions;
 using VolusionAccess.Misc;
 using VolusionAccess.Models.Command;
 using VolusionAccess.Models.Configuration;
@@ -119,19 +120,16 @@ namespace VolusionAccess
 			startDateUtc = startDateUtc.AddMinutes( -1 );
 			var marker = this.GetMarker();
 			var orders = new HashSet< VolusionOrder >();
-			var tasks = new List< Task< IEnumerable< VolusionOrder > > >();
-			foreach( var status in this.NotFinishedStatuses )
-			{
-				tasks.Add( this.GetFilteredOrdersAsync( OrderColumns.OrderStatus, status, marker ) );
-			}
-			await Task.WhenAll( tasks ).ConfigureAwait( false );
 
-			foreach( var task in tasks )
+			var filteredByStatus = await this.NotFinishedStatuses.ProcessInBatchAsync( 15, async status =>
 			{
-				var ordersPortion = task.Result.ToList();
-				var filtered = ordersPortion.Where( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) );
+				var ordersPortion = await this.GetFilteredOrdersAsync( OrderColumns.OrderStatus, status, marker );
+				ordersPortion = ordersPortion.Where( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) ).ToList();
+				return ordersPortion;
+			} );
+
+			foreach( var filtered in filteredByStatus )
 				this.AddOrders( orders, filtered );
-			}
 
 			//TODO: Remove it if all works fine
 			VolusionLogger.Log.Trace( "Received order ids: {0}",
@@ -144,10 +142,12 @@ namespace VolusionAccess
 		#region GetFinishedOrders
 		public IEnumerable< VolusionOrder > GetFinishedOrders( IEnumerable< int > ordersIds )
 		{
+			var marker = this.GetMarker();
 			var orders = new List< VolusionOrder >();
 			foreach( var orderId in ordersIds )
 			{
-				var order = this.GetOrder( orderId );
+				var filteredOrders = this.GetFilteredOrders( OrderColumns.OrderId, orderId, marker );
+				var order = filteredOrders.FirstOrDefault();
 				if( order != null && this.FinishedStatuses.Contains( order.OrderStatusStr ) )
 					orders.Add( order );
 			}
@@ -157,50 +157,43 @@ namespace VolusionAccess
 
 		public async Task< IEnumerable< VolusionOrder > > GetFinishedOrdersAsync( IEnumerable< int > ordersIds )
 		{
-			var orders = new List< VolusionOrder >();
-			var tasks = new List< Task< VolusionOrder > >();
-			foreach( var orderId in ordersIds )
+			var marker = this.GetMarker();
+			var orders = await ordersIds.ProcessInBatchAsync( 10, async orderId =>
 			{
-				tasks.Add( this.GetOrderAsync( orderId ) );
-				if( tasks.Count >= 10 )
-				{
-					await this.AddFinishedOrdersAsync( orders, tasks );
-					tasks = new List< Task< VolusionOrder > >();
-				}
-			}
-
-			if( tasks.Count > 0 )
-				await this.AddFinishedOrdersAsync( orders, tasks );
+				var filteredOrders = await this.GetFilteredOrdersAsync( OrderColumns.OrderId, orderId, marker );
+				var order = filteredOrders.FirstOrDefault();
+				if( order != null && this.FinishedStatuses.Contains( order.OrderStatusStr ) )
+					return order;
+				return null;
+			} );
 
 			return orders;
 		}
 		#endregion
 
 		#region Misc
-		private IEnumerable< VolusionOrder > GetFilteredOrders( OrderColumns column, object value, string marker )
+		private List< VolusionOrder > GetFilteredOrders( OrderColumns column, object value, string marker )
 		{
-			var orders = new List< VolusionOrder >();
 			var endpoint = EndpointsBuilder.CreateGetFilteredOrdersEndpoint( column, value );
 
-			var ordersPortion = ActionPolicies.Get.Get( () => this._webRequestServices.GetResponse< VolusionOrders >( endpoint, marker ) );
-			if( ordersPortion != null && ordersPortion.Orders != null )
-				orders.AddRange( ordersPortion.Orders );
+			var result = ActionPolicies.Get.Get( () => this._webRequestServices.GetResponse< VolusionOrders >( endpoint, marker ) );
+			if( result == null || result.Orders == null )
+				return new List< VolusionOrder >();
 
-			this.SetDefaultTimeZone( orders );
-			return orders;
+			this.SetDefaultTimeZone( result.Orders );
+			return result.Orders;
 		}
 
-		private async Task< IEnumerable< VolusionOrder > > GetFilteredOrdersAsync( OrderColumns column, object value, string marker )
+		private async Task< List< VolusionOrder > > GetFilteredOrdersAsync( OrderColumns column, object value, string marker )
 		{
-			var orders = new List< VolusionOrder >();
 			var endpoint = EndpointsBuilder.CreateGetFilteredOrdersEndpoint( column, value );
 
-			var ordersPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionOrders >( endpoint, marker ) );
-			if( ordersPortion != null && ordersPortion.Orders != null )
-				orders.AddRange( ordersPortion.Orders );
+			var result = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionOrders >( endpoint, marker ) );
+			if( result == null || result.Orders == null )
+				return new List< VolusionOrder >();
 
-			this.SetDefaultTimeZone( orders );
-			return orders;
+			this.SetDefaultTimeZone( result.Orders );
+			return result.Orders;
 		}
 
 		private IEnumerable< VolusionOrder > GetFilteredNewOrUpdatedOrders( Func< VolusionOrder, bool > predicate, string marker )
@@ -239,22 +232,12 @@ namespace VolusionAccess
 		{
 			foreach( var order in fetchedOrdersPartition )
 			{
-				if( processedOrders.Contains( order ) )
-				{
-					var oldOrder = processedOrders.FirstOrDefault( x => x.Id == order.Id && x.LastModified <= order.LastModified );
-					if( oldOrder != null )
-						processedOrders.Remove( oldOrder );
-				}
+				var oldOrder = processedOrders.FirstOrDefault( x => x.Id == order.Id && x.LastModified <= order.LastModified );
+				if( oldOrder != null )
+					processedOrders.Remove( oldOrder );
 
 				processedOrders.Add( order );
 			}
-		}
-
-		private async Task AddFinishedOrdersAsync( List< VolusionOrder > orders, List< Task< VolusionOrder > > tasks )
-		{
-			await Task.WhenAll( tasks ).ConfigureAwait( false );
-			orders.AddRange( tasks.Select( t => t.Result )
-				.Where( o => o != null && this.FinishedStatuses.Contains( o.OrderStatusStr ) ) );
 		}
 
 		private bool DoesOrderCreatedOrUpdatedInDateRange( VolusionOrder order, DateTime startDateUtc, DateTime endDateUtc )

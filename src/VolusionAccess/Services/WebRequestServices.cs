@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using VolusionAccess.Misc;
 using VolusionAccess.Models.Configuration;
@@ -12,6 +13,7 @@ namespace VolusionAccess.Services
 {
 	internal class WebRequestServices
 	{
+		private readonly int RequestTimeoutMs = ( int )TimeSpan.FromMinutes( 30 ).TotalMilliseconds;
 		private readonly VolusionConfig _config;
 
 		public WebRequestServices( VolusionConfig config )
@@ -23,6 +25,13 @@ namespace VolusionAccess.Services
 		{
 			var url = commandParams.GetFullEndpointWithAuth( this._config );
 			var result = this.GetResponseForSpecificUrl< T >( url, marker );
+			return result;
+		}
+
+		public async Task< T > GetResponseAsync< T >( string commandParams, string marker )
+		{
+			var url = commandParams.GetFullEndpointWithAuth( this._config );
+			var result = await this.GetResponseForSpecificUrlAsync< T >( url, marker );
 			return result;
 		}
 
@@ -45,13 +54,6 @@ namespace VolusionAccess.Services
 			}
 		}
 
-		public async Task< T > GetResponseAsync< T >( string commandParams, string marker )
-		{
-			var url = commandParams.GetFullEndpointWithAuth( this._config );
-			var result = await this.GetResponseForSpecificUrlAsync< T >( url, marker );
-			return result;
-		}
-
 		public async Task< T > GetResponseForSpecificUrlAsync< T >( string url, string marker )
 		{
 			try
@@ -60,8 +62,13 @@ namespace VolusionAccess.Services
 
 				T result;
 				var request = this.CreateGetServiceGetRequest( url );
+				var timeoutToken = this.GetTimeoutToken();
+				using( timeoutToken.Register( request.Abort ) )
 				using( var response = await request.GetResponseAsync() )
+				{
+					timeoutToken.ThrowIfCancellationRequested();
 					result = this.ParseResponse< T >( response, marker );
+				}
 
 				return result;
 			}
@@ -94,8 +101,13 @@ namespace VolusionAccess.Services
 			{
 				this.LogUpdateRequest( request.Address.OriginalString, xmlContent, marker );
 
+				var timeoutToken = this.GetTimeoutToken();
+				using( timeoutToken.Register( request.Abort ) )
 				using( var response = await request.GetResponseAsync() )
+				{
+					timeoutToken.ThrowIfCancellationRequested();
 					this.LogUpdateResponse( request.Address.OriginalString, ( ( HttpWebResponse )response ).StatusCode, marker );
+				}
 			}
 			catch( Exception ex )
 			{
@@ -111,6 +123,8 @@ namespace VolusionAccess.Services
 			var uri = new Uri( url );
 			var request = ( HttpWebRequest )WebRequest.Create( uri );
 			request.Method = WebRequestMethods.Http.Get;
+			request.Timeout = this.RequestTimeoutMs;
+			request.ReadWriteTimeout = this.RequestTimeoutMs;
 
 			return request;
 		}
@@ -123,6 +137,8 @@ namespace VolusionAccess.Services
 			var request = ( HttpWebRequest )WebRequest.Create( uri );
 
 			request.Method = WebRequestMethods.Http.Post;
+			request.Timeout = this.RequestTimeoutMs;
+			request.ReadWriteTimeout = this.RequestTimeoutMs;
 			request.ContentType = "application/x-www-form-urlencoded; charset=utf-8";
 			request.Headers[ "Content-Action" ] = "Volusion_API";
 
@@ -158,6 +174,13 @@ namespace VolusionAccess.Services
 			}
 		}
 
+		private CancellationToken GetTimeoutToken()
+		{
+			var cancellationTokenSource = new CancellationTokenSource();
+			cancellationTokenSource.CancelAfter( this.RequestTimeoutMs );
+			return cancellationTokenSource.Token;
+		}
+
 		private void LogGetRequest( string url, string marker )
 		{
 			var urlWithoutPass = this.GetUrlWithoutPassword( url );
@@ -175,6 +198,7 @@ namespace VolusionAccess.Services
 		{
 			var urlWithoutPass = this.GetUrlWithoutPassword( url );
 			var message = string.Format( "Marker:{0}\tCan't to get data for url '{1}'", marker, urlWithoutPass );
+			VolusionLogger.Log.Trace( message );
 			return new Exception( message, ex );
 		}
 
@@ -194,6 +218,7 @@ namespace VolusionAccess.Services
 		{
 			var urlWithoutPass = this.GetUrlWithoutPassword( url );
 			var message = string.Format( "Marker:{0}\tCan't to put/post data for url '{1}'", marker, urlWithoutPass );
+			VolusionLogger.Log.Trace( message );
 			return new Exception( message, ex );
 		}
 
