@@ -30,7 +30,9 @@ namespace VolusionAccess
 			"Partially Backordered", //VolusionOrderStatusEnum.PartiallyBackordered,
 			VolusionOrderStatusEnum.Backordered.ToString(),
 			"See Line Items", //VolusionOrderStatusEnum.SeeLineItems,
-			"See Order Notes" //VolusionOrderStatusEnum.SeeOrderNotes,
+			"See Order Notes", //VolusionOrderStatusEnum.SeeOrderNotes,
+			"New – See Order Notes",
+			"Awaiting Payment - See Order Notes"
 		};
 
 		private readonly IList< string > FinishedStatuses = new List< string >
