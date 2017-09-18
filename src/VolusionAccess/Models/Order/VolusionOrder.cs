@@ -120,7 +120,16 @@ namespace VolusionAccess.Models.Order
 		[ XmlIgnore ]
 		public VolusionOrderStatusEnum OrderStatus
 		{
-			get { return this.OrderStatusStr.ToEnum< VolusionOrderStatusEnum >(); }
+			get
+			{
+				if( string.Equals( this.OrderStatusStr, "New - See Order Notes", StringComparison.InvariantCultureIgnoreCase ) )
+					return VolusionOrderStatusEnum.NewSeeOrderNotes;
+
+				if( string.Equals( this.OrderStatusStr, "Awaiting Payment - See Order Notes", StringComparison.InvariantCultureIgnoreCase ) )
+					return VolusionOrderStatusEnum.AwaitingPaymentSeeOrderNotes;
+
+				return this.OrderStatusStr.ToEnum< VolusionOrderStatusEnum >();
+			}
 		}
 
 		[ XmlElement( ElementName = "OrderNotes" ) ]
@@ -357,6 +366,8 @@ namespace VolusionAccess.Models.Order
 		PartiallyReturned,
 		Returned,
 		Cancelled,
-		CancelOrder
+		CancelOrder,
+		NewSeeOrderNotes,
+		AwaitingPaymentSeeOrderNotes
 	}
 }

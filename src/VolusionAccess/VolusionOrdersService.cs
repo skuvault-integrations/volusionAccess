@@ -31,7 +31,7 @@ namespace VolusionAccess
 			VolusionOrderStatusEnum.Backordered.ToString(),
 			"See Line Items", //VolusionOrderStatusEnum.SeeLineItems,
 			"See Order Notes", //VolusionOrderStatusEnum.SeeOrderNotes,
-			"New – See Order Notes",
+			"New - See Order Notes",
 			"Awaiting Payment - See Order Notes"
 		};
 
