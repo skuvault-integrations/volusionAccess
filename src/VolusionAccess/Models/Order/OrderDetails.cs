@@ -35,10 +35,7 @@ namespace VolusionAccess.Models.Order
 
 		[ XmlElement( ElementName = "GiftWrapCost" ) ]
 		public decimal GiftWrapCost { get; set; }
-
-		[ XmlElement( ElementName = "GiftWrapNote" ) ]
-		public string GiftWrapNote{ get; set; }
-
+		
 		[ XmlElement( ElementName = "IsKitID" ) ]
 		public string IsKitID { get; set; }
 
@@ -81,10 +78,7 @@ namespace VolusionAccess.Models.Order
 
 		[ XmlElement( ElementName = "ProductName" ) ]
 		public string ProductName { get; set; }
-
-		[ XmlElement( ElementName = "ProductNote" ) ]
-		public string ProductNote{ get; set; }
-
+		
 		[ XmlElement( ElementName = "ProductPrice" ) ]
 		public decimal ProductPrice { get; set; }
 

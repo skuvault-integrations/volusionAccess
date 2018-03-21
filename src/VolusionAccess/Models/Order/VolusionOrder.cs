@@ -131,10 +131,7 @@ namespace VolusionAccess.Models.Order
 				return this.OrderStatusStr.ToEnum< VolusionOrderStatusEnum >();
 			}
 		}
-
-		[ XmlElement( ElementName = "OrderNotes" ) ]
-		public string OrderNotes{ get; set; }
-
+		
 		[ XmlElement( ElementName = "Order_Comments" ) ]
 		public string OrderComments{ get; set; }
 

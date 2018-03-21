@@ -117,7 +117,6 @@ namespace VolusionAccess.Services
 			              "o.OrderDate," +
 			              "o.OrderDateUtc," +
 			              "o.OrderStatus," +
-						  "o.OrderNotes," +
 						  "o.Order_Comments," +
 						  "o.PaymentAmount," +
 			              "o.PaymentDeclined," +
@@ -176,7 +175,6 @@ namespace VolusionAccess.Services
 			              "od.FreeShippingItem," +
 			              "od.GiftTrakNumber," +
 			              "od.GiftWrapCost," +
-						  "od.GiftWrapNote," +
 						  "od.IsKitID," +
 			              "od.KitID," +
 			              "od.Locked," +
@@ -189,7 +187,6 @@ namespace VolusionAccess.Services
 			              "od.ProductCode," +
 			              "od.ProductID," +
 			              "od.ProductName," +
-						  "od.ProductNote," +
 						  "od.ProductPrice," +
 			              "od.QtyOnBackOrder," +
 			              "od.QtyOnHold," +
