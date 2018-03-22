@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using VolusionAccess.Models.Command;
 using VolusionAccess.Models.Configuration;
 
@@ -48,19 +49,19 @@ namespace VolusionAccess.Services
 			return endpoint;
 		}
 
-		public static string CreateGetOrdersEndpoint()
+		public static string CreateGetOrdersEndpoint( bool isAddOrderComments )
 		{
 			var endpoint = string.Format( "{0}={1}&{2}={3},{4}",
 				VolusionParam.ApiName.Name, VolusionCommand.GetOrders.Command,
-				VolusionParam.SelectColumns.Name, GetOrderColumns(), GetOrderDetailsColumns() );
+				VolusionParam.SelectColumns.Name, GetOrderColumns( isAddOrderComments ), GetOrderDetailsColumns() );
 			return endpoint;
 		}
 
-		public static string CreateGetFilteredOrdersEndpoint( OrderColumns column, object value )
+		public static string CreateGetFilteredOrdersEndpoint( OrderColumns column, object value, bool isAddOrderComments )
 		{
 			var endpoint = string.Format( _culture, "{0}={1}&{2}={3},{4}&{5}={6}&{7}={8}",
 				VolusionParam.ApiName.Name, VolusionCommand.GetOrders.Command,
-				VolusionParam.SelectColumns.Name, GetOrderColumns(), GetOrderDetailsColumns(),
+				VolusionParam.SelectColumns.Name, GetOrderColumns( isAddOrderComments ), GetOrderDetailsColumns(),
 				VolusionParam.WhereColumn.Name, column.Name,
 				VolusionParam.WhereValue.Name, value );
 			return endpoint;
@@ -97,7 +98,7 @@ namespace VolusionAccess.Services
 			return columns;
 		}
 
-		private static string GetOrderColumns()
+		private static string GetOrderColumns( bool isAddOrderComments )
 		{
 			var columns = "o.OrderID," +
 			              "o.AccountNumber," +
@@ -117,7 +118,7 @@ namespace VolusionAccess.Services
 			              "o.OrderDate," +
 			              "o.OrderDateUtc," +
 			              "o.OrderStatus," +
-						  "o.Order_Comments," +
+						  ( isAddOrderComments ? "o.Order_Comments," : string.Empty ) +
 						  "o.PaymentAmount," +
 			              "o.PaymentDeclined," +
 			              "o.PaymentMethodID," +

@@ -7,19 +7,19 @@ namespace VolusionAccess
 {
 	public interface IVolusionOrdersService
 	{
-		VolusionOrder GetOrder( int orderId );
-		Task< VolusionOrder > GetOrderAsync( int orderId );
+		VolusionOrder GetOrder( int orderId, bool isAddOrderComments );
+		Task< VolusionOrder > GetOrderAsync( int orderId, bool isAddOrderComments );
 
-		IEnumerable< VolusionOrder > GetNewOrUpdatedOrders();
-		Task< IEnumerable< VolusionOrder > > GetNewOrUpdatedOrdersAsync();
+		IEnumerable< VolusionOrder > GetNewOrUpdatedOrders( bool isAddOrderComments );
+		Task< IEnumerable< VolusionOrder > > GetNewOrUpdatedOrdersAsync( bool isAddOrderComments );
 
-		IEnumerable< VolusionOrder > GetNewOrUpdatedOrders( DateTime startDateUtc, DateTime endDateUtc );
-		Task< IEnumerable< VolusionOrder > > GetNewOrUpdatedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc );
+		IEnumerable< VolusionOrder > GetNewOrUpdatedOrders( DateTime startDateUtc, DateTime endDateUtc, bool isAddOrderComments );
+		Task< IEnumerable< VolusionOrder > > GetNewOrUpdatedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, bool isAddOrderComments );
 
-		IEnumerable< VolusionOrder > GetNotFinishedOrders( DateTime startDateUtc, DateTime endDateUtc );
-		Task< IEnumerable< VolusionOrder > > GetNotFinishedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc );
+		IEnumerable< VolusionOrder > GetNotFinishedOrders( DateTime startDateUtc, DateTime endDateUtc, bool isAddOrderComments );
+		Task< IEnumerable< VolusionOrder > > GetNotFinishedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, bool isAddOrderComments );
 
-		IEnumerable< VolusionOrder > GetFinishedOrders( IEnumerable< int > ordersIds );
-		Task< IEnumerable< VolusionOrder > > GetFinishedOrdersAsync( IEnumerable< int > ordersIds );
+		IEnumerable< VolusionOrder > GetFinishedOrders( IEnumerable< int > ordersIds, bool isAddOrderComments );
+		Task< IEnumerable< VolusionOrder > > GetFinishedOrdersAsync( IEnumerable< int > ordersIds, bool isAddOrderComments );
 	}
 }
