@@ -192,13 +192,20 @@ namespace VolusionAccess
 			var endpoint = EndpointsBuilder.CreateProductsUpdateEndpoint();
 
 			var parts = products.Slice( UpdateInventoryLimit );
+
+			var batchMark = GetMarker();
+			VolusionLogger.Log.Trace( $"Marker:{batchMark}\t Start update products" );
+			var i = 0;
+
 			foreach( var part in parts )
 			{
 				var vp = new VolusionUpdatedProducts { Products = part.ToList() };
 				var xmlContent = XmlSerializeHelpers.Serialize( vp );
-				var marker = this.GetMarker();
+				var iterMark = GetMarker( batchMark );
 
-				ActionPolicies.Submit.Do( () => this._webRequestServices.PostData( endpoint, xmlContent, marker ) );
+				VolusionLogger.Log.Trace( $"Marker:{batchMark}\t Trace update products. Step {i++}. Updating {vp.Products.Count} products. " );
+
+				ActionPolicies.Submit.Do( () => this._webRequestServices.PostData( endpoint, xmlContent, iterMark ) );
 				Task.Delay( this.UpdateInventoryDelay ).Wait();
 			}
 		}
@@ -208,21 +215,35 @@ namespace VolusionAccess
 			var endpoint = EndpointsBuilder.CreateProductsUpdateEndpoint();
 
 			var parts = products.Slice( UpdateInventoryLimit );
+
+			var batchMarker = GetMarker();
+			VolusionLogger.Log.Trace( $"Marker:{batchMarker}\t Start update products" );
+			var i = 0;
+
 			foreach( var part in parts )
 			{
 				var vp = new VolusionUpdatedProducts { Products = part.ToList() };
 				var xmlContent = XmlSerializeHelpers.Serialize( vp );
-				var marker = this.GetMarker();
+				var iterMarker = GetMarker( batchMarker );
 
-				await ActionPolicies.SubmitAsync.Do( async () => await this._webRequestServices.PostDataAsync( endpoint, xmlContent, marker ) );
+				VolusionLogger.Log.Trace( $"Marker:{batchMarker}\t Trace update products. Step {i++}. Updating {vp.Products.Count} products. " );
+
+				await ActionPolicies.SubmitAsync.Do( async () => await this._webRequestServices.PostDataAsync( endpoint, xmlContent, iterMarker ) );
 				await Task.Delay( this.UpdateInventoryDelay );
 			}
+			VolusionLogger.Log.Trace( $"Marker:{batchMarker}\t End update products" );
 		}
 		#endregion
 
 		private static string GetMarker()
 		{
 			return Guid.NewGuid().ToString();
+		}
+
+		private static string GetMarker( string prefixMarker )
+		{
+			prefixMarker = prefixMarker ?? string.Empty;
+			return prefixMarker + "--" + Guid.NewGuid();
 		}
 	}
 }
