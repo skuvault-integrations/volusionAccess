@@ -36,7 +36,7 @@ namespace VolusionAccess
 		{
 			var products = new List< VolusionPublicProduct >();
 			var endpoint = EndpointsBuilder.CreateGetPublicProductsEndpoint().GetFullEndpoint( this._config );
-			var marker = this.GetMarker();
+			var marker = GetMarker();
 
 			var productsPortion = ActionPolicies.Get.Get( () => this._webRequestServices.GetResponseForSpecificUrl< VolusionPublicProducts >( endpoint, marker ) );
 			if( productsPortion != null && productsPortion.Products != null )
@@ -54,7 +54,7 @@ namespace VolusionAccess
 		{
 			var products = new List< VolusionPublicProduct >();
 			var endpoint = EndpointsBuilder.CreateGetPublicProductsEndpoint().GetFullEndpoint( this._config );
-			var marker = this.GetMarker();
+			var marker = GetMarker();
 
 			var productsPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseForSpecificUrlAsync< VolusionPublicProducts >( endpoint, marker ) );
 			if( productsPortion != null && productsPortion.Products != null )
@@ -67,7 +67,7 @@ namespace VolusionAccess
 		{
 			var products = new List< VolusionProduct >();
 			var endpoint = EndpointsBuilder.CreateGetProductsEndpoint();
-			var marker = this.GetMarker();
+			var marker = GetMarker();
 
 			while( true )
 			{
@@ -83,7 +83,7 @@ namespace VolusionAccess
 		{
 			var products = new List< VolusionProduct >();
 			var endpoint = EndpointsBuilder.CreateGetProductsEndpoint();
-			var marker = this.GetMarker();
+			var marker = GetMarker();
 
 			while( true )
 			{
@@ -99,7 +99,7 @@ namespace VolusionAccess
 		{
 			var products = new List< VolusionProduct >();
 			var endpoint = EndpointsBuilder.CreateGetFilteredProductsEndpoint( column, value );
-			var marker = this.GetMarker();
+			var marker = GetMarker();
 
 			var productsPortion = ActionPolicies.Get.Get( () => this._webRequestServices.GetResponse< VolusionProducts >( endpoint, marker ) );
 			if( productsPortion != null && productsPortion.Products != null )
@@ -112,7 +112,7 @@ namespace VolusionAccess
 		{
 			var products = new List< VolusionProduct >();
 			var endpoint = EndpointsBuilder.CreateGetFilteredProductsEndpoint( column, value );
-			var marker = this.GetMarker();
+			var marker = GetMarker();
 
 			var productsPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint, marker ) );
 			if( productsPortion != null && productsPortion.Products != null )
@@ -137,7 +137,7 @@ namespace VolusionAccess
 		{
 			VolusionProduct product = null;
 			var endpoint = EndpointsBuilder.CreateGetProductEndpoint( sku );
-			var marker = this.GetMarker();
+			var marker = GetMarker();
 
 			var productsPortion = ActionPolicies.Get.Get( () => this._webRequestServices.GetResponse< VolusionProducts >( endpoint, marker ) );
 			if( productsPortion != null && productsPortion.Products != null )
@@ -150,7 +150,7 @@ namespace VolusionAccess
 		{
 			VolusionProduct product = null;
 			var endpoint = EndpointsBuilder.CreateGetProductEndpoint( sku );
-			var marker = this.GetMarker();
+			var marker = GetMarker();
 
 			var productsPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint, marker ) );
 			if( productsPortion != null && productsPortion.Products != null )
@@ -163,7 +163,7 @@ namespace VolusionAccess
 		{
 			List< VolusionProduct > products = null;
 			var endpoint = EndpointsBuilder.CreateGetChildProductsEndpoint( sku );
-			var marker = this.GetMarker();
+			var marker = GetMarker();
 
 			var productsPortion = ActionPolicies.Get.Get( () => this._webRequestServices.GetResponse< VolusionProducts >( endpoint, marker ) );
 			if( productsPortion != null && productsPortion.Products != null )
@@ -176,7 +176,7 @@ namespace VolusionAccess
 		{
 			List< VolusionProduct > products = null;
 			var endpoint = EndpointsBuilder.CreateGetChildProductsEndpoint( sku );
-			var marker = this.GetMarker();
+			var marker = GetMarker();
 
 			var productsPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint, marker ) );
 			if( productsPortion != null && productsPortion.Products != null )
@@ -192,13 +192,20 @@ namespace VolusionAccess
 			var endpoint = EndpointsBuilder.CreateProductsUpdateEndpoint();
 
 			var parts = products.Slice( UpdateInventoryLimit );
+
+			var batchMark = GetMarker();
+			VolusionLogger.Log.Trace( $"Marker:{batchMark}\t Start update products" );
+			var i = 0;
+
 			foreach( var part in parts )
 			{
 				var vp = new VolusionUpdatedProducts { Products = part.ToList() };
 				var xmlContent = XmlSerializeHelpers.Serialize( vp );
-				var marker = this.GetMarker();
+				var iterMark = GetMarker( batchMark );
 
-				ActionPolicies.Submit.Do( () => this._webRequestServices.PostData( endpoint, xmlContent, marker ) );
+				VolusionLogger.Log.Trace( $"Marker:{batchMark}\t Trace update products. Step {i++}. Updating {vp.Products.Count} products. " );
+
+				ActionPolicies.Submit.Do( () => this._webRequestServices.PostData( endpoint, xmlContent, iterMark ) );
 				Task.Delay( this.UpdateInventoryDelay ).Wait();
 			}
 		}
@@ -208,21 +215,35 @@ namespace VolusionAccess
 			var endpoint = EndpointsBuilder.CreateProductsUpdateEndpoint();
 
 			var parts = products.Slice( UpdateInventoryLimit );
+
+			var batchMarker = GetMarker();
+			VolusionLogger.Log.Trace( $"Marker:{batchMarker}\t Start update products" );
+			var i = 0;
+
 			foreach( var part in parts )
 			{
 				var vp = new VolusionUpdatedProducts { Products = part.ToList() };
 				var xmlContent = XmlSerializeHelpers.Serialize( vp );
-				var marker = this.GetMarker();
+				var iterMarker = GetMarker( batchMarker );
 
-				await ActionPolicies.SubmitAsync.Do( async () => await this._webRequestServices.PostDataAsync( endpoint, xmlContent, marker ) );
+				VolusionLogger.Log.Trace( $"Marker:{batchMarker}\t Trace update products. Step {i++}. Updating {vp.Products.Count} products. " );
+
+				await ActionPolicies.SubmitAsync.Do( async () => await this._webRequestServices.PostDataAsync( endpoint, xmlContent, iterMarker ) );
 				await Task.Delay( this.UpdateInventoryDelay );
 			}
+			VolusionLogger.Log.Trace( $"Marker:{batchMarker}\t End update products" );
 		}
 		#endregion
 
-		private string GetMarker()
+		private static string GetMarker()
 		{
 			return Guid.NewGuid().ToString();
+		}
+
+		private static string GetMarker( string prefixMarker )
+		{
+			prefixMarker = prefixMarker ?? string.Empty;
+			return prefixMarker + "--" + Guid.NewGuid();
 		}
 	}
 }
