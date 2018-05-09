@@ -194,7 +194,7 @@ namespace VolusionAccess
 			var parts = products.Slice( UpdateInventoryLimit );
 
 			var batchMark = GetMarker();
-			VolusionLogger.Log.Trace( $"Marker:{batchMark}\t Start update products" );
+			VolusionLogger.Log.Trace( string.Format( "Marker:{0}\t Start update products", batchMark ) );
 			var i = 0;
 
 			foreach( var part in parts )
@@ -203,7 +203,7 @@ namespace VolusionAccess
 				var xmlContent = XmlSerializeHelpers.Serialize( vp );
 				var iterMark = GetMarker( batchMark );
 
-				VolusionLogger.Log.Trace( $"Marker:{batchMark}\t Trace update products. Step {i++}. Updating {vp.Products.Count} products. " );
+				VolusionLogger.Log.Trace( string.Format( "Marker:{0}\t Trace update products. Step {1}. Updating {2} products. ", batchMark, i++, vp.Products.Count ) );
 
 				ActionPolicies.Submit.Do( () => this._webRequestServices.PostData( endpoint, xmlContent, iterMark ) );
 				Task.Delay( this.UpdateInventoryDelay ).Wait();
@@ -217,7 +217,7 @@ namespace VolusionAccess
 			var parts = products.Slice( UpdateInventoryLimit );
 
 			var batchMarker = GetMarker();
-			VolusionLogger.Log.Trace( $"Marker:{batchMarker}\t Start update products" );
+			VolusionLogger.Log.Trace( string.Format( "Marker:{0}\t Start update products", batchMarker ) );
 			var i = 0;
 
 			foreach( var part in parts )
@@ -226,12 +226,12 @@ namespace VolusionAccess
 				var xmlContent = XmlSerializeHelpers.Serialize( vp );
 				var iterMarker = GetMarker( batchMarker );
 
-				VolusionLogger.Log.Trace( $"Marker:{batchMarker}\t Trace update products. Step {i++}. Updating {vp.Products.Count} products. " );
+				VolusionLogger.Log.Trace( string.Format( "Marker:{0}\t Trace update products. Step {1}. Updating {2} products. ", batchMarker, i++, vp.Products.Count ) );
 
 				await ActionPolicies.SubmitAsync.Do( async () => await this._webRequestServices.PostDataAsync( endpoint, xmlContent, iterMarker ) );
 				await Task.Delay( this.UpdateInventoryDelay );
 			}
-			VolusionLogger.Log.Trace( $"Marker:{batchMarker}\t End update products" );
+			VolusionLogger.Log.Trace( string.Format( "Marker:{0}\t End update products", batchMarker ) );
 		}
 		#endregion
 
