@@ -17,7 +17,7 @@ namespace VolusionAccess
 		private readonly VolusionConfig _config;
 		private readonly WebRequestServices _webRequestServices;
 
-		private readonly IEnumerable< string > NotFinishedStatuses = new List< string >
+		private readonly IEnumerable< string > OpenOrdersStatuses = new List< string >
 		{
 			VolusionOrderStatusEnum.New.ToString(),
 			VolusionOrderStatusEnum.Pending.ToString(),
@@ -101,13 +101,14 @@ namespace VolusionAccess
 		}
 		#endregion
 
-		#region GetNotFinishedOrders
+		#region GetOpenOrders
+		// [ Obsolete( "Because method filter server responses by date, instead of requesting orders in date range" ) ] TODO: make it obsolete, when we will completely rid of this
 		public IEnumerable< VolusionOrder > GetNotFinishedOrders( DateTime startDateUtc, DateTime endDateUtc, bool isAddOrderComments )
 		{
 			startDateUtc = startDateUtc.AddMinutes( -1 );
 			var marker = this.GetMarker();
 			var orders = new HashSet< VolusionOrder >();
-			foreach( var status in this.NotFinishedStatuses )
+			foreach( var status in this.OpenOrdersStatuses )
 			{
 				var ordersPortion = this.GetFilteredOrders( OrderColumns.OrderStatus, status, marker, isAddOrderComments ).ToList();
 				var filtered = ordersPortion.Where( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) );
@@ -117,13 +118,27 @@ namespace VolusionAccess
 			return orders;
 		}
 
+		public async Task< IEnumerable< VolusionOrder > > GetOpenOrdersAsync( bool addOrderComments )
+		{
+			var marker = this.GetMarker();
+			var orders = new HashSet< VolusionOrder >();
+			foreach( var status in this.OpenOrdersStatuses )
+			{
+				var ordersPortion = ( await this.GetFilteredOrdersAsync( OrderColumns.OrderStatus, status, marker, addOrderComments ) ).ToList();
+				this.AddOrders( orders, ordersPortion );
+			}
+
+			return orders;
+		}
+
+		// [ Obsolete( "Because method filter server responses by date, instead of requesting orders in date range" )] TODO: make it obsolete, when we will completely rid of this
 		public async Task< IEnumerable< VolusionOrder > > GetNotFinishedOrdersAsync( DateTime startDateUtc, DateTime endDateUtc, bool isAddOrderComments )
 		{
 			startDateUtc = startDateUtc.AddMinutes( -1 );
 			var marker = this.GetMarker();
 			var orders = new HashSet< VolusionOrder >();
 
-			var filteredByStatus = await this.NotFinishedStatuses.ProcessInBatchAsync( 15, async status =>
+			var filteredByStatus = await this.OpenOrdersStatuses.ProcessInBatchAsync( 15, async status =>
 			{
 				var ordersPortion = await this.GetFilteredOrdersAsync( OrderColumns.OrderStatus, status, marker, isAddOrderComments );
 				ordersPortion = ordersPortion.Where( x => this.DoesOrderCreatedOrUpdatedInDateRange( x, startDateUtc, endDateUtc ) ).ToList();
