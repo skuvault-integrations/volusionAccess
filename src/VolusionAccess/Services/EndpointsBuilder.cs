@@ -98,6 +98,12 @@ namespace VolusionAccess.Services
 			return columns;
 		}
 
+		private static string GetOrderColumns( params string[] columns )
+		{
+			var joinedColumns = string.Join( ",", columns );
+			return joinedColumns;
+		}
+
 		private static string GetOrderColumns( bool isAddOrderComments )
 		{
 			var columns = "o.OrderID," +
