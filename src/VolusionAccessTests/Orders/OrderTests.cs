@@ -112,14 +112,14 @@ namespace VolusionAccessTests.Orders
 
 		#region GetOpenOrders
 		[ Test ]
-		public void GetOpenOrders_ReturnsRequestedFieldsOnlyAndTimeZone()
+		public void GetOpenOrders_DoesntReturnNotRequestedFields()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
 			var ordersAllColumnsSet = OrderColumnsSets.OrdersAllColumnsSet;
-			ordersAllColumnsSet.Remove( OrderColumnsNamesWithPrefix.AccountNumber );
+			ordersAllColumnsSet.Remove( OrderColumnsNamesWithPrefix.OrderStatus );
 
 			var includeColumnsDetails = OrderDetailsColumnsSets.AllColumnsSet;
-			includeColumnsDetails.Remove( OrderDetailsColumnsNamesWithPrefix.);
+			includeColumnsDetails.Remove( OrderDetailsColumnsNamesWithPrefix.ProductName );
 
 			var orders = service.GetOpenOrdersAsync( ordersAllColumnsSet, includeColumnsDetails );
 			orders.Wait();
@@ -128,10 +128,36 @@ namespace VolusionAccessTests.Orders
 			foreach( var order in orders.Result )
 			{
 				order.DefaultTimeZone.Should().Be( this.TimeZone );
-				order.OrderDetails.Should().Be( 0 );
-				foreach( var item in order.OrderDetails )
+				order.OrderStatusStr.Should().BeNullOrWhiteSpace();
+				foreach( var volusionOrderDetailse in order.OrderDetails )
 				{
-					item.ProductSku.Should().BeNullOrWhiteSpace();
+					volusionOrderDetailse.ProductName.Should().BeNullOrWhiteSpace();
+				}
+			}
+		}
+
+		[ Test ]
+		public void GetOpenOrders_ReturnsRequestedFields()
+		{
+			var service = this.VolusionFactory.CreateOrdersService( this.Config );
+
+			var ordersAllColumnsSet = OrderColumnsSets.OrdersAllColumnsSet;
+			ordersAllColumnsSet.Add( OrderColumnsNamesWithPrefix.OrderStatus );
+
+			var includeColumnsDetails = OrderDetailsColumnsSets.AllColumnsSet;
+			includeColumnsDetails.Add( OrderDetailsColumnsNamesWithPrefix.ProductName );
+
+			var orders = service.GetOpenOrdersAsync( ordersAllColumnsSet, includeColumnsDetails );
+			orders.Wait();
+
+			orders.Result.Count().Should().BeGreaterThan( 0 );
+			foreach( var order in orders.Result )
+			{
+				order.DefaultTimeZone.Should().Be( this.TimeZone );
+				order.OrderStatusStr.Should().NotBeNullOrWhiteSpace();
+				foreach( var volusionOrderDetailse in order.OrderDetails )
+				{
+					volusionOrderDetailse.ProductName.Should().NotBeNullOrWhiteSpace();
 				}
 			}
 		}
