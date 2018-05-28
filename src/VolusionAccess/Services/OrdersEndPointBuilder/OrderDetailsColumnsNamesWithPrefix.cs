@@ -1,6 +1,6 @@
 ﻿namespace VolusionAccess.Services.OrdersEndPointBuilder
 {
-	public class OrderDetailsColumnsNamesWithPrefix
+	public class OrderDetailsColumnsNamesWithPrefix //todo: may be create Value objvect for each of these columns in future
 	{
 		public static readonly string OrderDetailID = "od.OrderDetailID,";
 		public static readonly string AutoDropShip = "od.AutoDropShip,";
