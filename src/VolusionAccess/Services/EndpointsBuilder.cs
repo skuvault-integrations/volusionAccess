@@ -67,6 +67,16 @@ namespace VolusionAccess.Services
 			return endpoint;
 		}
 
+		public static string CreateGetFilteredOrdersEndpoint( OrderColumns column, object value, string[] includeColumns )
+		{
+			var endpoint = string.Format( _culture, "{0}={1}&{2}={3},{4}&{5}={6}&{7}={8}",
+				VolusionParam.ApiName.Name, VolusionCommand.GetOrders.Command,
+				VolusionParam.SelectColumns.Name, GetOrderColumns( includeColumns ), GetOrderDetailsColumns(),
+				VolusionParam.WhereColumn.Name, column.Name,
+				VolusionParam.WhereValue.Name, value );
+			return endpoint;
+		}
+
 		public static string GetFullEndpoint( this string endpoint, VolusionConfig config )
 		{
 			var fullEndpoint = string.Format( "{0}?{1}", config.Host, endpoint );

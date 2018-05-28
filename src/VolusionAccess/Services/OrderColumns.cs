@@ -1,6 +1,6 @@
 ﻿namespace VolusionAccess.Services
 {
-	internal class OrderColumnsNamesWithPrefix
+	public class OrderColumnsNamesWithPrefix
 	{
 		public static string OrderID = "o.OrderID";
 		public static string AccountNumber = "o.AccountNumber";

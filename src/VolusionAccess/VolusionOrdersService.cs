@@ -118,13 +118,13 @@ namespace VolusionAccess
 			return orders;
 		}
 
-		public async Task< IEnumerable< VolusionOrder > > GetOpenOrdersAsync( bool addOrderComments )
+		public async Task< IEnumerable< VolusionOrder > > GetOpenOrdersAsync( string[] includeColumns )
 		{
 			var marker = this.GetMarker();
 			var orders = new HashSet< VolusionOrder >();
 			foreach( var status in this.OpenOrdersStatuses )
 			{
-				var ordersPortion = ( await this.GetFilteredOrdersAsync( OrderColumns.OrderStatus, status, marker, addOrderComments ) ).ToList();
+				var ordersPortion = ( await this.GetFilteredOrdersAsync( OrderColumns.OrderStatus, status, marker, includeColumns ) ).ToList();
 				this.AddOrders( orders, ordersPortion );
 			}
 
@@ -204,6 +204,18 @@ namespace VolusionAccess
 		private async Task< List< VolusionOrder > > GetFilteredOrdersAsync( OrderColumns column, object value, string marker, bool isAddOrderComments )
 		{
 			var endpoint = EndpointsBuilder.CreateGetFilteredOrdersEndpoint( column, value, isAddOrderComments );
+
+			var result = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionOrders >( endpoint, marker ) );
+			if( result == null || result.Orders == null )
+				return new List< VolusionOrder >();
+
+			this.SetDefaultTimeZone( result.Orders );
+			return result.Orders;
+		}
+
+		private async Task< List< VolusionOrder > > GetFilteredOrdersAsync( OrderColumns column, object value, string marker, string[] includeColumns )
+		{
+			var endpoint = EndpointsBuilder.CreateGetFilteredOrdersEndpoint( column, value, includeColumns );
 
 			var result = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionOrders >( endpoint, marker ) );
 			if( result == null || result.Orders == null )
