@@ -77,15 +77,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\EndpointsBuilder.cs" />
     <Compile Include="Services\OrderDetailsColumnsNamesWithPrefix.cs" />
-    <Compile Include="Services\OrderColumns.cs" />
+    <Compile Include="Services\OrderColumnsNamesWithPrefix.cs" />
     <Compile Include="Services\OrderDetailsColumnsSets.cs" />
-    <Compile Include="Services\OrderColumnsBuilder.cs" />
+    <Compile Include="Services\OrderColumnsSets.cs" />
     <Compile Include="Services\WebRequestServices.cs" />
     <Compile Include="VolusionFactory.cs" />
     <Compile Include="VolusionOrdersService.cs" />
     <Compile Include="VolusionProductsService.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Services\OrdersEndPointBuilder\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

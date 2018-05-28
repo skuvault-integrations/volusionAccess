@@ -3,7 +3,7 @@ using Netco.Extensions;
 
 namespace VolusionAccess.Services
 {
-	public class OrderColumnsBuilder
+	public class OrderColumnsSets
 	{
 		public static HashSet< string > OrdersAllColumnsSet
 		{
