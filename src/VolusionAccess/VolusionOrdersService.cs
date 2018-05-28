@@ -118,7 +118,7 @@ namespace VolusionAccess
 			return orders;
 		}
 
-		public async Task< IEnumerable< VolusionOrder > > GetOpenOrdersAsync( string[] includeColumns )
+		public async Task< IEnumerable< VolusionOrder > > GetOpenOrdersAsync( HashSet< string > includeColumns )
 		{
 			var marker = this.GetMarker();
 			var orders = new HashSet< VolusionOrder >();
@@ -213,7 +213,7 @@ namespace VolusionAccess
 			return result.Orders;
 		}
 
-		private async Task< List< VolusionOrder > > GetFilteredOrdersAsync( OrderColumns column, object value, string marker, string[] includeColumns )
+		private async Task< List< VolusionOrder > > GetFilteredOrdersAsync( OrderColumns column, object value, string marker, HashSet<string> includeColumns )
 		{
 			var endpoint = EndpointsBuilder.CreateGetFilteredOrdersEndpoint( column, value, includeColumns );
 

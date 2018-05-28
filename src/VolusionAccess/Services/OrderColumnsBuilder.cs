@@ -1,8 +1,21 @@
-﻿namespace VolusionAccess.Services
+﻿using System.Collections.Generic;
+using Netco.Extensions;
+
+namespace VolusionAccess.Services
 {
 	public class OrderColumnsBuilder
 	{
-		public static readonly string[] OrdersAllColumnsSet = new[]
+		public static HashSet< string > OrdersAllColumnsSet
+		{
+			get { return ordersAllColumnsSet.ToHashSet(); }
+		}
+
+		public static HashSet< string > OrdersMinimalColumnsSet
+		{
+			get { return ordersMinimalColumnsSet.ToHashSet(); }
+		}
+
+		private static readonly HashSet< string > ordersAllColumnsSet = new HashSet< string >()
 		{
 			OrderColumnsNamesWithPrefix.OrderID,
 			OrderColumnsNamesWithPrefix.AccountNumber,
@@ -67,7 +80,7 @@
 			OrderColumnsNamesWithPrefix.OrderDetails,
 		};
 
-		public static readonly string[] OrdersMinimalColumnsSet = new[]
+		private static readonly HashSet< string > ordersMinimalColumnsSet = new HashSet< string >()
 		{
 			OrderColumnsNamesWithPrefix.OrderID,
 			// we are sure it is not used //OrderColumnsWithPrefix.AccountNumber,
