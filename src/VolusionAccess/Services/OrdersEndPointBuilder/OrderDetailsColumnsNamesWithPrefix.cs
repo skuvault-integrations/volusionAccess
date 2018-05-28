@@ -1,4 +1,4 @@
-﻿namespace VolusionAccess.Services
+﻿namespace VolusionAccess.Services.OrdersEndPointBuilder
 {
 	public class OrderDetailsColumnsNamesWithPrefix
 	{

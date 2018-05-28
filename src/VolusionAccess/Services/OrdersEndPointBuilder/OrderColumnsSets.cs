@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Netco.Extensions;
 
-namespace VolusionAccess.Services
+namespace VolusionAccess.Services.OrdersEndPointBuilder
 {
 	public class OrderColumnsSets
 	{
