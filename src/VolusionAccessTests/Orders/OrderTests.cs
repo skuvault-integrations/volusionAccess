@@ -112,19 +112,29 @@ namespace VolusionAccessTests.Orders
 
 		#region GetOpenOrders
 		[ Test ]
-		public void GetOpenOrders()
+		public void GetOpenOrders_ReturnsRequestedFieldsOnlyAndTimeZone()
 		{
 			var service = this.VolusionFactory.CreateOrdersService( this.Config );
-			var orders = service.GetOpenOrdersAsync( OrderColumnsSets.OrdersAllColumnsSet, OrderDetailsColumnsSets.AllColumnsSet );
+			var ordersAllColumnsSet = OrderColumnsSets.OrdersAllColumnsSet;
+			ordersAllColumnsSet.Remove( OrderColumnsNamesWithPrefix.AccountNumber );
+
+			var includeColumnsDetails = OrderDetailsColumnsSets.AllColumnsSet;
+			includeColumnsDetails.Remove( OrderDetailsColumnsNamesWithPrefix.);
+
+			var orders = service.GetOpenOrdersAsync( ordersAllColumnsSet, includeColumnsDetails );
 			orders.Wait();
 
 			orders.Result.Count().Should().BeGreaterThan( 0 );
 			foreach( var order in orders.Result )
 			{
-				order.DefaultTimeZone.Should().Be( TimeZone );
+				order.DefaultTimeZone.Should().Be( this.TimeZone );
+				order.OrderDetails.Should().Be( 0 );
+				foreach( var item in order.OrderDetails )
+				{
+					item.ProductSku.Should().BeNullOrWhiteSpace();
+				}
 			}
 		}
-
 		#endregion
 		#region GetNotFinishedOrders
 		[ Test ]
