@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using VolusionAccess.Models.Command;
 using VolusionAccess.Models.Configuration;
@@ -68,7 +67,7 @@ namespace VolusionAccess.Services
 			return endpoint;
 		}
 
-		public static string CreateGetFilteredOrdersEndpoint( OrderColumns column, object value, HashSet<string> includeColumns )
+		public static string CreateGetFilteredOrdersEndpoint( OrderColumns column, object value, HashSet< string > includeColumns )
 		{
 			var endpoint = string.Format( _culture, "{0}={1}&{2}={3},{4}&{5}={6}&{7}={8}",
 				VolusionParam.ApiName.Name, VolusionCommand.GetOrders.Command,

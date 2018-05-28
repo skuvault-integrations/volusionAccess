@@ -7,15 +7,15 @@ namespace VolusionAccess.Services
 	{
 		public static HashSet< string > OrdersAllColumnsSet
 		{
-			get { return ordersAllColumnsSet.ToHashSet(); }
+			get { return _ordersAllColumnsSet.ToHashSet(); }
 		}
 
 		public static HashSet< string > OrdersMinimalColumnsSet
 		{
-			get { return ordersMinimalColumnsSet.ToHashSet(); }
+			get { return _ordersMinimalColumnsSet.ToHashSet(); }
 		}
 
-		private static readonly HashSet< string > ordersAllColumnsSet = new HashSet< string >()
+		private static readonly HashSet< string > _ordersAllColumnsSet = new HashSet< string >()
 		{
 			OrderColumnsNamesWithPrefix.OrderID,
 			OrderColumnsNamesWithPrefix.AccountNumber,
@@ -80,7 +80,7 @@ namespace VolusionAccess.Services
 			OrderColumnsNamesWithPrefix.OrderDetails,
 		};
 
-		private static readonly HashSet< string > ordersMinimalColumnsSet = new HashSet< string >()
+		private static readonly HashSet< string > _ordersMinimalColumnsSet = new HashSet< string >()
 		{
 			OrderColumnsNamesWithPrefix.OrderID,
 			// we are sure it is not used //OrderColumnsWithPrefix.AccountNumber,

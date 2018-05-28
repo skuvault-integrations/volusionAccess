@@ -213,7 +213,7 @@ namespace VolusionAccess
 			return result.Orders;
 		}
 
-		private async Task< List< VolusionOrder > > GetFilteredOrdersAsync( OrderColumns column, object value, string marker, HashSet<string> includeColumns )
+		private async Task< List< VolusionOrder > > GetFilteredOrdersAsync( OrderColumns column, object value, string marker, HashSet< string > includeColumns )
 		{
 			var endpoint = EndpointsBuilder.CreateGetFilteredOrdersEndpoint( column, value, includeColumns );
 
