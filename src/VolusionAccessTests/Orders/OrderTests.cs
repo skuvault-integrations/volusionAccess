@@ -8,6 +8,7 @@ using Netco.Logging;
 using NUnit.Framework;
 using VolusionAccess;
 using VolusionAccess.Models.Configuration;
+using VolusionAccess.Services.OrdersEndPointBuilder;
 
 namespace VolusionAccessTests.Orders
 {
@@ -24,7 +25,8 @@ namespace VolusionAccessTests.Orders
 			const string credentialsFilePath = @"..\..\Files\VolusionCredentials.csv";
 
 			var cc = new CsvContext();
-			var testConfig = cc.Read< TestConfig >( credentialsFilePath, new CsvFileDescription { FirstLineHasColumnNames = true } ).FirstOrDefault();
+			var testConfigs = cc.Read< TestConfig >( credentialsFilePath, new CsvFileDescription { FirstLineHasColumnNames = true,SeparatorChar = ';'} );
+			var testConfig = testConfigs.FirstOrDefault();
 
 			if( testConfig != null )
 				this.Config = new VolusionConfig( testConfig.ShopName, testConfig.UserName, testConfig.Password, TimeZone );
@@ -108,6 +110,22 @@ namespace VolusionAccessTests.Orders
 		}
 		#endregion
 
+		#region GetOpenOrders
+		[ Test ]
+		public void GetOpenOrders()
+		{
+			var service = this.VolusionFactory.CreateOrdersService( this.Config );
+			var orders = service.GetOpenOrdersAsync( OrderColumnsSets.OrdersAllColumnsSet, OrderDetailsColumnsSets.AllColumnsSet );
+			orders.Wait();
+
+			orders.Result.Count().Should().BeGreaterThan( 0 );
+			foreach( var order in orders.Result )
+			{
+				order.DefaultTimeZone.Should().Be( TimeZone );
+			}
+		}
+
+		#endregion
 		#region GetNotFinishedOrders
 		[ Test ]
 		public void GetNotFinishedOrders()
