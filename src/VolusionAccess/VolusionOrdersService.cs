@@ -186,6 +186,21 @@ namespace VolusionAccess
 
 			return orders;
 		}
+
+		public async Task< IEnumerable< VolusionOrder > > GetFinishedOrdersAsync( IEnumerable< int > ordersIds, HashSet< string > includeColumns, HashSet< string > includeColumnsDetails )
+		{
+			var marker = this.GetMarker();
+			var orders = await ordersIds.ProcessInBatchAsync( 10, async orderId =>
+			{
+				var filteredOrders = await this.GetFilteredOrdersAsync( OrderColumns.OrderId, orderId, marker, includeColumns, includeColumnsDetails );
+				var order = filteredOrders.FirstOrDefault();
+				if( order != null && this.FinishedStatuses.Contains( order.OrderStatusStr ) )
+					return order;
+				return null;
+			} );
+
+			return orders;
+		}
 		#endregion
 
 		#region Misc

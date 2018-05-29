@@ -26,5 +26,6 @@ namespace VolusionAccess
 
 		IEnumerable< VolusionOrder > GetFinishedOrders( IEnumerable< int > ordersIds, bool isAddOrderComments );
 		Task< IEnumerable< VolusionOrder > > GetFinishedOrdersAsync( IEnumerable< int > ordersIds, bool isAddOrderComments );
+		Task< IEnumerable< VolusionOrder > > GetFinishedOrdersAsync( IEnumerable< int > ordersIds, HashSet< string > includeColumns, HashSet< string > includeColumnsDetails );
 	}
 }
