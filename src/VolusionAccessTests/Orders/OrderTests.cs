@@ -216,6 +216,35 @@ namespace VolusionAccessTests.Orders
 				order.DefaultTimeZone.Should().Be( TimeZone );
 			}
 		}
+
+		[ Test ]
+		public void GetFinishedOrders_ReturnsRequestedFieldsOnly()
+		{
+			var service = this.VolusionFactory.CreateOrdersService( this.Config );
+
+			var ordersAllColumnsSet = OrderColumnsSets.OrdersAllColumnsSet;
+			ordersAllColumnsSet.Add( OrderColumnsNamesWithPrefix.OrderStatus );
+
+			var includeColumnsDetails = OrderDetailsColumnsSets.AllColumnsSet;
+			includeColumnsDetails.Remove( OrderDetailsColumnsNamesWithPrefix.ProductName );
+
+			var ordersSample = service.GetOpenOrdersAsync( ordersAllColumnsSet, includeColumnsDetails );
+			ordersSample.Wait();
+
+			var orders2 = service.GetFinishedOrdersAsync( ordersSample.Result.Select( x => x.Id ), ordersAllColumnsSet, includeColumnsDetails );
+			orders2.Wait();
+
+			ordersSample.Result.Count().Should().BeGreaterThan( 0 );
+			foreach( var order in ordersSample.Result )
+			{
+				order.DefaultTimeZone.Should().Be( this.TimeZone );
+				order.OrderStatusStr.Should().NotBeNullOrWhiteSpace();
+				foreach( var volusionOrderDetailse in order.OrderDetails )
+				{
+					volusionOrderDetailse.ProductName.Should().BeNullOrWhiteSpace();
+				}
+			}
+		}
 		#endregion
 	}
 }
