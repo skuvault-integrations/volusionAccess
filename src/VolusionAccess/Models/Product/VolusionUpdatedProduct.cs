@@ -9,5 +9,12 @@ namespace VolusionAccess.Models.Product
 
 		[ XmlElement( ElementName = "StockStatus" ) ]
 		public int Quantity { get; set; }
+
+		[ XmlElement( ElementName = "DoNotAllowBackOrders" ) ]
+		public string DoNotAllowBackOrders { get; set; }
+
+		public VolusionUpdatedProduct() {
+			this.DoNotAllowBackOrders = "Y";
+		}
 	}
 }
