@@ -48,10 +48,10 @@ $solution_file = "$src_dir\$project_name.sln"
 $nuget = "$src_dir\.nuget\NuGet.exe"
 	
 # Use MSBuild.
-use Framework\v4.0.30319 MSBuild
+Set-Alias MSBuild16 (Join-Path -Path (Get-VSSetupInstance | Where-Object {$_.DisplayName -eq 'Visual Studio Professional 2019'} | select InstallationPath | Select-Object -first 1).InstallationPath -ChildPath "MSBuild\Current\Bin\MSBuild.exe")
 
 task Clean { 
-	exec { MSBuild "$solution_file" /t:Clean /p:Configuration=$configuration /v:quiet } 
+	exec { MSBuild16 "$solution_file" /t:Clean /p:Configuration=$configuration /v:quiet } 
 	Remove-Item -force -recurse $build_dir -ErrorAction SilentlyContinue | Out-Null
 }
 
@@ -66,7 +66,7 @@ task NuGetRestore {
 }
 
 task Build {
-	exec { MSBuild "$solution_file" /t:Build /p:Configuration=$configuration /v:minimal /p:OutDir="$build_artifacts_dir\" }
+	exec { MSBuild16 "$solution_file" /t:Build /p:Configuration=$configuration /v:minimal /p:OutDir="$build_artifacts_dir\" }
 }
 
 task Package  {
@@ -117,7 +117,7 @@ task NuGet Package, Version, {
 		<tags>$project_short_name</tags>
 		<dependencies> 
 			<group targetFramework="net45">
-				<dependency id="Netco" version="1.5.6" />
+				<dependency id="Netco" version="2.0.2" />
 				<dependency id="CuttingEdge.Conditions" version="1.2.0.0" />
 			</group>
 		</dependencies>
