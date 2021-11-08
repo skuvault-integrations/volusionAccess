@@ -7,12 +7,17 @@ namespace VolusionAccess.Misc
 {
 	public static class ActionPolicies
 	{
+#if DEBUG
+		private const int RetryCount = 1;
+#else
+		private const int RetryCount = 10;
+#endif
 		public static ActionPolicy Submit
 		{
 			get { return _volusionSumbitPolicy; }
 		}
 
-		private static readonly ActionPolicy _volusionSumbitPolicy = ActionPolicy.Handle< Exception >().Retry( 10, ( ex, i ) =>
+		private static readonly ActionPolicy _volusionSumbitPolicy = ActionPolicy.Handle< Exception >().Retry( RetryCount, ( ex, i ) =>
 		{
 			VolusionLogger.Log.Trace( ex, "Retrying Volusion API submit call for the {0} time", i );
 			SystemUtil.Sleep( TimeSpan.FromSeconds( 0.5 + i ) );
@@ -23,7 +28,7 @@ namespace VolusionAccess.Misc
 			get { return _volusionSumbitAsyncPolicy; }
 		}
 
-		private static readonly ActionPolicyAsync _volusionSumbitAsyncPolicy = ActionPolicyAsync.Handle< Exception >().RetryAsync( 10, async ( ex, i ) =>
+		private static readonly ActionPolicyAsync _volusionSumbitAsyncPolicy = ActionPolicyAsync.Handle< Exception >().RetryAsync( RetryCount, async ( ex, i ) =>
 		{
 			VolusionLogger.Log.Trace( ex, "Retrying Volusion API submit call for the {0} time", i );
 			await Task.Delay( TimeSpan.FromSeconds( 0.5 + i ) );
@@ -34,7 +39,7 @@ namespace VolusionAccess.Misc
 			get { return _volusionGetPolicy; }
 		}
 
-		private static readonly ActionPolicy _volusionGetPolicy = ActionPolicy.Handle< Exception >().Retry( 10, ( ex, i ) =>
+		private static readonly ActionPolicy _volusionGetPolicy = ActionPolicy.Handle< Exception >().Retry( RetryCount, ( ex, i ) =>
 		{
 			VolusionLogger.Log.Trace( ex, "Retrying Volusion API get call for the {0} time", i );
 			SystemUtil.Sleep( TimeSpan.FromSeconds( 0.5 + i ) );
@@ -45,7 +50,7 @@ namespace VolusionAccess.Misc
 			get { return _volusionGetAsyncPolicy; }
 		}
 
-		private static readonly ActionPolicyAsync _volusionGetAsyncPolicy = ActionPolicyAsync.Handle< Exception >().RetryAsync( 10, async ( ex, i ) =>
+		private static readonly ActionPolicyAsync _volusionGetAsyncPolicy = ActionPolicyAsync.Handle< Exception >().RetryAsync( RetryCount, async ( ex, i ) =>
 		{
 			VolusionLogger.Log.Trace( ex, "Retrying Volusion API get call for the {0} time", i );
 			await Task.Delay( TimeSpan.FromSeconds( 0.5 + i ) );

@@ -49,6 +49,7 @@
     <Compile Include="IVolusionProductsService.cs" />
     <Compile Include="Misc\ActionPolicies.cs" />
     <Compile Include="Misc\VolusionLogger.cs" />
+    <Compile Include="Misc\VolusionThrottler.cs" />
     <Compile Include="Misc\XmlSerializeHelpers.cs" />
     <Compile Include="Models\Command\OrderColumns.cs" />
     <Compile Include="Models\Command\ProductColumns.cs" />
