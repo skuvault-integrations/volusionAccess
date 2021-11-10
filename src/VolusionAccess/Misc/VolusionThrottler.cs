@@ -18,8 +18,8 @@ namespace VolusionAccess.Misc
         /// <param name="delayInSecondsBeforeRelease">Delay in seconds before release</param>
         /// <param name="itemsCountForRelease">Items count for release. Default is 1</param>
         /// <param name="maxRetryCount">Max Retry Count</param>
-        public VolusionThrottler( int maxQuota = 1, int delayInSecondsBeforeRelease = 1, int itemsCountForRelease = 1, int maxRetryCount = 10 ):
-            base( maxQuota, delayInSecondsBeforeRelease, itemsCountForRelease, maxRetryCount, "" )
+        public VolusionThrottler( int maxQuota = 1, int delayInSecondsBeforeRelease = 1, int itemsCountForRelease = 1, int maxRetryCount = 1 ):
+            base( maxQuota, delayInSecondsBeforeRelease, itemsCountForRelease, maxRetryCount, "throttle" )
         {
         }
     }
@@ -40,8 +40,8 @@ namespace VolusionAccess.Misc
         /// <param name="delayInSecondsBeforeRelease">Delay in seconds before release</param>
         /// <param name="itemsCountForRelease">Items count for release. Default is 1</param>
         /// <param name="maxRetryCount">Max Retry Count</param>
-        public VolusionThrottlerAsync( int maxQuota = 1, int delayInSecondsBeforeRelease = 1, int itemsCountForRelease = 1, int maxRetryCount = 10 ):
-            base( maxQuota, delayInSecondsBeforeRelease, itemsCountForRelease, maxRetryCount, "" )
+        public VolusionThrottlerAsync( int maxQuota = 1, int delayInSecondsBeforeRelease = 1, int itemsCountForRelease = 1, int maxRetryCount = 1 ):
+            base( maxQuota, delayInSecondsBeforeRelease, itemsCountForRelease, maxRetryCount, "throttle" )
         {
         }
     }
