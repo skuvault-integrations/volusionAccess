@@ -14,10 +14,13 @@ namespace VolusionAccess
 {
 	public class VolusionProductsService: IVolusionProductsService
 	{
-		private const int UpdateInventoryLimit = 3000;
+		private const int UpdateInventoryLimit = 100;
 		private readonly TimeSpan UpdateInventoryDelay = TimeSpan.FromSeconds( 2 );
 		private readonly WebRequestServices _webRequestServices;
 		private readonly VolusionConfig _config;
+		
+		private readonly VolusionThrottler _throttler = new VolusionThrottler();
+		private readonly VolusionThrottlerAsync _throttlerAsync = new VolusionThrottlerAsync();
 
 		public VolusionProductsService( VolusionConfig config )
 		{
@@ -38,7 +41,7 @@ namespace VolusionAccess
 			var endpoint = EndpointsBuilder.CreateGetPublicProductsEndpoint().GetFullEndpoint( this._config );
 			var marker = GetMarker();
 
-			var productsPortion = ActionPolicies.Get.Get( () => this._webRequestServices.GetResponseForSpecificUrl< VolusionPublicProducts >( endpoint, marker ) );
+			var productsPortion = ActionPolicies.Get.Get( () => this._throttler.Execute( () => this._webRequestServices.GetResponseForSpecificUrl< VolusionPublicProducts >( endpoint, marker ) ) );
 			if( productsPortion != null && productsPortion.Products != null )
 				products.AddRange( productsPortion.Products );
 
@@ -56,7 +59,7 @@ namespace VolusionAccess
 			var endpoint = EndpointsBuilder.CreateGetPublicProductsEndpoint().GetFullEndpoint( this._config );
 			var marker = GetMarker();
 
-			var productsPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseForSpecificUrlAsync< VolusionPublicProducts >( endpoint, marker ) );
+			var productsPortion = await ActionPolicies.GetAsync.Get( () => this._throttlerAsync.ExecuteAsync( async () => await this._webRequestServices.GetResponseForSpecificUrlAsync< VolusionPublicProducts >( endpoint, marker ) ) );
 			if( productsPortion != null && productsPortion.Products != null )
 				products.AddRange( productsPortion.Products );
 
@@ -71,7 +74,7 @@ namespace VolusionAccess
 
 			while( true )
 			{
-				var productsPortion = ActionPolicies.Get.Get( () => this._webRequestServices.GetResponse< VolusionProducts >( endpoint, marker ) );
+				var productsPortion = ActionPolicies.Get.Get( () => this._throttler.Execute( () => this._webRequestServices.GetResponse< VolusionProducts >( endpoint, marker ) ) );
 				if( productsPortion == null || productsPortion.Products == null || productsPortion.Products.Count == 0 )
 					return products;
 
@@ -87,7 +90,7 @@ namespace VolusionAccess
 
 			while( true )
 			{
-				var productsPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint, marker ) );
+				var productsPortion = await ActionPolicies.GetAsync.Get( () => this._throttlerAsync.ExecuteAsync( async () => await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint, marker ) ) );
 				if( productsPortion == null || productsPortion.Products == null || productsPortion.Products.Count == 0 )
 					return products;
 
@@ -101,7 +104,7 @@ namespace VolusionAccess
 			var endpoint = EndpointsBuilder.CreateGetFilteredProductsEndpoint( column, value );
 			var marker = GetMarker();
 
-			var productsPortion = ActionPolicies.Get.Get( () => this._webRequestServices.GetResponse< VolusionProducts >( endpoint, marker ) );
+			var productsPortion = ActionPolicies.Get.Get( () => this._throttler.Execute( () => this._webRequestServices.GetResponse< VolusionProducts >( endpoint, marker ) ) );
 			if( productsPortion != null && productsPortion.Products != null )
 				products.AddRange( productsPortion.Products );
 
@@ -114,7 +117,7 @@ namespace VolusionAccess
 			var endpoint = EndpointsBuilder.CreateGetFilteredProductsEndpoint( column, value );
 			var marker = GetMarker();
 
-			var productsPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint, marker ) );
+			var productsPortion = await ActionPolicies.GetAsync.Get( () => this._throttlerAsync.ExecuteAsync( async () => await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint, marker ) ) );
 			if( productsPortion != null && productsPortion.Products != null )
 				products.AddRange( productsPortion.Products );
 
@@ -139,7 +142,7 @@ namespace VolusionAccess
 			var endpoint = EndpointsBuilder.CreateGetProductEndpoint( sku );
 			var marker = GetMarker();
 
-			var productsPortion = ActionPolicies.Get.Get( () => this._webRequestServices.GetResponse< VolusionProducts >( endpoint, marker ) );
+			var productsPortion = ActionPolicies.Get.Get( () => this._throttler.Execute( () => this._webRequestServices.GetResponse< VolusionProducts >( endpoint, marker ) ) );
 			if( productsPortion != null && productsPortion.Products != null )
 				product = productsPortion.Products.FirstOrDefault();
 
@@ -152,7 +155,7 @@ namespace VolusionAccess
 			var endpoint = EndpointsBuilder.CreateGetProductEndpoint( sku );
 			var marker = GetMarker();
 
-			var productsPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint, marker ) );
+			var productsPortion = await ActionPolicies.GetAsync.Get( () => this._throttlerAsync.ExecuteAsync( async () => await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint, marker ) ) );
 			if( productsPortion != null && productsPortion.Products != null )
 				product = productsPortion.Products.FirstOrDefault();
 
@@ -165,7 +168,7 @@ namespace VolusionAccess
 			var endpoint = EndpointsBuilder.CreateGetChildProductsEndpoint( sku );
 			var marker = GetMarker();
 
-			var productsPortion = ActionPolicies.Get.Get( () => this._webRequestServices.GetResponse< VolusionProducts >( endpoint, marker ) );
+			var productsPortion = ActionPolicies.Get.Get( () => this._throttler.Execute( () => this._webRequestServices.GetResponse< VolusionProducts >( endpoint, marker ) ) );
 			if( productsPortion != null && productsPortion.Products != null )
 				products = productsPortion.Products;
 
@@ -178,7 +181,7 @@ namespace VolusionAccess
 			var endpoint = EndpointsBuilder.CreateGetChildProductsEndpoint( sku );
 			var marker = GetMarker();
 
-			var productsPortion = await ActionPolicies.GetAsync.Get( async () => await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint, marker ) );
+			var productsPortion = await ActionPolicies.GetAsync.Get( () => this._throttlerAsync.ExecuteAsync( async () => await this._webRequestServices.GetResponseAsync< VolusionProducts >( endpoint, marker ) ) );
 			if( productsPortion != null && productsPortion.Products != null )
 				products = productsPortion.Products;
 
